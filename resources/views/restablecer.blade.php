@@ -4,24 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Crear una nueva contraseña</title>
-  <link rel="stylesheet" href="{{ asset('estilos/general.css') }}">
+  <link rel="stylesheet" href="{{ asset('Estilos/general.css') }}">
 </head>
 
 <body>
-  <main class="container page-content flex-center" style="min-height: 100vh;">
-    <section class="card mx-auto" style="width: min(100%, 480px);">
-      <div class="empty-state-icon" aria-hidden="true">🔒</div>
-      <h1 class="text-center">Crear una nueva contraseña</h1>
-      <p class="text-secondary text-center">Elige una contraseña segura para volver a tu cuenta.</p>
+  <main class="contenedor contenido">
+    <section class="tarjeta" style="max-width: 480px; margin: 0 auto;">
+      <h1 class="tarjeta-titulo">Crear una nueva contraseña</h1>
+      <p class="texto-secundario">Elige una contraseña segura para volver a tu cuenta.</p>
 
       <form method="POST" action="{{ route('password.update') }}">
         @csrf
         <input type="hidden" name="token" value="{{ $token }}">
 
-        <div class="form-group">
-          <label class="form-label" for="email">Correo electrónico</label>
+        <div class="grupo-formulario">
+          <label class="etiqueta" for="email">Correo electrónico</label>
           <input
-            class="form-control @error('email') is-invalid @enderror"
+            class="campo @error('email') campo-error @enderror"
             id="email"
             type="email"
             name="email"
@@ -30,14 +29,14 @@
             required
           >
           @error('email')
-            <span class="form-error">{{ $message }}</span>
+            <span class="mensaje-error">{{ $message }}</span>
           @enderror
         </div>
 
-        <div class="form-group">
-          <label class="form-label" for="password">Nueva contraseña</label>
+        <div class="grupo-formulario">
+          <label class="etiqueta" for="password">Nueva contraseña</label>
           <input
-            class="form-control @error('password') is-invalid @enderror"
+            class="campo @error('password') campo-error @enderror"
             id="password"
             type="password"
             name="password"
@@ -45,14 +44,14 @@
             required
           >
           @error('password')
-            <span class="form-error">{{ $message }}</span>
+            <span class="mensaje-error">{{ $message }}</span>
           @enderror
         </div>
 
-        <div class="form-group">
-          <label class="form-label" for="password_confirmation">Confirmar contraseña</label>
+        <div class="grupo-formulario">
+          <label class="etiqueta" for="password_confirmation">Confirmar contraseña</label>
           <input
-            class="form-control"
+            class="campo"
             id="password_confirmation"
             type="password"
             name="password_confirmation"
@@ -61,10 +60,10 @@
           >
         </div>
 
-        <button type="submit" class="btn btn-primary btn-block">Guardar contraseña</button>
+        <button type="submit" class="boton boton-azul boton-bloque">Guardar contraseña</button>
       </form>
 
-      <p class="text-center mt-4 mb-0">
+      <p style="margin-top: 20px; margin-bottom: 0;">
         <a href="{{ route('login') }}">Volver a iniciar sesión</a>
       </p>
     </section>
