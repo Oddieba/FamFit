@@ -1,0 +1,378 @@
+/* CONFIGURACIÓN GENERAL */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #e7f9ef, #e5f2ff);
+    color: #263b35;
+    min-height: 100vh;
+}
+
+.contenedor {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 35px 20px;
+}
+
+/* TARJETA PRINCIPAL */
+.tarjeta-login {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    max-width: 1000px;
+    background: #ffffff;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 20px 55px rgba(48, 91, 70, 0.12);
+}
+
+/* PANEL DE BIENVENIDA */
+.panel-bienvenida {
+    background: linear-gradient(160deg, #d9f8e5, #e4f4ff);
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    align-self: flex-start;
+}
+
+.icono-logo {
+    background: #ffffff;
+    width: 45px;
+    height: 45px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+}
+
+.logo h2 {
+    font-size: 21px;
+    color: #26734d;
+}
+
+/* ILUSTRACIÓN FAMILIAR */
+.ilustracion {
+    position: relative;
+    width: 230px;
+    height: 190px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0 15px;
+}
+
+.circulo {
+    position: absolute;
+    border-radius: 50%;
+}
+
+.circulo-uno {
+    width: 175px;
+    height: 175px;
+    background: #b8efd0;
+}
+
+.circulo-dos {
+    width: 125px;
+    height: 125px;
+    background: #d0eaff;
+    right: 0;
+    top: 0;
+}
+
+.personajes {
+    position: relative;
+    z-index: 1;
+    font-size: 75px;
+    background: #ffffff;
+    width: 145px;
+    height: 145px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 10px 25px rgba(38, 115, 77, 0.12);
+}
+
+.corazon {
+    position: absolute;
+    right: -10px;
+    bottom: 5px;
+    font-size: 30px;
+    background: white;
+    border-radius: 50%;
+    padding: 5px;
+}
+
+/* TEXTO DE BIENVENIDA */
+.panel-bienvenida h1 {
+    color: #26734d;
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.descripcion {
+    color: #557065;
+    font-size: 15px;
+    line-height: 1.8;
+    max-width: 350px;
+}
+
+/* BENEFICIOS */
+.beneficios {
+    width: 100%;
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.beneficio {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 13px;
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.beneficio span {
+    font-size: 23px;
+}
+
+.beneficio p {
+    color: #365d49;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* PANEL DEL FORMULARIO */
+.panel-formulario {
+    padding: 55px 45px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.saludo {
+    color: #32a66b;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.encabezado h2 {
+    color: #263b35;
+    font-size: 32px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.encabezado p {
+    color: #81918a;
+    font-size: 14px;
+    margin-bottom: 32px;
+}
+
+/* CAMPOS DE ENTRADA */
+.grupo-input {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-bottom: 22px;
+}
+
+.grupo-input label {
+    color: #344d41;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.grupo-input input {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #dce9e1;
+    border-radius: 12px;
+    outline: none;
+    background: #f9fcfa;
+    color: #263b35;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.grupo-input input:focus {
+    border-color: #43bd7b;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(67, 189, 123, 0.12);
+}
+
+/* OPCIONES DEL LOGIN */
+.opciones {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 5px 0 25px;
+    font-size: 12px;
+}
+
+.recordar {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #64756c;
+}
+
+.recordar input {
+    accent-color: #32a66b;
+}
+
+.opciones a,
+.registro a {
+    color: #26975c;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.opciones a:hover,
+.registro a:hover {
+    text-decoration: underline;
+}
+
+/* BOTÓN DE INICIO DE SESIÓN */
+.boton-login {
+    width: 100%;
+    padding: 15px;
+    background: #35b875;
+    color: #ffffff;
+    border: none;
+    border-radius: 13px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    transition: 0.3s;
+}
+
+.boton-login:hover {
+    background: #248c57;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(53, 184, 117, 0.2);
+}
+
+.boton-login span {
+    font-size: 20px;
+}
+
+/* SEPARADOR Y REGISTRO */
+.separador {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 28px 0 22px;
+    color: #9aa9a1;
+    font-size: 12px;
+    text-align: center;
+}
+
+.separador::before,
+.separador::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #e7eee9;
+}
+
+.registro {
+    color: #7b8b82;
+    font-size: 13px;
+    text-align: center;
+}
+
+/* MENSAJE INFERIOR */
+.mensaje-inferior {
+    text-align: center;
+    background: #f0fbf4;
+    color: #39865b;
+    border-radius: 12px;
+    padding: 13px;
+    margin-top: 30px;
+    font-size: 13px;
+}
+
+/* PIE DE PÁGINA */
+footer {
+    text-align: center;
+    color: #698477;
+    font-size: 12px;
+    margin-top: 25px;
+}
+
+/* ADAPTACIÓN A TABLET Y CELULAR */
+@media (max-width: 800px) {
+    .tarjeta-login {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+    }
+
+    .panel-bienvenida {
+        padding: 30px 25px;
+    }
+
+    .ilustracion {
+        margin: 20px 0 10px;
+    }
+
+    .panel-bienvenida h1 {
+        font-size: 27px;
+    }
+
+    .beneficios {
+        max-width: 330px;
+    }
+
+    .panel-formulario {
+        padding: 35px 28px;
+    }
+}
+
+/* CELULARES PEQUEÑOS */
+@media (max-width: 400px) {
+    .contenedor {
+        padding: 15px 10px;
+    }
+
+    .panel-bienvenida,
+    .panel-formulario {
+        padding: 25px 20px;
+    }
+
+    .encabezado h2 {
+        font-size: 27px;
+    }
+
+    .opciones {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
