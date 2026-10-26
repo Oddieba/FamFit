@@ -1,0 +1,619 @@
+/* ========================================
+   FAMFIT QUEST - SIDEBAR CON PERFIL
+   Laravel 12
+   ======================================== */
+
+:root {
+    --fq-bg: #F5F7FB;
+    --fq-white: #FFFFFF;
+    --fq-blue: #2864F0;
+    --fq-green: #A7E66D;
+    --fq-text: #26344A;
+    --fq-muted: #7B879B;
+    --fq-border: #E8EDF5;
+
+    --fq-small: 78px;
+    --fq-expanded: 255px;
+}
+
+.fq-sidebar,
+.fq-sidebar * {
+    box-sizing: border-box;
+}
+
+.fq-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 1000;
+
+    width: var(--fq-small);
+    height: 100vh;
+    height: 100dvh;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    padding: 22px 11px 16px;
+
+    overflow-x: visible;
+    overflow-y: auto;
+
+    background: var(--fq-white);
+    border-right: 1px solid var(--fq-border);
+
+    font-family: "Inter", "Segoe UI", sans-serif;
+    color: var(--fq-text);
+
+    transition: width 0.24s ease, box-shadow 0.24s ease;
+}
+
+/* EXPANSIÓN CON EL CURSOR */
+
+@media (hover: hover) and (pointer: fine) {
+    .fq-sidebar:hover {
+        width: var(--fq-expanded);
+        box-shadow: 12px 0 35px rgba(34, 53, 87, 0.08);
+    }
+}
+
+.fq-sidebar:focus-within,
+.fq-sidebar.is-expanded {
+    width: var(--fq-expanded);
+    box-shadow: 12px 0 35px rgba(34, 53, 87, 0.08);
+}
+
+/* LOGO */
+
+.fq-brand {
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+
+    padding: 2px 7px;
+    margin-bottom: 30px;
+
+    color: var(--fq-text);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.fq-logo {
+    width: 43px;
+    height: 43px;
+    flex: 0 0 43px;
+
+    display: grid;
+    place-items: center;
+
+    background: var(--fq-blue);
+    border-radius: 14px;
+
+    color: white;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.fq-brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-5px);
+
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.fq-sidebar:hover .fq-brand-text,
+.fq-sidebar:focus-within .fq-brand-text,
+.fq-sidebar.is-expanded .fq-brand-text {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.fq-brand-text strong {
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.fq-brand-text small {
+    color: var(--fq-muted);
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: 2.4px;
+}
+
+/* NAVEGACIÓN */
+
+.fq-navigation {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.fq-section-title {
+    display: block;
+    height: 24px;
+    padding: 6px 9px 0;
+
+    overflow: hidden;
+    white-space: nowrap;
+
+    color: var(--fq-muted);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.1px;
+
+    opacity: 0;
+    visibility: hidden;
+}
+
+.fq-sidebar:hover .fq-section-title,
+.fq-sidebar:focus-within .fq-section-title,
+.fq-sidebar.is-expanded .fq-section-title {
+    opacity: 1;
+    visibility: visible;
+}
+
+.fq-preferences-title {
+    margin-top: 16px;
+}
+
+/* ENLACES */
+
+.fq-link {
+    position: relative;
+
+    min-height: 47px;
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 14px;
+
+    padding: 0 16px;
+
+    border-radius: 12px;
+
+    color: #718096;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+
+    transition: background 0.18s ease, color 0.18s ease;
+}
+
+.fq-link:hover {
+    color: var(--fq-blue);
+    background: #F0F5FF;
+}
+
+.fq-link.is-active {
+    color: white;
+    background: var(--fq-blue);
+    box-shadow: 0 5px 12px rgba(40, 100, 240, 0.16);
+}
+
+.fq-link.is-active:hover {
+    background: #2057DA;
+    color: white;
+}
+
+.fq-link[data-pending="true"] {
+    opacity: 0.7;
+}
+
+.fq-link:focus-visible,
+.fq-brand:focus-visible,
+.fq-profile-button:focus-visible {
+    outline: 3px solid rgba(40, 100, 240, 0.4);
+    outline-offset: 3px;
+}
+
+/* ICONOS */
+
+.fq-icon {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+
+    display: grid;
+    place-items: center;
+}
+
+.fq-icon svg {
+    display: block;
+    width: 21px;
+    height: 21px;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* TEXTOS: OCULTOS HASTA EXPANDIR */
+
+.fq-link-text {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-5px);
+
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.fq-sidebar:hover .fq-link-text,
+.fq-sidebar:focus-within .fq-link-text,
+.fq-sidebar.is-expanded .fq-link-text {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+/* ETIQUETAS FLOTANTES EN MODO COMPACTO */
+
+.fq-tooltip {
+    position: absolute;
+    z-index: 1200;
+    left: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%);
+
+    padding: 10px 13px;
+    border-radius: 9px;
+
+    background: #202D42;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    pointer-events: none;
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .fq-sidebar:not(:hover):not(:focus-within) .fq-link:hover .fq-tooltip {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+/* PERFIL DEL USUARIO */
+
+.fq-profile {
+    position: relative;
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--fq-border);
+}
+
+.fq-profile-button {
+    width: 100%;
+    min-height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+
+    padding: 7px;
+    border: 0;
+    border-radius: 12px;
+
+    background: transparent;
+    color: var(--fq-text);
+    text-align: left;
+    cursor: pointer;
+}
+
+.fq-profile-button:hover {
+    background: var(--fq-bg);
+}
+
+.fq-avatar {
+    width: 43px;
+    height: 43px;
+    flex: 0 0 43px;
+
+    display: grid;
+    place-items: center;
+
+    border: 2px solid #E5F4D6;
+    border-radius: 50%;
+
+    background: #F0F8E8;
+    font-size: 25px;
+}
+
+.fq-profile-info {
+    min-width: 0;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 5px;
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease;
+}
+
+.fq-profile-info strong {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+}
+
+.fq-profile-info small {
+    color: var(--fq-muted);
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+.fq-sidebar:hover .fq-profile-info,
+.fq-sidebar:focus-within .fq-profile-info,
+.fq-sidebar.is-expanded .fq-profile-info {
+    opacity: 1;
+    visibility: visible;
+}
+
+.fq-edit-icon {
+    display: grid;
+    place-items: center;
+
+    opacity: 0;
+    visibility: hidden;
+}
+
+.fq-sidebar:hover .fq-edit-icon,
+.fq-sidebar:focus-within .fq-edit-icon,
+.fq-sidebar.is-expanded .fq-edit-icon {
+    opacity: 1;
+    visibility: visible;
+}
+
+.fq-edit-icon svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: var(--fq-muted);
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* VENTANA DE PERSONALIZACIÓN */
+
+.fq-avatar-picker {
+    position: absolute;
+    z-index: 1300;
+
+    left: calc(100% + 12px);
+    bottom: 0;
+
+    width: 245px;
+    padding: 17px;
+
+    background: white;
+    border: 1px solid var(--fq-border);
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(30, 45, 70, 0.15);
+}
+
+.fq-avatar-picker[hidden] {
+    display: none !important;
+}
+
+.fq-avatar-picker > strong {
+    display: block;
+    margin-bottom: 14px;
+    font-size: 14px;
+}
+
+.fq-avatar-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.fq-avatar-option {
+    width: 44px;
+    height: 44px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid var(--fq-border);
+    border-radius: 12px;
+
+    background: var(--fq-bg);
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.fq-avatar-option:hover,
+.fq-avatar-option.selected {
+    background: #EEF3FF;
+    border-color: var(--fq-blue);
+}
+
+.fq-profile-label {
+    display: block;
+    margin: 12px 0 6px;
+
+    color: var(--fq-muted);
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.fq-avatar-picker input {
+    display: block;
+    width: 100%;
+    min-height: 38px;
+
+    padding: 9px 10px;
+
+    border: 1px solid var(--fq-border);
+    border-radius: 9px;
+
+    background: white;
+    color: var(--fq-text);
+    font: inherit;
+    font-size: 12px;
+}
+
+.fq-avatar-picker input:focus {
+    outline: 2px solid rgba(40, 100, 240, 0.25);
+    border-color: var(--fq-blue);
+}
+
+.fq-save-profile {
+    width: 100%;
+    min-height: 39px;
+    margin-top: 14px;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: var(--fq-blue);
+    color: white;
+    font-weight: 650;
+    font-size: 12px;
+
+    cursor: pointer;
+}
+
+.fq-save-profile:hover {
+    background: #2057DA;
+}
+
+/* BOTÓN Y FONDO MÓVIL */
+
+.fq-mobile-toggle,
+.fq-overlay {
+    display: none;
+}
+
+/* CONTENIDO PRINCIPAL OPCIONAL */
+
+.fq-main {
+    min-width: 0;
+    min-height: 100vh;
+    margin-left: var(--fq-small);
+    padding: 30px;
+
+    background: var(--fq-bg);
+}
+
+/* MÓVILES Y TABLETAS */
+
+@media (max-width: 768px) {
+    .fq-sidebar {
+        width: min(var(--fq-expanded), 86vw);
+        transform: translateX(-110%);
+        visibility: hidden;
+        box-shadow: none;
+    }
+
+    .fq-sidebar.is-mobile-open {
+        transform: translateX(0);
+        visibility: visible;
+        box-shadow: 12px 0 35px rgba(30, 45, 70, 0.15);
+    }
+
+    /* El menú móvil abierto siempre muestra sus textos */
+    .fq-sidebar.is-mobile-open .fq-brand-text,
+    .fq-sidebar.is-mobile-open .fq-section-title,
+    .fq-sidebar.is-mobile-open .fq-link-text,
+    .fq-sidebar.is-mobile-open .fq-profile-info,
+    .fq-sidebar.is-mobile-open .fq-edit-icon {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+    }
+
+    .fq-tooltip {
+        display: none;
+    }
+
+    .fq-mobile-toggle {
+        position: fixed;
+        top: 14px;
+        left: 14px;
+        z-index: 900;
+
+        width: 43px;
+        height: 43px;
+
+        display: grid;
+        place-items: center;
+
+        border: 1px solid var(--fq-border);
+        border-radius: 12px;
+        background: white;
+        color: var(--fq-blue);
+
+        box-shadow: 0 3px 12px rgba(30, 45, 70, 0.07);
+        cursor: pointer;
+    }
+
+    .fq-mobile-toggle svg {
+        width: 22px;
+        height: 22px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+    }
+
+    .fq-overlay.is-visible {
+        position: fixed;
+        inset: 0;
+        z-index: 950;
+
+        display: block;
+        background: rgba(25, 37, 58, 0.4);
+    }
+
+    .fq-main {
+        margin-left: 0;
+        padding: 75px 16px 24px;
+    }
+
+    .fq-avatar-picker {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        bottom: auto;
+        transform: translate(-50%, -50%);
+        width: min(300px, calc(100vw - 32px));
+    }
+
+    body.fq-menu-open {
+        overflow: hidden;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fq-sidebar,
+    .fq-link,
+    .fq-tooltip,
+    .fq-brand-text,
+    .fq-link-text {
+        transition: none;
+    }
+}

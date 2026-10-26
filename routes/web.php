@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('login');
@@ -23,29 +24,36 @@ Route::get('/menu', function() {
     return view('menu');
 })->name('menu');
 
-// Ruta para procesar el login manual
+//credenciales en base de datos
 Route::post('/login', function (Request $request) {
-    // 1. Definimos los datos fijos que tú quieres exigir
-    $usuarioCorrecto = "1@famfit.com";
-    $passwordCorrecto = "1";
 
-    // 2. Comparamos lo que escribió el usuario con tus datos fijos
-    if ($request->input('email') === $usuarioCorrecto && $request->input('password') === $passwordCorrecto) {
-        // Si coinciden, los dejamos pasar (por ejemplo, los mandamos al menú)
-        return redirect()->route('menu'); // O la ruta a donde quieras enviarlos
+    $credenciales = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
+
+    if (Auth::attempt($credenciales)) {
+        // Regenerar la sesión por seguridad
+        $request->session()->regenerate();
+
+        // Entrar al menú
+        return redirect()->route('menu');
     }
 
-    // Si fallan, los regresamos al login con un error
-    return back()->withErrors(['email' => 'Las credenciales son incorrectas.']);
+    // Si las credenciales son incorrectas
+    return back()
+        ->withErrors([
+            'email' => 'El correo o la contraseña son incorrectos.',
+        ])
+        ->onlyInput('email');
+
 })->name('login.post');
 
 route::get('/bienestar', function() {
     return view('bienestar');
 })->name('bienestar');
 
-route::get('/progreso', function() {
-    return view('progreso');
-})->name('progreso');
+
 
 Route::get('/registro', function () {
     return view('registro');
@@ -102,5 +110,3 @@ Route::post('/reset-password', function (Request $request) {
 Route::get('configuracion', function () {
     return view('configuracion');
 })->name('configuracion');
-
-
