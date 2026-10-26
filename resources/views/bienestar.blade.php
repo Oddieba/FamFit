@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FamFit Quest | Bienestar</title>
+<link rel="stylesheet" href="{{ asset('estilos/general.css') }}">
 <style>
   :root{
     --bg:#050a13; --sidebar:#081323; --panel:#0b1729; --panel2:#0e1c31;
@@ -148,7 +149,7 @@
         <button class="button ghost" id="todayBtn">📅 Hoy</button>
       </div>
       <div class="grid sleep-layout">
-        <article class="panel">
+        <article class="panel tarjeta">
           <div class="eyebrow">Tu descanso de anoche</div>
           <div class="sleep-main">
             <div>
@@ -180,7 +181,7 @@
           </div>
         </article>
 
-        <article class="panel">
+        <article class="panel tarjeta">
           <div class="eyebrow">Tu objetivo diario</div>
           <h2>Horas recomendadas</h2>
           <div class="target-number"><span id="targetDisplay">8</span><small> horas</small></div>
@@ -194,13 +195,13 @@
       </div>
 
       <div class="grid stats">
-        <article class="stat-card"><div class="stat-label">PROMEDIO DEL MES</div><div class="stat-value"><span id="avgStat">7.2</span> <small>h / noche</small></div><p id="avgCaption">Tu promedio mensual</p></article>
-        <article class="stat-card"><div class="stat-label">HORAS TOTALES</div><div class="stat-value"><span id="totalStat">216</span> <small>horas</small></div><p>Acumuladas en el mes seleccionado</p></article>
-        <article class="stat-card"><div class="stat-label">OBJETIVO DIARIO</div><div class="stat-value">8 <small>horas</small></div><p>Meta de referencia personalizable</p></article>
+        <article class="stat-card tarjeta"><div class="stat-label">PROMEDIO DEL MES</div><div class="stat-value"><span id="avgStat">7.2</span> <small>h / noche</small></div><p id="avgCaption">Tu promedio mensual</p></article>
+        <article class="stat-card tarjeta"><div class="stat-label">HORAS TOTALES</div><div class="stat-value"><span id="totalStat">216</span> <small>horas</small></div><p>Acumuladas en el mes seleccionado</p></article>
+        <article class="stat-card tarjeta"><div class="stat-label">OBJETIVO DIARIO</div><div class="stat-value">8 <small>horas</small></div><p>Meta de referencia personalizable</p></article>
       </div>
 
       <div class="grid month-grid">
-        <article class="panel">
+        <article class="panel tarjeta">
           <div class="section-title">
             <div><h2>Tu sueño durante el mes</h2><p>Consulta y compara tus registros diarios.</p></div>
             <select id="monthSelect" class="select" aria-label="Seleccionar mes"></select>
@@ -219,27 +220,27 @@
 
     <section id="page-progress" class="hidden">
       <div class="page-head"><div><div class="eyebrow">Tu evolución</div><h1>Mi progreso 📈</h1><p>Consulta tus hábitos y constancia en FamFit.</p></div></div>
-      <div class="grid stats"><article class="stat-card"><div class="stat-label">EXPERIENCIA ACUMULADA</div><div class="stat-value" id="xpProgressStat">0 <small>XP</small></div><p>Gana experiencia completando actividades.</p></article><article class="stat-card"><div class="stat-label">NOCHES REGISTRADAS</div><div class="stat-value" id="nightsProgressStat">0</div><p>Registros de sueño guardados.</p></article><article class="stat-card"><div class="stat-label">PROMEDIO DE SUEÑO</div><div class="stat-value" id="sleepProgressStat">— <small>h</small></div><p>Promedio de noches registradas.</p></article></div>
+      <div class="grid stats"><article class="stat-card tarjeta"><div class="stat-label">EXPERIENCIA ACUMULADA</div><div class="stat-value" id="xpProgressStat">0 <small>XP</small></div><p>Gana experiencia completando actividades.</p></article><article class="stat-card"><div class="stat-label">NOCHES REGISTRADAS</div><div class="stat-value" id="nightsProgressStat">0</div><p>Registros de sueño guardados.</p></article><article class="stat-card"><div class="stat-label">PROMEDIO DE SUEÑO</div><div class="stat-value" id="sleepProgressStat">— <small>h</small></div><p>Promedio de noches registradas.</p></article></div>
     </section>
-    <section id="page-training" class="hidden"><div class="page-head"><div><div class="eyebrow">Muévete a tu ritmo</div><h1>Entrenamientos 🏋️</h1><p>Consulta rutinas y registra sesiones. Esta sección puede conectarse con tu módulo de entrenamiento.</p></div></div><div class="grid mission-grid"><article class="panel"><div class="mission-icon">💪</div><h2>Fuerza básica</h2><p>Rutina de cuerpo completo adaptada a tu nivel.</p></article><article class="panel"><div class="mission-icon">🚶</div><h2>Actividad ligera</h2><p>Caminar y moverte durante el día también cuenta.</p></article><article class="panel"><div class="mission-icon">🧘</div><h2>Movilidad</h2><p>Movimientos cómodos para acompañar la recuperación.</p></article></div></section>
-    <section id="page-nutrition" class="hidden"><div class="page-head"><div><div class="eyebrow">Hábitos equilibrados</div><h1>Alimentación 🥗</h1><p>Espacio preparado para registrar comidas, hidratación y preferencias alimentarias.</p></div></div><article class="panel"><h2>Registro de alimentación</h2><p>Esta sección puede ampliarse con el diario de comidas y planificación de menús.</p></article></section>
-    <section id="page-habits" class="hidden"><div class="page-head"><div><div class="eyebrow">Pequeñas acciones</div><h1>Hábitos ✅</h1><p>Construye constancia con objetivos alcanzables.</p></div></div><article class="panel"><h2>Hábitos del día</h2><p>Próximamente: lista de hábitos configurables y seguimiento diario.</p></article></section>
-    <section id="page-stats" class="hidden"><div class="page-head"><div><div class="eyebrow">Datos y tendencias</div><h1>Estadísticas 📊</h1><p>Resumen de sueño y actividades registradas.</p></div></div><div class="grid stats"><article class="stat-card"><div class="stat-label">PROMEDIO MENSUAL DE SUEÑO</div><div class="stat-value" id="sleepStatsAvg">— <small>h</small></div></article><article class="stat-card"><div class="stat-label">HORAS REGISTRADAS ESTE MES</div><div class="stat-value" id="sleepStatsTotal">0 <small>h</small></div></article></div></section>
-    <section id="page-avatar" class="hidden"><div class="page-head"><div><div class="eyebrow">Tu compañero de aventura</div><h1>Avatares 🧍</h1><p>Personaliza tu personaje y observa su estado de energía.</p></div></div><article class="panel" style="max-width:360px;text-align:center"><div id="avatarPreview" style="font-size:84px">😎</div><h2 id="avatarPreviewLabel">Avatar con energía</h2><p>El estado visual se adapta a las horas de sueño registradas.</p></article></section>
-    <section id="page-social" class="hidden"><div class="page-head"><div><div class="eyebrow">Avanza acompañado</div><h1>Social 👥</h1><p>Retos compartidos, amigos y logros.</p></div></div><article class="panel"><h2>Comunidad FamFit</h2><p>En esta sección podrán añadirse amigos, retos grupales y publicaciones con controles de privacidad.</p></article></section>
-    <section id="page-store" class="hidden"><div class="page-head"><div><div class="eyebrow">Recompensas virtuales</div><h1>Tienda y recompensas 🛍️</h1><p>Consulta la experiencia acumulada y los objetos que podrás desbloquear.</p></div></div><article class="panel"><h2>Tu experiencia</h2><div class="target-number" id="xpStore">0 <small>XP</small></div><p>Las recompensas son virtuales y se ganan completando hábitos saludables.</p></article></section>
-    <section id="page-settings" class="hidden"><div class="page-head"><div><div class="eyebrow">Personaliza tu experiencia</div><h1>Configuración ⚙️</h1><p>Preferencias del prototipo.</p></div></div><article class="panel"><h2>Objetivo de sueño</h2><p>La meta de demostración es de 8 horas. En una versión conectada a usuarios, esta preferencia podría personalizarse.</p></article></section>
+    <section id="page-training" class="hidden"><div class="page-head"><div><div class="eyebrow">Muévete a tu ritmo</div><h1>Entrenamientos 🏋️</h1><p>Consulta rutinas y registra sesiones. Esta sección puede conectarse con tu módulo de entrenamiento.</p></div></div><div class="grid mission-grid"><article class="panel tarjeta"><div class="mission-icon">💪</div><h2>Fuerza básica</h2><p>Rutina de cuerpo completo adaptada a tu nivel.</p></article><article class="panel tarjeta"><div class="mission-icon">🚶</div><h2>Actividad ligera</h2><p>Caminar y moverte durante el día también cuenta.</p></article><article class="panel tarjeta"><div class="mission-icon">🧘</div><h2>Movilidad</h2><p>Movimientos cómodos para acompañar la recuperación.</p></article></div></section>
+    <section id="page-nutrition" class="hidden"><div class="page-head"><div><div class="eyebrow">Hábitos equilibrados</div><h1>Alimentación 🥗</h1><p>Espacio preparado para registrar comidas, hidratación y preferencias alimentarias.</p></div></div><article class="panel tarjeta"><h2>Registro de alimentación</h2><p>Esta sección puede ampliarse con el diario de comidas y planificación de menús.</p></article></section>
+    <section id="page-habits" class="hidden"><div class="page-head"><div><div class="eyebrow">Pequeñas acciones</div><h1>Hábitos ✅</h1><p>Construye constancia con objetivos alcanzables.</p></div></div><article class="panel tarjeta"><h2>Hábitos del día</h2><p>Próximamente: lista de hábitos configurables y seguimiento diario.</p></article></section>
+    <section id="page-stats" class="hidden"><div class="page-head"><div><div class="eyebrow">Datos y tendencias</div><h1>Estadísticas 📊</h1><p>Resumen de sueño y actividades registradas.</p></div></div><div class="grid stats"><article class="stat-card tarjeta"><div class="stat-label">PROMEDIO MENSUAL DE SUEÑO</div><div class="stat-value" id="sleepStatsAvg">— <small>h</small></div></article><article class="stat-card tarjeta"><div class="stat-label">HORAS REGISTRADAS ESTE MES</div><div class="stat-value" id="sleepStatsTotal">0 <small>h</small></div></article></div></section>
+    <section id="page-avatar" class="hidden"><div class="page-head"><div><div class="eyebrow">Tu compañero de aventura</div><h1>Avatares 🧍</h1><p>Personaliza tu personaje y observa su estado de energía.</p></div></div><article class="panel tarjeta" style="max-width:360px;text-align:center"><div id="avatarPreview" style="font-size:84px">😎</div><h2 id="avatarPreviewLabel">Avatar con energía</h2><p>El estado visual se adapta a las horas de sueño registradas.</p></article></section>
+    <section id="page-social" class="hidden"><div class="page-head"><div><div class="eyebrow">Avanza acompañado</div><h1>Social 👥</h1><p>Retos compartidos, amigos y logros.</p></div></div><article class="panel tarjeta"><h2>Comunidad FamFit</h2><p>En esta sección podrán añadirse amigos, retos grupales y publicaciones con controles de privacidad.</p></article></section>
+    <section id="page-store" class="hidden"><div class="page-head"><div><div class="eyebrow">Recompensas virtuales</div><h1>Tienda y recompensas 🛍️</h1><p>Consulta la experiencia acumulada y los objetos que podrás desbloquear.</p></div></div><article class="panel tarjeta"><h2>Tu experiencia</h2><div class="target-number" id="xpStore">0 <small>XP</small></div><p>Las recompensas son virtuales y se ganan completando hábitos saludables.</p></article></section>
+    <section id="page-settings" class="hidden"><div class="page-head"><div><div class="eyebrow">Personaliza tu experiencia</div><h1>Configuración ⚙️</h1><p>Preferencias del prototipo.</p></div></div><article class="panel tarjeta"><h2>Objetivo de sueño</h2><p>La meta de demostración es de 8 horas. En una versión conectada a usuarios, esta preferencia podría personalizarse.</p></article></section>
     <section id="page-logout" class="hidden"><div class="page-head"><div><div class="eyebrow">Hasta pronto</div><h1>Cerrar sesión 🚪</h1><p>Este prototipo no tiene autenticación conectada. El cierre de sesión deberá integrarse con Laravel.</p></div></div><button class="button" id="backHomeBtn">Volver al inicio</button></section>
 
     <section id="page-sleep" class="hidden">
       <div class="page-head"><div><div class="eyebrow">Historial y objetivos</div><h1>Mi sueño 🌙</h1><p>Registra tus noches y observa tus hábitos a lo largo del tiempo.</p></div></div>
       <div class="grid sleep-layout">
-        <article class="panel"><h2>Registrar descanso</h2><p style="margin:8px 0 18px">Añade o corrige las horas dormidas de una fecha.</p>
+        <article class="panel tarjeta"><h2>Registrar descanso</h2><p style="margin:8px 0 18px">Añade o corrige las horas dormidas de una fecha.</p>
           <label class="muted" for="dateInput">Fecha</label><br><input id="dateInput" type="date" class="select" style="margin:8px 0 15px">
           <br><label class="muted" for="sleepInput2">Horas dormidas</label><br><input id="sleepInput2" type="number" min="0" max="16" step=".5" value="7.5" class="select" style="margin:8px 0 15px;width:140px">
           <br><button class="button primary" id="saveDateBtn">Guardar noche</button>
         </article>
-        <article class="panel"><h2>Tu objetivo</h2><div class="target-number">7–9 <small>horas</small></div><p>Como referencia general para adultos, procura dormir al menos 7 horas y ajustar la meta a tus necesidades.</p><div class="reward"><strong>+30 XP</strong><p style="margin-top:5px">Por cumplir la meta diaria configurada. Los puntos son una recompensa virtual, no una medida de salud.</p></div></article>
+        <article class="panel tarjeta"><h2>Tu objetivo</h2><div class="target-number">7–9 <small>horas</small></div><p>Como referencia general para adultos, procura dormir al menos 7 horas y ajustar la meta a tus necesidades.</p><div class="reward"><strong>+30 XP</strong><p style="margin-top:5px">Por cumplir la meta diaria configurada. Los puntos son una recompensa virtual, no una medida de salud.</p></div></article>
       </div>
     </section>
 
@@ -251,17 +252,17 @@
         <button class="tab" data-tab="breaks">🌿 Pausas activas</button>
       </div>
       <div id="tab-relax" class="grid mission-grid">
-        <article class="panel mission"><div class="mission-icon">🌬️</div><div><h2>Respiración consciente</h2><p>Haz una pausa de 2 minutos y respira con suavidad, sin forzar.</p></div><div class="muted">Duración: 2 min · <span class="xp">+15 XP</span></div><button class="button primary completeMission" data-id="breathing" data-xp="15">Completar actividad</button></article>
-        <article class="panel mission"><div class="mission-icon">🧘</div><div><h2>Estiramiento suave</h2><p>Realiza movimientos cómodos de cuello, hombros y espalda, sin dolor.</p></div><div class="muted">Duración: 5 min · <span class="xp">+20 XP</span></div><button class="button primary completeMission" data-id="stretch" data-xp="20">Completar actividad</button></article>
-        <article class="panel mission"><div class="mission-icon">🎧</div><div><h2>Pausa sin pantallas</h2><p>Aléjate de la pantalla, relaja la vista y escucha tu entorno.</p></div><div class="muted">Duración: 5 min · <span class="xp">+15 XP</span></div><button class="button primary completeMission" data-id="screenbreak" data-xp="15">Completar actividad</button></article>
+        <article class="panel tarjeta mission"><div class="mission-icon">🌬️</div><div><h2>Respiración consciente</h2><p>Haz una pausa de 2 minutos y respira con suavidad, sin forzar.</p></div><div class="muted">Duración: 2 min · <span class="xp">+15 XP</span></div><button class="button primary completeMission" data-id="breathing" data-xp="15">Completar actividad</button></article>
+        <article class="panel tarjeta mission"><div class="mission-icon">🧘</div><div><h2>Estiramiento suave</h2><p>Realiza movimientos cómodos de cuello, hombros y espalda, sin dolor.</p></div><div class="muted">Duración: 5 min · <span class="xp">+20 XP</span></div><button class="button primary completeMission" data-id="stretch" data-xp="20">Completar actividad</button></article>
+        <article class="panel tarjeta mission"><div class="mission-icon">🎧</div><div><h2>Pausa sin pantallas</h2><p>Aléjate de la pantalla, relaja la vista y escucha tu entorno.</p></div><div class="muted">Duración: 5 min · <span class="xp">+15 XP</span></div><button class="button primary completeMission" data-id="screenbreak" data-xp="15">Completar actividad</button></article>
       </div>
       <div id="tab-water" class="grid mission-grid hidden">
-        <article class="panel mission"><div class="mission-icon">💧</div><div><h2>Tu hidratación diaria</h2><p>Registra vasos de agua a lo largo del día. La necesidad varía con el clima, actividad y salud.</p></div><div class="stat-value"><span id="waterCount">0</span> <small>/ 6 vasos de referencia</small></div><div class="progress-line"><span id="waterProgress" style="width:0%"></span></div><button class="button primary" id="addWater">+ Registrar un vaso · +5 XP</button><p class="empty-note">Evita beber en exceso de golpe; distribuye el agua durante el día.</p></article>
-        <article class="panel mission"><div class="mission-icon">🚰</div><div><h2>Misión: recuerda beber</h2><p>Haz una pausa para hidratarte cuando tengas sed y acompaña tus comidas con agua.</p></div><div class="muted">Recompensa diaria · <span class="xp">+10 XP</span></div><button class="button primary" id="waterMission">Completar misión</button></article>
+        <article class="panel tarjeta mission"><div class="mission-icon">💧</div><div><h2>Tu hidratación diaria</h2><p>Registra vasos de agua a lo largo del día. La necesidad varía con el clima, actividad y salud.</p></div><div class="stat-value"><span id="waterCount">0</span> <small>/ 6 vasos de referencia</small></div><div class="progress-line"><span id="waterProgress" style="width:0%"></span></div><button class="button primary" id="addWater">+ Registrar un vaso · +5 XP</button><p class="empty-note">Evita beber en exceso de golpe; distribuye el agua durante el día.</p></article>
+        <article class="panel tarjeta mission"><div class="mission-icon">🚰</div><div><h2>Misión: recuerda beber</h2><p>Haz una pausa para hidratarte cuando tengas sed y acompaña tus comidas con agua.</p></div><div class="muted">Recompensa diaria · <span class="xp">+10 XP</span></div><button class="button primary" id="waterMission">Completar misión</button></article>
       </div>
       <div id="tab-breaks" class="grid mission-grid hidden">
-        <article class="panel mission"><div class="mission-icon">🌳</div><div><h2>Pausa de movimiento</h2><p>Levántate un momento, camina o cambia de postura si llevas mucho tiempo sentado.</p></div><div class="muted">Duración: 3 min · <span class="xp">+10 XP</span></div><button class="button primary completeMission" data-id="movement" data-xp="10">Completar actividad</button></article>
-        <article class="panel mission"><div class="mission-icon">👀</div><div><h2>Descanso visual</h2><p>Mira a lo lejos unos segundos y parpadea con naturalidad para descansar la vista.</p></div><div class="muted">Duración: 1 min · <span class="xp">+10 XP</span></div><button class="button primary completeMission" data-id="eyes" data-xp="10">Completar actividad</button></article>
+        <article class="panel tarjeta mission"><div class="mission-icon">🌳</div><div><h2>Pausa de movimiento</h2><p>Levántate un momento, camina o cambia de postura si llevas mucho tiempo sentado.</p></div><div class="muted">Duración: 3 min · <span class="xp">+10 XP</span></div><button class="button primary completeMission" data-id="movement" data-xp="10">Completar actividad</button></article>
+        <article class="panel tarjeta mission"><div class="mission-icon">👀</div><div><h2>Descanso visual</h2><p>Mira a lo lejos unos segundos y parpadea con naturalidad para descansar la vista.</p></div><div class="muted">Duración: 1 min · <span class="xp">+10 XP</span></div><button class="button primary completeMission" data-id="eyes" data-xp="10">Completar actividad</button></article>
       </div>
     </section>
 

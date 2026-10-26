@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi progreso | Famfit Quest</title>
+    <link rel="stylesheet" href="{{ asset('estilos/general.css') }}">
     <link rel="stylesheet" href="{{ asset('estilos/progreso.css') }}">
 </head>
 <body>
@@ -53,22 +54,22 @@
             <p class="demo-note"><span aria-hidden="true">●</span> Resumen de ejemplo: tus avances reales aparecerán aquí cuando registres tus actividades.</p>
 
             <section class="summary-grid" aria-label="Resumen del mes">
-                <article class="card summary-card">
+                <article class="card tarjeta summary-card">
                     <div class="summary-top"><span class="summary-label">Días activos</span><span class="summary-icon">📅</span></div>
                     <p class="summary-value">18 <small>/ 30 días</small></p>
                     <div class="summary-foot"><strong>+4 días</strong> respecto al mes pasado</div>
                 </article>
-                <article class="card summary-card">
+                <article class="card tarjeta summary-card">
                     <div class="summary-top"><span class="summary-label">Hábitos completados</span><span class="summary-icon">✅</span></div>
                     <p class="summary-value">42 <small>hábitos</small></p>
                     <div class="summary-foot"><strong>+12%</strong> respecto al mes pasado</div>
                 </article>
-                <article class="card summary-card">
+                <article class="card tarjeta summary-card">
                     <div class="summary-top"><span class="summary-label">Tiempo en movimiento</span><span class="summary-icon">🏃</span></div>
                     <p class="summary-value">9.5 <small>horas</small></p>
                     <div class="summary-foot"><strong>+1.5 h</strong> respecto al mes pasado</div>
                 </article>
-                <article class="card summary-card">
+                <article class="card tarjeta summary-card">
                     <div class="summary-top"><span class="summary-label">Racha actual</span><span class="summary-icon">🔥</span></div>
                     <p class="summary-value">6 <small>días</small></p>
                     <div class="summary-foot">Tu mejor racha: <strong>12 días</strong></div>
@@ -76,7 +77,7 @@
             </section>
 
             <section class="content-grid" aria-label="Actividad y constancia">
-                <article class="card chart-card">
+                <article class="card tarjeta chart-card">
                     <div class="card-heading">
                         <div><h2>Tu actividad</h2><p>Minutos de actividad por semana</p></div>
                         <span class="activity-total">Este mes</span>
@@ -116,7 +117,7 @@
                     </div>
                 </article>
 
-                <article class="card activity-card">
+                <article class="card tarjeta activity-card">
                     <div class="card-heading"><div><h2>Constancia semanal</h2><p>Actividad de los últimos 7 días</p></div></div>
                     <div class="activity-summary"><strong>5</strong><span>días activos</span></div>
                     <div class="activity-bars" aria-label="Actividad por día">
@@ -133,7 +134,7 @@
             </section>
 
             <section class="lower-grid" aria-label="Hábitos, logros y nivel">
-                <article class="card habits-card">
+                <article class="card tarjeta habits-card">
                     <div class="card-heading"><div><h2>Mis hábitos</h2><p>Avance de tus objetivos semanales</p></div></div>
                     <div class="habit-list">
                         <div class="habit-row"><span class="habit-emoji">💧</span><div><span class="habit-name">Tomar agua</span><div class="progress-track"><div class="progress-fill" style="width: 78%"></div></div></div><span class="habit-value">11/14</span></div>
@@ -144,7 +145,7 @@
                     <p class="habit-caption">Sigue así: cada repetición te acerca a tu objetivo.</p>
                 </article>
 
-                <article class="card achievements-card">
+                <article class="card tarjeta achievements-card">
                     <div class="card-heading"><div><h2>Mis logros</h2><p>Reconocimientos de tu aventura</p></div></div>
                     <div class="achievement-list">
                         <div class="achievement"><span class="achievement-icon">🔥</span><div class="achievement-copy"><strong>Constancia</strong><span>Completa hábitos 5 días seguidos</span></div><span class="achievement-status">Obtenido</span></div>
@@ -153,7 +154,7 @@
                     </div>
                 </article>
 
-                <article class="card avatar-card">
+                <article class="card tarjeta avatar-card">
                     <div class="avatar-head"><h2>Mi aventura</h2><span class="level-tag">NIVEL 4</span></div>
                     <div class="avatar-illustration" aria-label="Personaje de la aventura" role="img">🧑‍🚀</div>
                     <div class="avatar-stat"><span>Experiencia</span><strong>680 / 1000 XP</strong></div>

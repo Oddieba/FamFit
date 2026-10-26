@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 Route::get('/', function () {
     return view('login');
@@ -98,3 +99,8 @@ Route::post('/reset-password', function (Request $request) {
 
     return back()->withInput($request->only('email'))->withErrors(['email' => __($status)]);
 })->name('password.update');
+Route::get('configuracion', function () {
+    return view('configuracion');
+})->name('configuracion');
+
+

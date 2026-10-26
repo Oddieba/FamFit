@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Famfit Quest | Bienestar familiar</title>
-    <link rel="stylesheet" href="{{ asset('Estilos/estilologin.css') }}">
+    <link rel="stylesheet" href="{{ asset('estilos/general.css') }}">
+    <link rel="stylesheet" href="{{ asset('estilos/estilologin.css') }}">
 
 </head>
 <body>
 
     <main class="contenedor">
 
-        <section class="tarjeta-login">
+        <section class="tarjeta-login tarjeta">
 
             <!-- Panel de bienvenida -->
             <div class="panel-bienvenida">
@@ -74,13 +75,14 @@
 
                 <form action="{{ route('login.post') }}" method="post">
                     @csrf
-                    <div class="grupo-input">
-                        <label for="correo">
+                    <div class="grupo-input grupo-formulario">
+                        <label class="etiqueta" for="correo">
                             Correo electrónico
                         </label>
 
                         <input
                             type="email"
+                            class="campo"
                             id="correo"
                             name="email"
                             placeholder="Ingresa tu correo"
@@ -89,13 +91,14 @@
                         >
                     </div>
 
-                    <div class="grupo-input">
-                        <label for="contrasena">
+                    <div class="grupo-input grupo-formulario">
+                        <label class="etiqueta" for="contrasena">
                             Contraseña
                         </label>
 
                         <input
                             type="password"
+                            class="campo"
                             id="contrasena"
                             name="password"
                             placeholder="Ingresa tu contraseña"
@@ -115,7 +118,7 @@
 
                     </div>
 
-                    <button type="submit" class="boton-login">
+                    <button type="submit" class="boton-login boton boton-azul">
                         Iniciar sesión
                         <span>→</span>
                     </button>

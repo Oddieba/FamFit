@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Famfit - Menú Principal</title>
+  <link rel="stylesheet" href="{{ asset('estilos/general.css') }}">
 
   <style>
     /* ---------- General ---------- */
@@ -470,6 +471,7 @@
           Inicio
         </button>
         <a class="opcion" href="{{ route('progreso') }}" data-seccion="progreso">progreso</a>
+
          <button class="opcion" data-seccion="Retos">
           <span class="icono-opcion">🏆</span>
           Retos
@@ -501,10 +503,8 @@
           <span class="icono-opcion">🧘</span>
           Bienestar
         </button>
-        <button class="opcion" data-seccion="configuracion">
-          <span class="icono-opcion">️</span>
-          Configuración
-        </button>
+          <a class="opcion" href="{{ route('configuracion') }}" data-seccion="configuracion">configuracion</a>
+          
         <button class="opcion" data-seccion="sesion">
           <span class="icono-opcion">🚪</span>
           Cerrar sesión
@@ -542,25 +542,25 @@
 
         <!-- Estadísticas del usuario -->
         <div class="stats-grid">
-          <div class="stat-card">
+          <div class="stat-card tarjeta">
             <div class="stat-icon azul">️</div>
             <h3>Entrenamiento</h3>
             <p>Entrena tu cuerpo, fortalece tu mente.</p>
             <button class="boton">Ver rutina</button>
           </div>
-          <div class="stat-card">
+          <div class="stat-card tarjeta">
             <div class="stat-icon verde">🥗</div>
             <h3>Alimentación</h3>
             <p>Comer bien también es entrenar.</p>
             <button class="boton">Ver plan</button>
           </div>
-          <div class="stat-card">
+          <div class="stat-card tarjeta">
             <div class="stat-icon morado">✅</div>
             <h3>Hábitos</h3>
             <p>Pequeños hábitos, grandes cambios.</p>
             <button class="boton">Ver hábitos</button>
           </div>
-          <div class="stat-card">
+          <div class="stat-card tarjeta">
             <div class="stat-icon lila">📊</div>
             <h3>Estadísticas</h3>
             <p>Tu progreso en tiempo real.</p>
@@ -570,22 +570,22 @@
 
         <!-- Stats adicionales -->
         <div class="stats-adicionales">
-          <div class="stat-adicional">
+          <div class="stat-adicional tarjeta">
             <h4>Entrenamientos esta semana</h4>
             <div class="valor">2 <span>/ 5</span></div>
             <div class="barra-progreso"><div class="fill" style="width: 40%"></div></div>
           </div>
-          <div class="stat-adicional">
+          <div class="stat-adicional tarjeta">
             <h4>Comidas saludables</h4>
             <div class="valor">4 <span>/ 7</span></div>
             <div class="barra-progreso"><div class="fill verde" style="width: 57%"></div></div>
           </div>
-          <div class="stat-adicional">
+          <div class="stat-adicional tarjeta">
             <h4>Horas de sueño</h4>
             <div class="valor">6 <span>/ 8</span></div>
             <div class="barra-progreso"><div class="fill morado" style="width: 75%"></div></div>
           </div>
-          <div class="stat-adicional">
+          <div class="stat-adicional tarjeta">
             <h4>Racha actual</h4>
             <div class="valor">12 <span>días 🔥</span></div>
             <div class="barra-progreso"><div class="fill naranja" style="width: 80%"></div></div>
@@ -594,7 +594,7 @@
 
         <!-- Fila inferior -->
         <div class="fila-inferior">
-          <div class="caja-progreso">
+          <div class="caja-progreso tarjeta">
             <h3>Tu progreso esta semana</h3>
             <div class="anillos">
               <div class="item-anillo">
@@ -626,7 +626,7 @@
               </div>
             </div>
           </div>
-          <div class="caja-frase">
+          <div class="caja-frase tarjeta">
             <p>Disciplina hoy, resultados mañana.</p>
           </div>
         </div>
