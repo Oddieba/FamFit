@@ -473,10 +473,11 @@
          <button class="opcion" data-seccion="Retos">
           <span class="icono-opcion">🏆</span>
           Retos
-        <button class="opcion" data-seccion="entrenamientos">
+        </button>
+        <a class="opcion" href="{{ route('entrenamientos') }}" data-seccion="entrenamientos">
           <span class="icono-opcion">🏋️</span>
           Entrenamientos
-        </button>
+        </a>
         <button class="opcion" data-seccion="alimentacion">
           <span class="icono-opcion">🥗</span>
           Alimentación

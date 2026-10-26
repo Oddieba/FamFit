@@ -98,3 +98,7 @@ Route::post('/reset-password', function (Request $request) {
 
     return back()->withInput($request->only('email'))->withErrors(['email' => __($status)]);
 })->name('password.update');
+
+route::get('/entrenamientos', function() {
+    return view('entrenamientos');
+})->name('entrenamientos');
