@@ -6,8 +6,10 @@
     <meta name="theme-color" content="#F5F7FB">
 
     <title>Iniciar sesión | FamFit Quest</title>
+    <script src="{{ asset('js/theme.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('estilos/general.css') }}">
     <link rel="stylesheet" href="{{ asset('estilos/estilologin.css') }}">
+    <link rel="stylesheet" href="{{ asset('estilos/tema-oscuro.css') }}">
 
 </head>
 <body>

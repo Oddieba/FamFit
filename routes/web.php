@@ -1,5 +1,6 @@
 <?php
 use App\Models\User;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -14,6 +15,7 @@ Route::get('/', function () {
 })->name('login');
 
 Route::post('/logout', function (Request $request) {
+    Auth::logout();
     $request->session()->invalidate();
     $request->session()->regenerateToken();
 
@@ -22,7 +24,7 @@ Route::post('/logout', function (Request $request) {
 
 Route::get('/menu', function() {
     return view('menu');
-})->name('menu');
+})->middleware('auth')->name('menu');
 
 //credenciales en base de datos
 Route::post('/login', function (Request $request) {
@@ -58,6 +60,9 @@ route::get('/bienestar', function() {
 Route::get('/registro', function () {
     return view('registro');
 })->name('registro');
+
+Route::post('/registro', [RegisteredUserController::class, 'store'])
+    ->name('registro.store');
 
 Route::get('/olv_contra', function () {
     return view('olv_contra');

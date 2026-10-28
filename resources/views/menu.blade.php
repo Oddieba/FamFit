@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#F5F7FB">
     <title>Menú | FamFit Quest</title>
+    <script src="{{ asset('js/theme.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('estilos/general.css') }}">
     <link rel="stylesheet" href="{{ asset('estilos/estilomenu.css') }}">
+    <link rel="stylesheet" href="{{ asset('estilos/tema-oscuro.css') }}">
 </head>
 <body>
     <button

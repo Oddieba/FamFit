@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FamFit Quest | Bienestar</title>
+<script src="{{ asset('js/theme.js') }}"></script>
 <link rel="stylesheet" href="{{ asset('estilos/general.css') }}">
 <style>
   :root{
@@ -113,6 +114,7 @@
   @media(max-width:1050px){.app{grid-template-columns:195px minmax(0,1fr)}main{padding:0 20px 30px}.sleep-layout,.month-grid{grid-template-columns:1fr}.mission-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media(max-width:700px){.app,.app.sidebar-collapsed{display:block;grid-template-columns:1fr}.sidebar{padding:13px;gap:12px;border-right:0;border-bottom:1px solid var(--border)}.sidebar-toggle{align-self:flex-start}.sidebar-collapsed .nav-label{display:inline}.sidebar-collapsed .brand{font-size:24px}.sidebar-collapsed .brand:before{content:none}.sidebar-collapsed .sidebar-toggle span{display:inline}.brand{font-size:24px}.nav{display:flex;overflow-x:auto;gap:5px}.nav button{white-space:nowrap;padding:10px}.side-note{display:none}main{padding:0 14px 25px}.topbar{height:60px}.search{width:65%}.page-head{margin-top:10px}h1{font-size:24px}.sleep-main{align-items:flex-start}.big-hours{font-size:46px}.avatar-box{width:115px;min-width:105px}.avatar-face{font-size:48px}.stats{grid-template-columns:1fr}.mission-grid{grid-template-columns:1fr}.panel{padding:16px}.section-title{align-items:flex-start;flex-direction:column}}
 </style>
+<link rel="stylesheet" href="{{ asset('estilos/tema-oscuro.css') }}">
 </head>
 <body>
 <div class="app">

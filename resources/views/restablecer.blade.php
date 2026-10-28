@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Crear una nueva contraseña</title>
+  <script src="{{ asset('js/theme.js') }}"></script>
   <link rel="stylesheet" href="{{ asset('estilos/general.css') }}">
+  <link rel="stylesheet" href="{{ asset('estilos/tema-oscuro.css') }}">
 </head>
 
 <body>

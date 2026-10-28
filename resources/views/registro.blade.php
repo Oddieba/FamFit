@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="{{ asset('js/theme.js') }}"></script>
   <link rel="stylesheet" href="{{ asset('estilos/general.css') }}">
 
   <style>
@@ -489,6 +490,7 @@
       flex-shrink: 0;
     }
   </style>
+  <link rel="stylesheet" href="{{ asset('estilos/tema-oscuro.css') }}">
 </head>
 
 <body>
@@ -498,7 +500,7 @@
     <section class="registro__lado-form">
 
       <!-- Tarjeta del formulario -->
-      <div class="tarjeta" id="tarjeta-form">
+      <div class="tarjeta" id="tarjeta-form" @if(session('registration_success')) hidden @endif>
 
         <div class="logo">
           <span class="logo__icono">
@@ -510,34 +512,23 @@
         <h1 class="tarjeta__titulo">Crea tu cuenta</h1>
         <p class="tarjeta__subtitulo">Solo te pediremos lo necesario para empezar. Después podrás contarnos tus metas.</p>
 
-        <form id="form-registro" novalidate>
-
-          <!-- Nombre -->
-          <div class="campo">
-            <label class="campo__etiqueta" for="nombre">Nombre completo</label>
-            <div class="campo__control">
-              <input class="campo__input" type="text" id="nombre" name="nombre"
-                     autocomplete="name" placeholder="Ej: Ana Martínez"
-                     aria-describedby="nombre-error">
-            </div>
-            <p class="campo__error" id="nombre-error" hidden>
-              <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <span></span>
-            </p>
-          </div>
+        <form id="form-registro" method="POST" action="{{ route('registro.store') }}" novalidate>
+          @csrf
 
           <!-- Nombre de usuario -->
           <div class="campo">
             <label class="campo__etiqueta" for="usuario">Nombre de usuario</label>
             <div class="campo__control">
-              <input class="campo__input" type="text" id="usuario" name="usuario"
+              <input class="campo__input @error('username') es-invalido @enderror" type="text" id="usuario" name="username"
+                     value="{{ old('username') }}"
                      autocomplete="username" placeholder="Ej: ana_fit"
+                     @error('username') aria-invalid="true" @enderror
                      aria-describedby="usuario-ayuda usuario-error">
             </div>
             <p class="campo__ayuda" id="usuario-ayuda">Así te verán en la comunidad. De 3 a 20 caracteres.</p>
-            <p class="campo__error" id="usuario-error" hidden>
+            <p class="campo__error" id="usuario-error" @if(!$errors->has('username')) hidden @endif>
               <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <span></span>
+              <span>{{ $errors->first('username') }}</span>
             </p>
           </div>
 
@@ -545,13 +536,15 @@
           <div class="campo">
             <label class="campo__etiqueta" for="correo">Correo electrónico</label>
             <div class="campo__control">
-              <input class="campo__input" type="email" id="correo" name="correo"
+              <input class="campo__input @error('email') es-invalido @enderror" type="email" id="correo" name="email"
+                     value="{{ old('email') }}"
                      autocomplete="email" placeholder="nombre@correo.com"
+                     @error('email') aria-invalid="true" @enderror
                      aria-describedby="correo-error">
             </div>
-            <p class="campo__error" id="correo-error" hidden>
+            <p class="campo__error" id="correo-error" @if(!$errors->has('email')) hidden @endif>
               <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <span></span>
+              <span>{{ $errors->first('email') }}</span>
             </p>
           </div>
 
@@ -559,8 +552,9 @@
           <div class="campo">
             <label class="campo__etiqueta" for="clave">Contraseña</label>
             <div class="campo__control">
-              <input class="campo__input campo__input--con-boton" type="password" id="clave" name="clave"
+              <input class="campo__input campo__input--con-boton @error('password') es-invalido @enderror" type="password" id="clave" name="password"
                      autocomplete="new-password" placeholder="Crea una contraseña"
+                     @error('password') aria-invalid="true" @enderror
                      aria-describedby="reglas-clave clave-error">
               <button class="ver-clave" type="button" data-objetivo="clave"
                       aria-label="Mostrar contraseña" aria-pressed="false">
@@ -573,9 +567,9 @@
               <li data-regla="letra"><span class="regla__marca" aria-hidden="true"></span><span class="estado-lector solo-lectores">Pendiente: </span>Al menos una letra</li>
               <li data-regla="numero"><span class="regla__marca" aria-hidden="true"></span><span class="estado-lector solo-lectores">Pendiente: </span>Al menos un número</li>
             </ul>
-            <p class="campo__error" id="clave-error" hidden>
+            <p class="campo__error" id="clave-error" @if(!$errors->has('password')) hidden @endif>
               <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <span></span>
+              <span>{{ $errors->first('password') }}</span>
             </p>
           </div>
 
@@ -583,7 +577,7 @@
           <div class="campo">
             <label class="campo__etiqueta" for="clave2">Confirmar contraseña</label>
             <div class="campo__control">
-              <input class="campo__input campo__input--con-boton" type="password" id="clave2" name="clave2"
+              <input class="campo__input campo__input--con-boton @error('password') es-invalido @enderror" type="password" id="clave2" name="password_confirmation"
                      autocomplete="new-password" placeholder="Repite tu contraseña"
                      aria-describedby="clave2-error">
               <button class="ver-clave" type="button" data-objetivo="clave2"
@@ -592,9 +586,9 @@
                 <svg class="icono icono-ocultar" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
               </button>
             </div>
-            <p class="campo__error" id="clave2-error" hidden>
+            <p class="campo__error" id="clave2-error" @if(!$errors->has('password')) hidden @endif>
               <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <span></span>
+              <span>{{ $errors->first('password') }}</span>
             </p>
           </div>
 
@@ -604,18 +598,18 @@
               <span class="opcion__titulo">Mostrar mi perfil en la comunidad</span>
               <span class="opcion__detalle">Es opcional. Tu perfil empieza como <strong id="estado-visible">privado</strong> y puedes cambiarlo cuando quieras.</span>
             </label>
-            <input class="interruptor" type="checkbox" role="switch" id="visible" name="visible">
+            <input class="interruptor" type="checkbox" role="switch" id="visible" name="visible" value="1" @checked(old('visible'))>
           </div>
 
           <!-- Términos y privacidad -->
           <div class="campo">
             <label class="casilla" for="terminos">
-              <input type="checkbox" id="terminos" name="terminos" aria-describedby="terminos-error">
+              <input type="checkbox" id="terminos" name="terminos" value="1" aria-describedby="terminos-error" @checked(old('terminos'))>
               <span>Acepto los <a href="terminos.html">Términos de uso</a> y la <a href="privacidad.html">Política de privacidad</a>.</span>
             </label>
-            <p class="campo__error" id="terminos-error" hidden>
+            <p class="campo__error" id="terminos-error" @if(!$errors->has('terminos')) hidden @endif>
               <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <span></span>
+              <span>{{ $errors->first('terminos') }}</span>
             </p>
           </div>
 
@@ -630,13 +624,13 @@
       </div>
 
       <!-- Tarjeta de éxito (se muestra al terminar el registro) -->
-      <div class="tarjeta exito" id="tarjeta-exito" hidden>
+      <div class="tarjeta exito" id="tarjeta-exito" @if(!session('registration_success')) hidden @endif>
         <div class="exito__icono">
           <svg class="icono" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
         <h2 class="tarjeta__titulo" id="titulo-exito" tabindex="-1">¡Te damos la bienvenida!</h2>
-        <p class="tarjeta__subtitulo">Tu cuenta está lista. El siguiente paso es un test corto para personalizar tus rutinas. Podrás cambiar tus respuestas cuando quieras.</p>
-        <a class="boton boton--primario" href="test-inicial.html">Continuar al test inicial</a>
+        <p class="tarjeta__subtitulo">Tu cuenta está lista. Ya puedes comenzar a organizar tus rutinas y hábitos.</p>
+        <a class="boton boton--primario" href="{{ route('menu') }}">Continuar</a>
       </div>
     </section>
 
@@ -869,16 +863,6 @@
       textoBoton.textContent = estaCargando ? "Creando tu cuenta..." : "Crear cuenta";
     }
 
-    function mostrarExito() {
-      var primerNombre = campoNombre.value.trim().split(" ")[0];
-      var titulo = document.getElementById("titulo-exito");
-
-      titulo.textContent = "¡Te damos la bienvenida, " + primerNombre + "!";
-      document.getElementById("tarjeta-form").hidden = true;
-      document.getElementById("tarjeta-exito").hidden = false;
-      titulo.focus();
-    }
-
     // ==========================================================
     // 8. VALIDAR TODO EL FORMULARIO
     // ==========================================================
@@ -912,19 +896,12 @@
     // 9. ENVIAR EL FORMULARIO
     // ==========================================================
     formulario.addEventListener("submit", function (evento) {
-      evento.preventDefault();
-
       if (!validarTodo()) {
+        evento.preventDefault();
         return;
       }
 
       ponerCargando(true);
-
-      // Simulación del envío (solo para ver el diseño del front-end)
-      setTimeout(function () {
-        ponerCargando(false);
-        mostrarExito();
-      }, 1200);
     });
   </script>
 </body>

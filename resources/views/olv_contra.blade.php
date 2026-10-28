@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>¿Olvidaste tu contraseña?</title>
+  <script src="{{ asset('js/theme.js') }}"></script>
   <link rel="stylesheet" href="{{ asset('estilos/general.css') }}">
+  <link rel="stylesheet" href="{{ asset('estilos/tema-oscuro.css') }}">
 </head>
 
 <body>

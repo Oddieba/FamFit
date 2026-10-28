@@ -25,6 +25,12 @@ class LoginTest extends TestCase
         $this->get(route('menu'))->assertOk();
     }
 
+    public function test_guest_cannot_access_the_menu(): void
+    {
+        $this->get(route('menu'))
+            ->assertRedirect(route('login'));
+    }
+
     public function test_authenticated_user_visiting_login_sees_the_login_page(): void
     {
         $this->actingAs(User::factory()->create())

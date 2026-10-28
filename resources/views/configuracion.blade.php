@@ -6,8 +6,10 @@
 
     <title>Configuración | FamFit Quest</title>
 
+    <script src="{{ asset('js/theme.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('estilos/general.css') }}">
     <link rel="stylesheet" href="{{ asset('estilos/Configuracion.css') }}">
+    <link rel="stylesheet" href="{{ asset('estilos/tema-oscuro.css') }}">
 </head>
 
 <body>
@@ -265,13 +267,13 @@
 
                     <div class="setting-row">
                         <div class="setting-info">
-                            <strong class="etiqueta">Contraseña</strong>
-                            <span>Administra la seguridad de tu cuenta.</span>
+                            <strong class="etiqueta">Cambiar Contraseña</strong>
+                            <span></span>
                         </div>
 
-                        <a href="{{ url('/perfil') }}"
+                        <a href="{{ url('/') }}"
                            class="btn btn-secondary boton boton-secundario">
-                            Mi perfil
+                            Cambiar
                         </a>
                     </div>
 
@@ -391,7 +393,7 @@
             }
         }
 
-        document.body.classList.toggle('dark', document.getElementById('darkMode').checked);
+        window.setFamfitDarkMode(document.getElementById('darkMode').checked);
     }
 
     try {
@@ -404,7 +406,23 @@
     }
 
     document.getElementById('darkMode').addEventListener('change', (event) => {
-        document.body.classList.toggle('dark', event.currentTarget.checked);
+        const enabled = event.currentTarget.checked;
+        window.setFamfitDarkMode(enabled);
+
+        try {
+            const savedSettings = localStorage.getItem(settingsStorageKey);
+            const settings = savedSettings ? JSON.parse(savedSettings) : {};
+
+            if (!settings || typeof settings !== 'object' || Array.isArray(settings)) {
+                throw new Error('Las preferencias guardadas no tienen un formato válido.');
+            }
+
+            settings.darkMode = enabled;
+            localStorage.setItem(settingsStorageKey, JSON.stringify(settings));
+            showSettingsNotice('Preferencia de modo oscuro guardada.', false);
+        } catch (error) {
+            showSettingsNotice('No se pudo guardar la preferencia de modo oscuro.', true);
+        }
     });
 
     settingsForm.addEventListener('submit', (event) => {
