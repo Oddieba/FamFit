@@ -114,4 +114,19 @@ Route::post('/reset-password', function (Request $request) {
 })->name('password.update');
 Route::get('configuracion', function () {
     return view('configuracion');
-})->name('configuracion');
+})->middleware('auth')->name('configuracion');
+
+Route::delete('/cuenta', function (Request $request) {
+    $usuario = $request->user();
+
+    DB::transaction(function () use ($usuario): void {
+        DB::table('password_reset_tokens')->where('email', $usuario->email)->delete();
+        DB::table('users')->where('id', $usuario->id)->delete();
+    });
+
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect()->route('login');
+})->middleware('auth')->name('cuenta.destroy');

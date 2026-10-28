@@ -320,6 +320,12 @@
             @csrf
         </form>
 
+        <form id="deleteAccountForm" action="{{ route('cuenta.destroy') }}"
+              method="POST" hidden>
+            @csrf
+            @method('DELETE')
+        </form>
+
         <dialog class="account-delete-dialog" id="deleteAccountDialog"
                 aria-labelledby="deleteAccountTitle">
             <div class="account-delete-content">
@@ -333,13 +339,6 @@
                     <li>Historial</li>
                     <li>Contraseñas</li>
                 </ul>
-
-                <p class="delete-account-notice" id="deleteAccountNotice"
-                   role="alert" hidden>
-                    <strong>
-                    La cuenta se eliminó correctamente. Serás redirigido al login.
-                    </strong>
-                </p>
 
                 <div class="account-delete-actions">
                     <button type="button" class="btn btn-cancel boton boton-secundario"
@@ -460,10 +459,8 @@
     });
 
     const deleteAccountDialog = document.getElementById('deleteAccountDialog');
-    const deleteAccountNotice = document.getElementById('deleteAccountNotice');
 
     document.getElementById('openDeleteAccount').addEventListener('click', () => {
-        deleteAccountNotice.hidden = true;
         deleteAccountDialog.showModal();
     });
 
@@ -472,13 +469,9 @@
     });
 
     document.getElementById('confirmDeleteAccount').addEventListener('click', () => {
-        deleteAccountNotice.hidden = false;
         document.getElementById('confirmDeleteAccount').disabled = true;
         document.getElementById('cancelDeleteAccount').disabled = true;
-
-        window.setTimeout(() => {
-            window.location.href = @json(route('login'));
-        }, 1500);
+        document.getElementById('deleteAccountForm').submit();
     });
 
     deleteAccountDialog.addEventListener('click', (event) => {

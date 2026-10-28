@@ -664,7 +664,6 @@
     var textoBoton = document.getElementById("texto-boton");
     var spinner = document.getElementById("spinner");
 
-    var campoNombre = document.getElementById("nombre");
     var campoUsuario = document.getElementById("usuario");
     var campoCorreo = document.getElementById("correo");
     var campoClave = document.getElementById("clave");
@@ -676,13 +675,6 @@
     // 2. VALIDACIONES
     // Cada función devuelve un mensaje de error, o "" si todo está bien.
     // ==========================================================
-    function validarNombre() {
-      if (campoNombre.value.trim().length < 2) {
-        return "Escribe tu nombre para continuar.";
-      }
-      return "";
-    }
-
     function validarUsuario() {
       var texto = campoUsuario.value.trim();
       var patron = /^[a-zA-Z0-9_]{3,20}$/;
@@ -783,7 +775,6 @@
       });
     }
 
-    activarValidacion(campoNombre, validarNombre, "input");
     activarValidacion(campoUsuario, validarUsuario, "input");
     activarValidacion(campoCorreo, validarCorreo, "input");
     activarValidacion(campoClave, validarClave, "input");
@@ -868,7 +859,6 @@
     // ==========================================================
     function validarTodo() {
       var lista = [
-        [campoNombre, validarNombre],
         [campoUsuario, validarUsuario],
         [campoCorreo, validarCorreo],
         [campoClave, validarClave],
