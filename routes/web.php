@@ -107,6 +107,10 @@ route::get('/entrenamientos', function() {
     return view('entrenamientos');
 })->name('entrenamientos');
 
-Route::get('/onboarding', function () {
-    return view('onboarding');
-})->middleware(['auth'])->name('onboarding');
+Route::get('/onboarding', [OnboardingController::class, 'index'])
+    ->middleware(['auth'])
+    ->name('onboarding');
+
+Route::post('/onboarding/guardar', [OnboardingController::class, 'store'])
+    ->middleware(['auth'])
+    ->name('onboarding.guardar');

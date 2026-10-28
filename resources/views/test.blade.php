@@ -223,7 +223,7 @@
             border-color: var(--primary-blue);
         }
 
-        /* --- MATRIZ DE DISPONIBILIDAD --- */
+        /* --- MATRIZ DE DISPONIBILIDAD (SELECCIÓN ÚNICA CON RADIOS) --- */
         .schedule-matrix {
             display: flex;
             flex-direction: column;
@@ -251,7 +251,7 @@
             gap: 6px;
         }
 
-        .slot-btn {
+        .slot-radio {
             display: none;
         }
 
@@ -269,13 +269,12 @@
             gap: 4px;
         }
 
-        .slot-btn:checked + .slot-label {
+        .slot-radio:checked + .slot-label {
             background: var(--accent-green);
             color: #1A3E00;
             border-color: var(--accent-green);
         }
 
-        /* --- CAMPO CONDICIONAL DE LESIONES --- */
         .injury-details-container {
             display: none;
             margin-top: 12px;
@@ -346,9 +345,9 @@
             </div>
         </div>
 
-        <form id="onboardingForm" action="/onboarding/guardar" method="POST">
-            <!-- Token CSRF para Laravel -->
-            <!-- @csrf -->
+        <form id="onboardingForm" action="{{ route('onboarding.guardar') }}" method="POST">
+            <!-- Token de seguridad CSRF de Laravel -->
+            @csrf
 
             <!-- PASO 0: BIENVENIDA -->
             <div class="wizard-step active" id="step-0">
@@ -482,73 +481,73 @@
                 </div>
             </div>
 
-            <!-- PASO 4: DISPONIBILIDAD SEMANAL -->
+            <!-- PASO 4: DISPONIBILIDAD SEMANAL (ÚNICA SELECCIÓN POR DÍA) -->
             <div class="wizard-step" id="step-4">
                 <h2 class="step-title">¿Qué disponibilidad tienes para entrenar?</h2>
-                <p class="step-subtitle">Selecciona los días y bloques horarios ideales para tus notificaciones y calendario.</p>
+                <p class="step-subtitle">Selecciona la franja horaria principal para cada día de la semana.</p>
 
                 <div class="schedule-matrix">
                     <!-- Lunes -->
                     <div class="schedule-row">
                         <span class="day-name">Lunes</span>
                         <div class="time-slots">
-                            <input type="checkbox" id="lun_m" name="disponibilidad[lunes][]" value="mañana" class="slot-btn" checked><label for="lun_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
-                            <input type="checkbox" id="lun_t" name="disponibilidad[lunes][]" value="tarde" class="slot-btn"><label for="lun_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
-                            <input type="checkbox" id="lun_n" name="disponibilidad[lunes][]" value="noche" class="slot-btn"><label for="lun_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
+                            <input type="radio" id="lun_m" name="disponibilidad[lunes]" value="mañana" class="slot-radio" checked><label for="lun_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
+                            <input type="radio" id="lun_t" name="disponibilidad[lunes]" value="tarde" class="slot-radio"><label for="lun_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
+                            <input type="radio" id="lun_n" name="disponibilidad[lunes]" value="noche" class="slot-radio"><label for="lun_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
                         </div>
                     </div>
                     <!-- Martes -->
                     <div class="schedule-row">
                         <span class="day-name">Martes</span>
                         <div class="time-slots">
-                            <input type="checkbox" id="mar_m" name="disponibilidad[martes][]" value="mañana" class="slot-btn"><label for="mar_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
-                            <input type="checkbox" id="mar_t" name="disponibilidad[martes][]" value="tarde" class="slot-btn" checked><label for="mar_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
-                            <input type="checkbox" id="mar_n" name="disponibilidad[martes][]" value="noche" class="slot-btn"><label for="mar_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
+                            <input type="radio" id="mar_m" name="disponibilidad[martes]" value="mañana" class="slot-radio"><label for="mar_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
+                            <input type="radio" id="mar_t" name="disponibilidad[martes]" value="tarde" class="slot-radio" checked><label for="mar_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
+                            <input type="radio" id="mar_n" name="disponibilidad[martes]" value="noche" class="slot-radio"><label for="mar_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
                         </div>
                     </div>
                     <!-- Miércoles -->
                     <div class="schedule-row">
                         <span class="day-name">Miércoles</span>
                         <div class="time-slots">
-                            <input type="checkbox" id="mie_m" name="disponibilidad[miercoles][]" value="mañana" class="slot-btn" checked><label for="mie_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
-                            <input type="checkbox" id="mie_t" name="disponibilidad[miercoles][]" value="tarde" class="slot-btn"><label for="mie_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
-                            <input type="checkbox" id="mie_n" name="disponibilidad[miercoles][]" value="noche" class="slot-btn"><label for="mie_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
+                            <input type="radio" id="mie_m" name="disponibilidad[miercoles]" value="mañana" class="slot-radio" checked><label for="mie_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
+                            <input type="radio" id="mie_t" name="disponibilidad[miercoles]" value="tarde" class="slot-radio"><label for="mie_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
+                            <input type="radio" id="mie_n" name="disponibilidad[miercoles]" value="noche" class="slot-radio"><label for="mie_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
                         </div>
                     </div>
                     <!-- Jueves -->
                     <div class="schedule-row">
                         <span class="day-name">Jueves</span>
                         <div class="time-slots">
-                            <input type="checkbox" id="jue_m" name="disponibilidad[jueves][]" value="mañana" class="slot-btn"><label for="jue_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
-                            <input type="checkbox" id="jue_t" name="disponibilidad[jueves][]" value="tarde" class="slot-btn" checked><label for="jue_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
-                            <input type="checkbox" id="jue_n" name="disponibilidad[jueves][]" value="noche" class="slot-btn"><label for="jue_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
+                            <input type="radio" id="jue_m" name="disponibilidad[jueves]" value="mañana" class="slot-radio"><label for="jue_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
+                            <input type="radio" id="jue_t" name="disponibilidad[jueves]" value="tarde" class="slot-radio" checked><label for="jue_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
+                            <input type="radio" id="jue_n" name="disponibilidad[jueves]" value="noche" class="slot-radio"><label for="jue_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
                         </div>
                     </div>
                     <!-- Viernes -->
                     <div class="schedule-row">
                         <span class="day-name">Viernes</span>
                         <div class="time-slots">
-                            <input type="checkbox" id="vie_m" name="disponibilidad[viernes][]" value="mañana" class="slot-btn" checked><label for="vie_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
-                            <input type="checkbox" id="vie_t" name="disponibilidad[viernes][]" value="tarde" class="slot-btn"><label for="vie_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
-                            <input type="checkbox" id="vie_n" name="disponibilidad[viernes][]" value="noche" class="slot-btn"><label for="vie_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
+                            <input type="radio" id="vie_m" name="disponibilidad[viernes]" value="mañana" class="slot-radio" checked><label for="vie_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
+                            <input type="radio" id="vie_t" name="disponibilidad[viernes]" value="tarde" class="slot-radio"><label for="vie_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
+                            <input type="radio" id="vie_n" name="disponibilidad[viernes]" value="noche" class="slot-radio"><label for="vie_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
                         </div>
                     </div>
                     <!-- Sábado -->
                     <div class="schedule-row">
                         <span class="day-name">Sábado</span>
                         <div class="time-slots">
-                            <input type="checkbox" id="sab_m" name="disponibilidad[sabado][]" value="mañana" class="slot-btn"><label for="sab_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
-                            <input type="checkbox" id="sab_t" name="disponibilidad[sabado][]" value="tarde" class="slot-btn"><label for="sab_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
-                            <input type="checkbox" id="sab_n" name="disponibilidad[sabado][]" value="noche" class="slot-btn"><label for="sab_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
+                            <input type="radio" id="sab_m" name="disponibilidad[sabado]" value="mañana" class="slot-radio"><label for="sab_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
+                            <input type="radio" id="sab_t" name="disponibilidad[sabado]" value="tarde" class="slot-radio"><label for="sab_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
+                            <input type="radio" id="sab_n" name="disponibilidad[sabado]" value="noche" class="slot-radio"><label for="sab_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
                         </div>
                     </div>
                     <!-- Domingo -->
                     <div class="schedule-row">
                         <span class="day-name">Domingo</span>
                         <div class="time-slots">
-                            <input type="checkbox" id="dom_m" name="disponibilidad[domingo][]" value="mañana" class="slot-btn"><label for="dom_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
-                            <input type="checkbox" id="dom_t" name="disponibilidad[domingo][]" value="tarde" class="slot-btn"><label for="dom_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
-                            <input type="checkbox" id="dom_n" name="disponibilidad[domingo][]" value="noche" class="slot-btn"><label for="dom_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
+                            <input type="radio" id="dom_m" name="disponibilidad[domingo]" value="mañana" class="slot-radio"><label for="dom_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
+                            <input type="radio" id="dom_t" name="disponibilidad[domingo]" value="tarde" class="slot-radio"><label for="dom_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
+                            <input type="radio" id="dom_n" name="disponibilidad[domingo]" value="noche" class="slot-radio"><label for="dom_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
                         </div>
                     </div>
                 </div>
@@ -633,7 +632,6 @@
             }
         }
 
-        // Selección para tarjetas estándar de columnas (Género)
         function selectSingle(element, hiddenInputId, value) {
             const parent = element.parentElement;
             const cards = parent.querySelectorAll('.option-card');
@@ -642,7 +640,6 @@
             document.getElementById(hiddenInputId).value = value;
         }
 
-        // Selección para filas detalladas con descripciones (Objetivos y Experiencia)
         function selectSingleRow(element, hiddenInputId, value) {
             const parent = element.parentElement;
             const rows = parent.querySelectorAll('.option-row');
@@ -651,7 +648,6 @@
             document.getElementById(hiddenInputId).value = value;
         }
 
-        // Control dinámico de lesiones (Muestra input si selecciona "Sí")
         function toggleLesion(option) {
             const cardNo = document.getElementById('card-lesion-no');
             const cardSi = document.getElementById('card-lesion-si');
