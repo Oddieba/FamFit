@@ -21,7 +21,9 @@ class AccountDeletionTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->delete(route('cuenta.destroy'))
+            ->delete(route('cuenta.destroy'), [
+                'current_password' => 'password',
+            ])
             ->assertRedirect(route('login'));
 
         $this->assertGuest();
@@ -33,5 +35,34 @@ class AccountDeletionTest extends TestCase
     {
         $this->delete(route('cuenta.destroy'))
             ->assertRedirect(route('login'));
+    }
+
+    public function test_account_is_not_deleted_when_password_is_incorrect(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->from(route('configuracion'))
+            ->delete(route('cuenta.destroy'), [
+                'current_password' => 'incorrecta',
+            ])
+            ->assertRedirect(route('configuracion'))
+            ->assertSessionHasErrors('current_password');
+
+        $this->assertDatabaseHas('users', ['id' => $user->id]);
+        $this->assertAuthenticatedAs($user);
+    }
+
+    public function test_account_deletion_requires_password(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->from(route('configuracion'))
+            ->delete(route('cuenta.destroy'))
+            ->assertRedirect(route('configuracion'))
+            ->assertSessionHasErrors('current_password');
+
+        $this->assertDatabaseHas('users', ['id' => $user->id]);
     }
 }

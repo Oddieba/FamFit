@@ -320,12 +320,6 @@
             @csrf
         </form>
 
-        <form id="deleteAccountForm" action="{{ route('cuenta.destroy') }}"
-              method="POST" hidden>
-            @csrf
-            @method('DELETE')
-        </form>
-
         <dialog class="account-delete-dialog" id="deleteAccountDialog"
                 aria-labelledby="deleteAccountTitle">
             <div class="account-delete-content">
@@ -340,16 +334,29 @@
                     <li>Contraseñas</li>
                 </ul>
 
-                <div class="account-delete-actions">
-                    <button type="button" class="btn btn-cancel boton boton-secundario"
-                            id="cancelDeleteAccount">
-                        Cancelar
-                    </button>
-                    <button type="button" class="btn btn-danger boton boton-peligro"
-                            id="confirmDeleteAccount">
-                        Confirmar
-                    </button>
-                </div>
+                <form id="deleteAccountForm" action="{{ route('cuenta.destroy') }}"
+                      method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <label for="deleteAccountPassword">Confirma tu contraseña</label>
+                    <input id="deleteAccountPassword" name="current_password"
+                           type="password" autocomplete="current-password" required
+                           @error('current_password') aria-invalid="true" @enderror>
+                    @error('current_password')
+                        <p class="delete-account-error" role="alert">{{ $message }}</p>
+                    @enderror
+
+                    <div class="account-delete-actions">
+                        <button type="button" class="btn btn-cancel boton boton-secundario"
+                                id="cancelDeleteAccount">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-danger boton boton-peligro"
+                                id="confirmDeleteAccount">
+                            Confirmar
+                        </button>
+                    </div>
+                </form>
             </div>
         </dialog>
 
@@ -468,17 +475,15 @@
         deleteAccountDialog.close();
     });
 
-    document.getElementById('confirmDeleteAccount').addEventListener('click', () => {
-        document.getElementById('confirmDeleteAccount').disabled = true;
-        document.getElementById('cancelDeleteAccount').disabled = true;
-        document.getElementById('deleteAccountForm').submit();
-    });
-
     deleteAccountDialog.addEventListener('click', (event) => {
         if (event.target === deleteAccountDialog) {
             deleteAccountDialog.close();
         }
     });
+
+    @if($errors->has('current_password'))
+        deleteAccountDialog.showModal();
+    @endif
 </script>
 </body>
 </html>

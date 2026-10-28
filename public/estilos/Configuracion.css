@@ -338,6 +338,32 @@ body {
     padding-left: 22px;
 }
 
+.account-delete-content label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.account-delete-content input[name="current_password"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    background: var(--card);
+    font: inherit;
+}
+
+.account-delete-content input[name="current_password"][aria-invalid="true"] {
+    border-color: #dc2626;
+}
+
+.delete-account-error {
+    margin-top: 6px;
+    color: #b91c1c;
+}
+
 .account-delete-actions {
     display: flex;
     justify-content: flex-end;

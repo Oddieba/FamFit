@@ -117,6 +117,13 @@ Route::get('configuracion', function () {
 })->middleware('auth')->name('configuracion');
 
 Route::delete('/cuenta', function (Request $request) {
+    $request->validate([
+        'current_password' => ['required', 'current_password'],
+    ], [
+        'current_password.required' => 'Escribe tu contraseña para confirmar la eliminación.',
+        'current_password.current_password' => 'La contraseña ingresada no es correcta.',
+    ]);
+
     $usuario = $request->user();
 
     DB::transaction(function () use ($usuario): void {
