@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use App\Http\Controllers\OnboardingController;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('login');
@@ -22,6 +24,10 @@ Route::get('/menu', function() {
     return view('menu');
 })->name('menu');
 
+route::get('/test', function() {
+    return view('test');
+})->name('test');
+
 // Ruta para procesar el login manual
 Route::post('/login', function (Request $request) {
     // 1. Definimos los datos fijos que tú quieres exigir
@@ -30,8 +36,10 @@ Route::post('/login', function (Request $request) {
 
     // 2. Comparamos lo que escribió el usuario con tus datos fijos
     if ($request->input('email') === $usuarioCorrecto && $request->input('password') === $passwordCorrecto) {
+        $user = User::where('email', $usuarioCorrecto)->first();
+        Auth::login($user);
         // Si coinciden, los dejamos pasar (por ejemplo, los mandamos al menú)
-        return redirect()->route('menu'); // O la ruta a donde quieras enviarlos
+        return redirect()->route('test'); // O la ruta a donde quieras enviarlos
     }
 
     // Si fallan, los regresamos al login con un error
@@ -102,3 +110,11 @@ Route::post('/reset-password', function (Request $request) {
 route::get('/entrenamientos', function() {
     return view('entrenamientos');
 })->name('entrenamientos');
+
+Route::get('/onboarding', [OnboardingController::class, 'index'])
+    ->middleware(['auth'])
+    ->name('onboarding');
+
+Route::post('/onboarding/guardar', [OnboardingController::class, 'store'])
+    ->middleware(['auth'])
+    ->name('onboarding.guardar');
