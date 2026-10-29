@@ -167,4 +167,33 @@ class QuestExperienceTest extends TestCase
 
         $this->assertTrue($user->fresh()->preferences['dark_mode']);
     }
+
+    public function test_onboarding_saves_the_authenticated_users_profile(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('onboarding.guardar'), [
+                'edad' => 24,
+                'peso' => 68.5,
+                'altura' => 175,
+                'genero' => 'masculino',
+                'objetivo' => 'perder_grasa',
+                'experiencia_ejercicio' => 'principiante',
+                'disponibilidad' => [
+                    'lunes' => 'tarde',
+                    'miercoles' => 'manana',
+                ],
+                'tiene_lesion' => 'si',
+                'descripcion_lesion' => 'Molestia de rodilla',
+            ])
+            ->assertRedirect(route('menu'));
+
+        $profile = $user->profile()->firstOrFail();
+
+        $this->assertSame(24, $profile->age);
+        $this->assertSame('tarde', $profile->availability['lunes']);
+        $this->assertTrue($profile->has_injury);
+        $this->assertSame('Molestia de rodilla', $profile->injury_description);
+    }
 }

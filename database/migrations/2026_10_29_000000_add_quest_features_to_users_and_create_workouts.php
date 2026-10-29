@@ -22,36 +22,42 @@ return new class extends Migration
             }
         });
 
-        Schema::create('quest_routines', function (Blueprint $table): void {
-            $table->id();
-            $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete();
-            $table->string('name', 80);
-            $table->string('goal', 30);
-            $table->string('experience', 20);
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('quest_routines')) {
+            Schema::create('quest_routines', function (Blueprint $table): void {
+                $table->id();
+                $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete();
+                $table->string('name', 80);
+                $table->string('goal', 30);
+                $table->string('experience', 20);
+                $table->timestamps();
+            });
+        }
 
-        Schema::create('quest_exercises', function (Blueprint $table): void {
-            $table->id();
-            $table->foreignId('quest_routine_id')->constrained()->cascadeOnDelete();
-            $table->string('name', 80);
-            $table->unsignedTinyInteger('day_of_week');
-            $table->unsignedTinyInteger('sets');
-            $table->unsignedTinyInteger('reps');
-            $table->unsignedSmallInteger('rest_seconds');
-            $table->unsignedTinyInteger('position');
-            $table->timestamps();
-            $table->index(['quest_routine_id', 'day_of_week']);
-        });
+        if (! Schema::hasTable('quest_exercises')) {
+            Schema::create('quest_exercises', function (Blueprint $table): void {
+                $table->id();
+                $table->foreignId('quest_routine_id')->constrained()->cascadeOnDelete();
+                $table->string('name', 80);
+                $table->unsignedTinyInteger('day_of_week');
+                $table->unsignedTinyInteger('sets');
+                $table->unsignedTinyInteger('reps');
+                $table->unsignedSmallInteger('rest_seconds');
+                $table->unsignedTinyInteger('position');
+                $table->timestamps();
+                $table->index(['quest_routine_id', 'day_of_week']);
+            });
+        }
 
-        Schema::create('quest_exercise_completions', function (Blueprint $table): void {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('quest_exercise_id')->constrained()->cascadeOnDelete();
-            $table->date('completed_on');
-            $table->timestamps();
-            $table->unique(['user_id', 'quest_exercise_id', 'completed_on'], 'quest_completion_once_per_day');
-        });
+        if (! Schema::hasTable('quest_exercise_completions')) {
+            Schema::create('quest_exercise_completions', function (Blueprint $table): void {
+                $table->id();
+                $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+                $table->foreignId('quest_exercise_id')->constrained()->cascadeOnDelete();
+                $table->date('completed_on');
+                $table->timestamps();
+                $table->unique(['user_id', 'quest_exercise_id', 'completed_on'], 'quest_completion_once_per_day');
+            });
+        }
     }
 
     public function down(): void

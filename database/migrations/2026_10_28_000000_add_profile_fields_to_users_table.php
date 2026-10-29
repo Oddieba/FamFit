@@ -21,7 +21,10 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (Schema::hasColumn('users', 'profile_visible')) {
+        $hasLegacyUsers = Schema::hasTable('users')
+            && Schema::hasColumn('users', 'role_id');
+
+        if (! $hasLegacyUsers && Schema::hasColumn('users', 'profile_visible')) {
             Schema::table('users', fn (Blueprint $table) => $table->dropColumn('profile_visible'));
         }
     }

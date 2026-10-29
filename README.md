@@ -60,7 +60,7 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 ## FamFit Quest
 
-The authenticated quest menu includes the avatar, profile, training, calendar, social, and settings sections. Avatar choices, account preferences, XP, routines, and exercise completions are stored per user. Social connections and challenges are not yet available and are shown as such.
+The authenticated quest menu includes the avatar, profile, training, calendar, social, and settings sections. Avatar choices, account preferences, XP, routines, exercise completions, and onboarding profiles are stored per user. Social connections and challenges are not yet available and are shown as such.
 
 After configuring the local database, apply the additive feature migration and build the frontend:
 
@@ -71,4 +71,4 @@ npm run build
 php artisan test
 ```
 
-The migration adds user preference fields and the quest routine/completion tables; it does not reset or erase existing tables. The quest feature tests can be run alone with `php artisan test --filter=QuestExperienceTest`.
+Pending migrations are safe to run on existing installations: they create missing tables, add missing user fields, and backfill account names from usernames or email addresses without recreating the `users` table. They also add the quest and onboarding profile tables. The quest feature tests can be run alone with `php artisan test --filter=QuestExperienceTest`.
