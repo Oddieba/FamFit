@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use App\Http\Controllers\OnboardingController;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('login');
@@ -34,6 +36,8 @@ Route::post('/login', function (Request $request) {
 
     // 2. Comparamos lo que escribió el usuario con tus datos fijos
     if ($request->input('email') === $usuarioCorrecto && $request->input('password') === $passwordCorrecto) {
+        $user = User::where('email', $usuarioCorrecto)->first();
+        Auth::login($user);
         // Si coinciden, los dejamos pasar (por ejemplo, los mandamos al menú)
         return redirect()->route('test'); // O la ruta a donde quieras enviarlos
     }

@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; // Soluciona el error del usuario
+use App\Models\Profile;            // Soluciona el error de la clase Profile
 
 class OnboardingController extends Controller
 {
-    // 1. Muestra la vista del test inicial
     public function index()
     {
         return view('test');
     }
 
-    // 2. Recibe, valida y guarda los datos del test
     public function store(Request $request)
     {
         $request->validate([
@@ -23,22 +23,30 @@ class OnboardingController extends Controller
             'objetivo' => 'required|string',
             'experiencia_ejercicio' => 'required|string',
         ]);
+        
+        // Le indicamos explícitamente al editor el tipo de modelo
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
-        $user = auth()->user();
         if ($user) {
-            $user->update([
-                'edad' => $request->edad,
-                'peso' => $request->peso,
-                'altura' => $request->altura,
-                'genero' => $request->genero,
-                'objetivo' => $request->objetivo,
-                'experiencia' => $request->experiencia_ejercicio,
-                'disponibilidad' => json_encode($request->disponibilidad),
-                'tiene_lesion' => $request->tiene_lesion,
-                'descripcion_lesion' => $request->descripcion_lesion,
-            ]);
+            $user->profile()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'age'                => $request->edad,
+                    'weight'             => $request->peso,
+                    'height'             => $request->altura,
+                    'gender'             => $request->genero,
+                    'goals'              => $request->objetivo,
+                    'experience'         => $request->experiencia_ejercicio,
+                    'availability'       => json_encode($request->disponibilidad),
+                    'has_injury'         => $request->tiene_lesion,
+                    'injury_description' => $request->descripcion_lesion,
+                ]
+            );
         }
-
+        if (Auth::check()) {
+            dd('¡Alerta! La sesión se perdió antes de llegar aquí.');
+        }
         return redirect()->route('menu')->with('status', '¡Perfil configurado con éxito!');
     }
 }
