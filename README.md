@@ -57,3 +57,18 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## FamFit Quest
+
+The authenticated quest menu includes the avatar, profile, training, calendar, social, and settings sections. Avatar choices, account preferences, XP, routines, and exercise completions are stored per user. Social connections and challenges are not yet available and are shown as such.
+
+After configuring the local database, apply the additive feature migration and build the frontend:
+
+```sh
+php artisan migrate
+npm install
+npm run build
+php artisan test
+```
+
+The migration adds user preference fields and the quest routine/completion tables; it does not reset or erase existing tables. The quest feature tests can be run alone with `php artisan test --filter=QuestExperienceTest`.

@@ -1,218 +1,123 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#F5F7FB">
-    <title>Menú | FamFit Quest</title>
-    <script src="{{ asset('js/theme.js') }}"></script>
-    <link rel="stylesheet" href="{{ asset('estilos/general.css') }}">
-    <link rel="stylesheet" href="{{ asset('estilos/estilomenu.css') }}">
-    <link rel="stylesheet" href="{{ asset('estilos/tema-oscuro.css') }}">
-</head>
-<body>
-    <button
-        class="fq-mobile-toggle"
-        id="fqMobileToggle"
-        type="button"
-        aria-label="Abrir menú"
-        aria-controls="fqSidebar"
-        aria-expanded="false"
-    >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-    </button>
-    <div class="fq-overlay" id="fqOverlay"></div>
+@extends('layouts.quest')
 
-    <aside class="fq-sidebar" id="fqSidebar" aria-label="Menú principal">
-        <a class="fq-brand" href="{{ route('menu') }}" aria-label="FamFit Quest, inicio">
-            <span class="fq-logo" aria-hidden="true">F</span>
-            <span class="fq-brand-text">
-                <strong>FamFit Quest</strong>
-                <small>BIENESTAR EN FAMILIA</small>
-            </span>
-        </a>
+@section('title', 'Inicio | FamFit Quest')
 
-        <nav class="fq-navigation" aria-label="Secciones">
-            <span class="fq-section-title">MI ESPACIO</span>
-
-            <a class="fq-link is-active" href="{{ route('menu') }}" aria-current="page">
-                <span class="fq-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></svg>
-                </span>
-                <span class="fq-link-text">Inicio</span>
-                <span class="fq-tooltip" aria-hidden="true">Inicio</span>
-            </a>
-
-            <a class="fq-link" href="{{ route('bienestar') }}">
-                <span class="fq-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"></path><path d="M3.5 12h4l2-3 3 6 2-3h6"></path></svg>
-                </span>
-                <span class="fq-link-text">Bienestar</span>
-                <span class="fq-tooltip" aria-hidden="true">Bienestar</span>
-            </a>
-
-            <a class="fq-link" href="#" data-pending="true" aria-disabled="true">
-                <span class="fq-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h17"></path><path d="m7 15 4-4 3 2 6-7"></path></svg>
-                </span>
-                <span class="fq-link-text">Mi progreso</span>
-                <span class="fq-tooltip" aria-hidden="true">Mi progreso</span>
-            </a>
-
-            <a class="fq-link" href="#" data-pending="true" aria-disabled="true">
-                <span class="fq-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M12 3v3M5.6 5.6l2.1 2.1M3 12h3m-.4 6.4 2.1-2.1M12 18v3m6.4-2.6-2.1-2.1M18 12h3m-5.4-4.3 2.1-2.1"></path><circle cx="12" cy="12" r="5"></circle></svg>
-                </span>
-                <span class="fq-link-text">Hábitos</span>
-                <span class="fq-tooltip" aria-hidden="true">Hábitos</span>
-            </a>
-
-            <a class="fq-link" href="#" data-pending="true" aria-disabled="true">
-                <span class="fq-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M4 7h16v13H4zM8 7V4h8v3M4 12h16M9 12v2h6v-2"></path></svg>
-                </span>
-                <span class="fq-link-text">Alimentación</span>
-                <span class="fq-tooltip" aria-hidden="true">Alimentación</span>
-            </a>
-
-            <a class="fq-link" href="#" data-pending="true" aria-disabled="true">
-                <span class="fq-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></svg>
-                </span>
-                <span class="fq-link-text">Calendario</span>
-                <span class="fq-tooltip" aria-hidden="true">Calendario</span>
-            </a>
-
-            <a class="fq-link" href="#" data-pending="true" aria-disabled="true">
-                <span class="fq-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-1a6 6 0 0 1 12 0v1zM16 5.5a3 3 0 0 1 0 5.8M18 14a5 5 0 0 1 3 4.6v1"></path></svg>
-                </span>
-                <span class="fq-link-text">Comunidad</span>
-                <span class="fq-tooltip" aria-hidden="true">Comunidad</span>
-            </a>
-
-            <span class="fq-section-title fq-preferences-title">PREFERENCIAS</span>
-            <a class="fq-link" href="{{ route('configuracion') }}">
-                <span class="fq-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"></path><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.6.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.6-.9l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.9l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.6-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.6.9l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1-.1 1.8Z"></path></svg>
-                </span>
-                <span class="fq-link-text">Configuración</span>
-                <span class="fq-tooltip" aria-hidden="true">Configuración</span>
-            </a>
-        </nav>
-
-        <div class="fq-profile">
-            <button
-                class="fq-profile-button"
-                id="fqAvatarButton"
-                type="button"
-                aria-label="Personalizar perfil"
-                aria-controls="fqAvatarPicker"
-                aria-expanded="false"
-            >
-                <span class="fq-avatar" id="fqAvatarDisplay" aria-hidden="true">🦊</span>
-                <span class="fq-profile-info">
-                    <strong id="fqProfileName">{{ auth()->user()?->name ?? 'Mi perfil' }}</strong>
-                    <small id="fqProfileLevel">Nivel 1</small>
-                </span>
-                <span class="fq-edit-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path></svg>
-                </span>
-            </button>
-
-            <section class="fq-avatar-picker" id="fqAvatarPicker" aria-label="Personalizar perfil" hidden>
-                <strong>Personaliza tu perfil</strong>
-                <div class="fq-avatar-options" aria-label="Elige un avatar">
-                    <button class="fq-avatar-option" type="button" data-avatar="🦊" aria-label="Zorro" aria-pressed="false">🦊</button>
-                    <button class="fq-avatar-option" type="button" data-avatar="🐼" aria-label="Panda" aria-pressed="false">🐼</button>
-                    <button class="fq-avatar-option" type="button" data-avatar="🐸" aria-label="Rana" aria-pressed="false">🐸</button>
-                    <button class="fq-avatar-option" type="button" data-avatar="🐯" aria-label="Tigre" aria-pressed="false">🐯</button>
-                    <button class="fq-avatar-option" type="button" data-avatar="🐨" aria-label="Koala" aria-pressed="false">🐨</button>
-                    <button class="fq-avatar-option" type="button" data-avatar="🐙" aria-label="Pulpo" aria-pressed="false">🐙</button>
-                    <button class="fq-avatar-option" type="button" data-avatar="🦁" aria-label="León" aria-pressed="false">🦁</button>
-                    <button class="fq-avatar-option" type="button" data-avatar="🐢" aria-label="Tortuga" aria-pressed="false">🐢</button>
-                </div>
-                <label class="fq-profile-label" for="fqNameInput">Nombre del perfil</label>
-                <input id="fqNameInput" type="text" maxlength="30" autocomplete="nickname">
-                <label class="fq-profile-label" for="fqLevelInput">Nivel</label>
-                <input id="fqLevelInput" type="number" min="1" max="999" step="1">
-                <button class="fq-save-profile" id="fqSaveProfile" type="button">Guardar perfil</button>
-            </section>
+@section('content')
+    <header class="fq-page-heading">
+        <div>
+            <p class="fq-eyebrow">TU ESPACIO FAMFIT</p>
+            <h1>¡Hola, {{ auth()->user()->name }}! <span aria-hidden="true">👋</span></h1>
+            <p class="fq-muted">Pequeños hábitos, grandes logros. ¿Qué te gustaría hacer hoy?</p>
         </div>
+        <a class="fq-button fq-button-light" href="{{ route('perfil') }}">Ver mi perfil <span aria-hidden="true">↗</span></a>
+    </header>
 
-        @auth
-            <form action="{{ route('logout') }}" method="POST">
+    <section class="fq-home-grid" aria-label="Resumen y avatar">
+        <article class="fq-card fq-avatar-card">
+            <div class="fq-card-heading">
+                <div><p class="fq-eyebrow">TU AVENTURA</p><h2>Tu avatar</h2></div>
+                <span class="fq-level-pill">Nivel {{ $level }}</span>
+            </div>
+            <div class="fq-avatar-stage">
+                <div class="fq-avatar-art" id="fqAvatarPreview" style="--fq-outfit: {{ $avatar['outfit'] }}">
+                    <span class="fq-avatar-character" id="fqAnimalPreview" aria-label="Avatar {{ $avatar['animal'] }}">{{ $avatar['animal'] }}</span>
+                    @if($avatar['accessory_symbol'])
+                        <span class="fq-avatar-accessory" id="fqAccessoryPreview">{{ $avatar['accessory_symbol'] }}</span>
+                    @else
+                        <span class="fq-avatar-accessory" id="fqAccessoryPreview" hidden></span>
+                    @endif
+                </div>
+                <p class="fq-muted">¡Este eres tú en FamFit Quest!</p>
+            </div>
+
+            <div class="fq-xp-block">
+                <div class="fq-xp-label"><strong>Experiencia</strong><span>{{ auth()->user()->xp ?? 0 }} XP</span></div>
+                <div class="fq-progress-track" role="progressbar" aria-label="Progreso al siguiente nivel" aria-valuenow="{{ $xpProgress }}" aria-valuemin="0" aria-valuemax="100">
+                    <span style="width: {{ $xpProgress }}%"></span>
+                </div>
+                <small class="fq-muted">{{ 100 - $xpProgress }} XP para el nivel {{ $level + 1 }}</small>
+            </div>
+
+            @if($avatarStorageAvailable)
+                <button class="fq-button fq-button-light fq-customize-toggle" type="button" data-toggle-panel="fqAvatarForm" aria-expanded="false">Personalizar avatar</button>
+                <form class="fq-customize-form" id="fqAvatarForm" action="{{ route('avatar.update') }}" method="POST" hidden>
                 @csrf
-                <button class="fq-link" type="submit" style="border: 0; background: transparent; cursor: pointer; font: inherit; text-align: left;">
-                    <span class="fq-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3"></path><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7"></path></svg>
-                    </span>
-                    <span class="fq-link-text">Cerrar sesión</span>
-                    <span class="fq-tooltip" aria-hidden="true">Cerrar sesión</span>
-                </button>
-            </form>
-        @else
-            <a class="fq-link" href="{{ route('login') }}">
-                <span class="fq-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3"></path><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7"></path></svg>
-                </span>
-                <span class="fq-link-text">Iniciar sesión</span>
-                <span class="fq-tooltip" aria-hidden="true">Iniciar sesión</span>
-            </a>
-        @endauth
-    </aside>
-
-    <main class="fq-main">
-        <div class="contenedor">
-            <header class="encabezado-pagina">
-                <div>
-                    <p class="texto-azul">TU ESPACIO FAMFIT</p>
-                    <h1>¡Hola, {{ auth()->user()?->name ?? 'campeón' }}! 👋</h1>
-                    <p class="texto-secundario">
-                        Pequeños hábitos, grandes logros. ¿Qué te gustaría hacer hoy?
-                    </p>
-                </div>
-            </header>
-
-            @if (session('status'))
-                <div class="alerta alerta-exito" role="status">{{ session('status') }}</div>
+                @method('PUT')
+                <fieldset>
+                    <legend>Elige tu personaje</legend>
+                    <div class="fq-choice-row">
+                        @foreach(['🦊', '🐼', '🐸', '🐯', '🐨', '🐙', '🦁', '🐢'] as $animal)
+                            <label class="fq-avatar-choice">
+                                <input type="radio" name="animal" value="{{ $animal }}" @checked(old('animal', $avatar['animal']) === $animal)>
+                                <span aria-hidden="true">{{ $animal }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </fieldset>
+                <label class="fq-field-label" for="fqOutfit">Color de ropa</label>
+                <select class="fq-input" id="fqOutfit" name="outfit">
+                    @foreach(['#2864F0' => 'Azul', '#A7E66D' => 'Verde', '#F3A847' => 'Naranja', '#B58BEA' => 'Lila', '#F28BA8' => 'Rosa'] as $color => $name)
+                        <option value="{{ $color }}" @selected(old('outfit', $avatar['outfit']) === $color)>{{ $name }}</option>
+                    @endforeach
+                </select>
+                <label class="fq-field-label" for="fqAccessory">Accesorio</label>
+                <select class="fq-input" id="fqAccessory" name="accessory">
+                    @foreach(['Ninguno' => 'Sin accesorio', 'Gafas' => 'Gafas 🕶️', 'Gorra' => 'Gorra 🧢', 'Estrella' => 'Estrella ⭐'] as $value => $label)
+                        <option value="{{ $value }}" @selected(old('accessory', $avatar['accessory']) === $value)>{{ $label }}</option>
+                    @endforeach
+                </select>
+                <p class="fq-muted fq-preview-note">La vista previa se actualiza al elegir; guarda para conservarla en tu cuenta.</p>
+                <button class="fq-button fq-button-primary" type="submit">Guardar cambios</button>
+                </form>
             @endif
+        </article>
 
-            <section aria-labelledby="titulo-accesos">
-                <h2 id="titulo-accesos">Tu aventura saludable</h2>
-                <div class="cuadricula cuadricula-2">
-                    <article class="tarjeta tarjeta-principal">
-                        <div class="tarjeta-titulo">
-                            <span aria-hidden="true">💚</span>
-                            <h3>Bienestar</h3>
-                        </div>
-                        <p class="texto-secundario">
-                            Explora actividades de descanso y bienestar para cuidar de ti cada día.
-                        </p>
-                        <a class="boton boton-azul" href="{{ route('bienestar') }}">Ir a bienestar <span aria-hidden="true">→</span></a>
-                    </article>
-
-                    <article class="tarjeta">
-                        <div class="tarjeta-titulo">
-                            <span aria-hidden="true">⚙️</span>
-                            <h3>Configuración</h3>
-                        </div>
-                        <p class="texto-secundario">
-                            Consulta las opciones disponibles y personaliza tus preferencias.
-                        </p>
-                        <a class="boton boton-secundario" href="{{ route('configuracion') }}">Ver configuración <span aria-hidden="true">→</span></a>
-                    </article>
+        <div class="fq-home-side">
+            <article class="fq-card fq-workout-summary">
+                <div class="fq-card-heading">
+                    <div><p class="fq-eyebrow">HOY</p><h2>Entreno</h2></div>
+                    <span class="fq-card-icon" aria-hidden="true">🏃</span>
                 </div>
-            </section>
-
-            <footer style="margin-top: 32px; color: var(--texto-secundario);">
-                FamFit Quest · Bienestar para toda la familia 💚
-            </footer>
+                @if($routine)
+                    <p class="fq-routine-title">{{ $routine->name }}</p>
+                    @if($todaysExercises->isNotEmpty())
+                        <p class="fq-muted">{{ $completedToday }} de {{ $todaysExercises->count() }} ejercicios completados</p>
+                        <div class="fq-progress-track" role="progressbar" aria-label="Progreso de hoy" aria-valuenow="{{ (int) round($completedToday / $todaysExercises->count() * 100) }}" aria-valuemin="0" aria-valuemax="100">
+                            <span style="width: {{ (int) round($completedToday / $todaysExercises->count() * 100) }}%"></span>
+                        </div>
+                    @else
+                        <p class="fq-muted">Hoy es un día de descanso según tu rutina.</p>
+                    @endif
+                @elseif($routineStorageAvailable)
+                    <p class="fq-muted">Aún no tienes una rutina. Puedes crear una a tu medida.</p>
+                @else
+                    <p class="fq-muted">La rutina aparecerá aquí cuando la base de datos tenga sus tablas listas.</p>
+                @endif
+                <a class="fq-text-link" href="{{ route('entreno') }}">{{ $routine ? 'Ver mi rutina' : 'Crear rutina' }} <span aria-hidden="true">→</span></a>
+            </article>
+            <article class="fq-card fq-calendar-summary">
+                <div class="fq-card-heading">
+                    <div><p class="fq-eyebrow">ORGANÍZATE</p><h2>Tu calendario</h2></div>
+                    <span class="fq-card-icon fq-icon-green" aria-hidden="true">📅</span>
+                </div>
+                <p class="fq-muted">Consulta los días de entrenamiento y las actividades completadas.</p>
+                <a class="fq-text-link" href="{{ route('calendario') }}">Abrir calendario <span aria-hidden="true">→</span></a>
+            </article>
+            <article class="fq-card fq-achievements">
+                <div class="fq-card-heading">
+                    <div><p class="fq-eyebrow">TUS LOGROS</p><h2>Un paso a la vez</h2></div>
+                    <span class="fq-card-icon fq-icon-green" aria-hidden="true">✦</span>
+                </div>
+                <p class="fq-muted">Los logros se habilitarán cuando se incorpore el sistema de retos. Por ahora, cada ejercicio completado suma 10 XP.</p>
+            </article>
+            <article class="fq-card">
+                <div class="fq-card-heading">
+                    <div><p class="fq-eyebrow">BIENESTAR</p><h2>Haz una pausa</h2></div>
+                    <span class="fq-card-icon fq-icon-green" aria-hidden="true">💚</span>
+                </div>
+                <p class="fq-muted">Explora las actividades de descanso y bienestar que ya forman parte de FamFit Quest.</p>
+                <a class="fq-text-link" href="{{ route('bienestar') }}">Ir a bienestar <span aria-hidden="true">→</span></a>
+            </article>
         </div>
-    </main>
-    
-    <script src="{{ asset('js/menu.js') }}" defer></script>
-</body>
-</html>
+    </section>
+@endsection

@@ -5,6 +5,8 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -51,6 +53,19 @@ class User extends Authenticatable
             'profile_visible' => 'boolean',
             'terms_accepted_at' => 'datetime',
             'privacy_accepted_at' => 'datetime',
+            'avatar_settings' => 'array',
+            'preferences' => 'array',
+            'xp' => 'integer',
         ];
+    }
+
+    public function questRoutine(): HasOne
+    {
+        return $this->hasOne(QuestRoutine::class);
+    }
+
+    public function questCompletions(): HasMany
+    {
+        return $this->hasMany(QuestExerciseCompletion::class);
     }
 }

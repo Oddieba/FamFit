@@ -1,14 +1,17 @@
 <?php
-use App\Models\User;
+
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\QuestController;
+use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('login');
@@ -22,11 +25,23 @@ Route::post('/logout', function (Request $request) {
     return redirect()->route('login');
 })->name('logout');
 
-Route::get('/menu', function() {
-    return view('menu');
-})->middleware('auth')->name('menu');
+Route::middleware('auth')->group(function (): void {
+    Route::get('/menu', [QuestController::class, 'home'])->name('menu');
+    Route::get('/entreno', [QuestController::class, 'training'])->name('entreno');
+    Route::post('/entreno/rutinas', [QuestController::class, 'storeRoutine'])->name('entreno.rutinas.store');
+    Route::post('/entreno/ejercicios/{exercise}/completar', [QuestController::class, 'completeExercise'])->name('entreno.ejercicios.complete');
+    Route::get('/calendario', [QuestController::class, 'calendar'])->name('calendario');
+    Route::get('/social', [QuestController::class, 'social'])->name('social');
+    Route::get('/perfil', [QuestController::class, 'profile'])->name('perfil');
+    Route::put('/perfil', [QuestController::class, 'updateProfile'])->name('perfil.update');
+    Route::put('/avatar', [QuestController::class, 'updateAvatar'])->name('avatar.update');
+    Route::get('/configuracion', [QuestController::class, 'settings'])->name('configuracion');
+    Route::put('/configuracion', [QuestController::class, 'updateSettings'])->name('configuracion.update');
+    Route::put('/configuracion/tema', [QuestController::class, 'updateTheme'])->name('configuracion.theme');
+    Route::put('/configuracion/contrasena', [QuestController::class, 'updatePassword'])->name('configuracion.password');
+});
 
-//credenciales en base de datos
+// credenciales en base de datos
 Route::post('/login', function (Request $request) {
 
     $credenciales = $request->validate([
@@ -51,11 +66,9 @@ Route::post('/login', function (Request $request) {
 
 })->name('login.post');
 
-route::get('/bienestar', function() {
+Route::get('/bienestar', function () {
     return view('bienestar');
 })->name('bienestar');
-
-
 
 Route::get('/registro', function () {
     return view('registro');
@@ -112,10 +125,6 @@ Route::post('/reset-password', function (Request $request) {
 
     return back()->withInput($request->only('email'))->withErrors(['email' => __($status)]);
 })->name('password.update');
-Route::get('configuracion', function () {
-    return view('configuracion');
-})->middleware('auth')->name('configuracion');
-
 Route::delete('/cuenta', function (Request $request) {
     $request->validate([
         'current_password' => ['required', 'current_password'],
@@ -127,7 +136,10 @@ Route::delete('/cuenta', function (Request $request) {
     $usuario = $request->user();
 
     DB::transaction(function () use ($usuario): void {
-        DB::table('password_reset_tokens')->where('email', $usuario->email)->delete();
+        if (Schema::hasTable('password_reset_tokens')) {
+            DB::table('password_reset_tokens')->where('email', $usuario->email)->delete();
+        }
+
         DB::table('users')->where('id', $usuario->id)->delete();
     });
 
