@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; // Soluciona el error del usuario
+use App\Models\Profile;            // Soluciona el error de la clase Profile
 
 class OnboardingController extends Controller
 {
@@ -13,35 +15,38 @@ class OnboardingController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'edad' => ['required', 'integer', 'between:10,100'],
-            'peso' => ['required', 'numeric', 'between:1,500'],
-            'altura' => ['required', 'integer', 'between:50,300'],
-            'genero' => ['required', 'string', 'max:30'],
-            'objetivo' => ['required', 'string', 'max:100'],
-            'experiencia_ejercicio' => ['required', 'string', 'max:50'],
-            'disponibilidad' => ['nullable', 'array'],
-            'disponibilidad.*' => ['string', 'max:20'],
-            'tiene_lesion' => ['required', 'in:si,no'],
-            'descripcion_lesion' => ['nullable', 'string', 'max:2000'],
+        $request->validate([
+            'edad' => 'required|integer',
+            'peso' => 'required|numeric',
+            'altura' => 'required|integer',
+            'genero' => 'required|string',
+            'objetivo' => 'required|string',
+            'experiencia_ejercicio' => 'required|string',
         ]);
+        
+        // Le indicamos explícitamente al editor el tipo de modelo
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
-        $user = $request->user();
-        $user->profile()->updateOrCreate(
-            ['user_id' => $user->id],
-            [
-                'age' => $data['edad'],
-                'weight' => $data['peso'],
-                'height' => $data['altura'],
-                'gender' => $data['genero'],
-                'goals' => $data['objetivo'],
-                'experience' => $data['experiencia_ejercicio'],
-                'availability' => $data['disponibilidad'] ?? [],
-                'has_injury' => $data['tiene_lesion'] === 'si',
-                'injury_description' => $data['descripcion_lesion'] ?? null,
-            ]
-        );
-
-        return redirect()->route('menu')->with('status', 'Tu perfil se configuro correctamente.');
+        if ($user) {
+            $user->profile()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'age'                => $request->edad,
+                    'weight'             => $request->peso,
+                    'height'             => $request->altura,
+                    'gender'             => $request->genero,
+                    'goals'              => $request->objetivo,
+                    'experience'         => $request->experiencia_ejercicio,
+                    'availability'       => json_encode($request->disponibilidad),
+                    'has_injury'         => $request->tiene_lesion,
+                    'injury_description' => $request->descripcion_lesion,
+                ]
+            );
+        }
+        if (Auth::check()) {
+            dd('¡Alerta! La sesión se perdió antes de llegar aquí.');
+        }
+        return redirect()->route('menu')->with('status', '¡Perfil configurado con éxito!');
     }
 }
