@@ -110,14 +110,7 @@
                 </div>
                 <p class="fq-muted">Los logros se habilitarán cuando se incorpore el sistema de retos. Por ahora, cada ejercicio completado suma 10 XP.</p>
             </article>
-            <article class="fq-card">
-                <div class="fq-card-heading">
-                    <div><p class="fq-eyebrow">BIENESTAR</p><h2>Haz una pausa</h2></div>
-                    <span class="fq-card-icon fq-icon-green" aria-hidden="true">💚</span>
-                </div>
-                <p class="fq-muted">Explora las actividades de descanso y bienestar que ya forman parte de FamFit Quest.</p>
-                <a class="fq-text-link" href="{{ route('bienestar') }}">Ir a bienestar <span aria-hidden="true">→</span></a>
-            </article>
+           
         </div>
     </section>
 @endsection

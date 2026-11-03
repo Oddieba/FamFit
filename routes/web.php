@@ -30,7 +30,7 @@ Route::post('/login', function (Request $request) {
     if (Auth::attempt($credenciales)) {
         $request->session()->regenerate();
 
-        return redirect()->route('menu');
+        return redirect()->route('test');
     }
 
     return back()
@@ -94,6 +94,10 @@ Route::middleware('auth')->group(function () {
         ->name('configuracion.password');
 
     // Onboarding
+    Route::get('/test', function () {
+        return view('test');
+    })->name('test');
+
     Route::get('/onboarding', [OnboardingController::class, 'index'])
         ->name('onboarding');
 
@@ -133,15 +137,6 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('login');
     })->name('cuenta.destroy');
 });
-
-// Páginas públicas
-Route::get('/test', function () {
-    return view('test');
-})->name('test');
-
-Route::get('/bienestar', function () {
-    return view('bienestar');
-})->name('bienestar');
 
 Route::get('/progreso', function () {
     return view('progreso');

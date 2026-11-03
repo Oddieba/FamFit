@@ -10,7 +10,7 @@ class LoginTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_successful_login_redirects_to_the_menu(): void
+    public function test_successful_login_redirects_to_the_test_view(): void
     {
         $user = User::factory()->create([
             'password' => 'password123',
@@ -19,15 +19,21 @@ class LoginTest extends TestCase
         $this->post(route('login.post'), [
             'email' => $user->email,
             'password' => 'password123',
-        ])->assertRedirect(route('menu'))
+        ])->assertRedirect(route('test'))
             ->assertSessionHasNoErrors();
 
-        $this->get(route('menu'))->assertOk();
+        $this->get(route('test'))->assertOk();
     }
 
     public function test_guest_cannot_access_the_menu(): void
     {
         $this->get(route('menu'))
+            ->assertRedirect(route('login'));
+    }
+
+    public function test_guest_cannot_access_the_test_view(): void
+    {
+        $this->get(route('test'))
             ->assertRedirect(route('login'));
     }
 
