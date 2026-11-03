@@ -28,23 +28,32 @@ route::get('/test', function() {
     return view('test');
 })->name('test');
 
-// Ruta para procesar el login manual
-Route::post('/login', function (Request $request) {
-    // 1. Definimos los datos fijos que tú quieres exigir
-    $usuarioCorrecto = "1@famfit.com";
-    $passwordCorrecto = "1";
 
-    // 2. Comparamos lo que escribió el usuario con tus datos fijos
-    if ($request->input('email') === $usuarioCorrecto && $request->input('password') === $passwordCorrecto) {
-        $user = User::where('email', $usuarioCorrecto)->first();
-        Auth::login($user);
-        // Si coinciden, los dejamos pasar (por ejemplo, los mandamos al menú)
-        return redirect()->route('test'); // O la ruta a donde quieras enviarlos
+Route::post('/login', function (Request $request) {
+    // 1. Validamos que el usuario llene los campos correctamente
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
+
+    // 2. Auth::attempt busca al usuario y verifica la contraseña encriptada automáticamente
+    if (Auth::attempt($credentials)) {
+        // 3. Regeneramos la sesión por seguridad (evita ataques de fijación de sesión)
+        $request->session()->regenerate();
+        
+        // 4. Lo mandamos a la ruta 'test' (puedes cambiar esto por tu ruta de inicio)
+        return redirect()->intended(route('test'));
     }
 
-    // Si fallan, los regresamos al login con un error
-    return back()->withErrors(['email' => 'Las credenciales son incorrectas.']);
+    // 5. Si los datos están mal, regresamos con un error
+    return back()->withErrors([
+        'email' => 'El correo o la contraseña son incorrectos.',
+    ])->onlyInput('email'); // 'onlyInput' mantiene el correo escrito para que no lo vuelvan a teclear
 })->name('login.post');
+
+
+
+
 
 route::get('/bienestar', function() {
     return view('bienestar');
