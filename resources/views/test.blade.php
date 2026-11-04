@@ -16,6 +16,7 @@
             --text-dark: #2B3674;
             --text-gray: #A3AED0;
             --white: #FFFFFF;
+            --error-red: #FF4D4D;
         }
 
         * {
@@ -216,19 +217,27 @@
             border: 2px solid #E9ECEF;
             font-size: 0.95rem;
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, background-color 0.2s;
         }
 
         .form-control:focus {
             border-color: var(--primary-blue);
         }
 
-        /* --- MATRIZ DE DISPONIBILIDAD (SELECCIÓN ÚNICA CON RADIOS) --- */
+        .form-control.is-invalid {
+            border-color: var(--error-red) !important;
+            background-color: #FFF5F5;
+        }
+
+        /* --- MATRIZ DE DISPONIBILIDAD BLOQUEABLE --- */
         .schedule-matrix {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             margin-top: 10px;
+            max-height: 340px;
+            overflow-y: auto;
+            padding-right: 5px;
         }
 
         .schedule-row {
@@ -238,17 +247,46 @@
             background: var(--soft-bg);
             padding: 10px 14px;
             border-radius: 12px;
+            border: 1px solid #E0E5F2;
+        }
+
+        .schedule-row.header-row {
+            background: #E8EEFF;
+            border-color: #D0E1FF;
+        }
+
+        .day-toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 140px;
+        }
+
+        .day-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-blue);
+            cursor: pointer;
         }
 
         .day-name {
             font-weight: 700;
-            width: 75px;
             font-size: 0.88rem;
+            color: var(--text-dark);
+            cursor: pointer;
         }
 
         .time-slots {
             display: flex;
             gap: 6px;
+            opacity: 0.3;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .time-slots.enabled {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .slot-radio {
@@ -329,9 +367,103 @@
             from { transform: translateY(0); }
             to { transform: translateY(-10px); }
         }
+
+        /* --- MODAL BONITO CON CSS --- */
+        .custom-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(43, 54, 116, 0.4);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .custom-modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .custom-modal-box {
+            background: var(--white);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 380px;
+            padding: 28px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .custom-modal-overlay.open .custom-modal-box {
+            transform: scale(1);
+        }
+
+        .modal-icon-container {
+            width: 60px;
+            height: 60px;
+            background: #FFF4E5;
+            color: #FF9800;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            margin: 0 auto 16px auto;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .modal-message {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+
+        .btn-modal-action {
+            background: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-modal-action:hover {
+            background: #1B52D8;
+        }
     </style>
 </head>
 <body>
+
+    <!-- MODAL BONITO PARA ALERTAS -->
+    <div class="custom-modal-overlay" id="customModal">
+        <div class="custom-modal-box">
+            <div class="modal-icon-container">
+                <i class="fa-solid fa-exclamation"></i>
+            </div>
+            <h3 class="modal-title" id="modalTitle">Campo incompleto</h3>
+            <p class="modal-message" id="modalMessage">Por favor completa la información necesaria para continuar.</p>
+            <button type="button" class="btn-modal-action" onclick="closeModal()">Entendido</button>
+        </div>
+    </div>
 
     <div class="quest-wizard-card">
         <!-- BARRA DE PROGRESO -->
@@ -366,15 +498,18 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label" for="edad">Edad (años)</label>
-                        <input type="number" id="edad" name="edad" class="form-control" placeholder="Ej: 24" required min="10" max="100">
+                        <input type="number" id="edad" name="edad" class="form-control" placeholder="Ej: 24" required min="10" max="120" maxlength="3" 
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3); checkRealisticRange(this, 10, 120);">
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="peso">Peso (kg)</label>
-                        <input type="number" step="0.1" id="peso" name="peso" class="form-control" placeholder="Ej: 68.5" required>
+                        <input type="text" inputmode="decimal" id="peso" name="peso" class="form-control" placeholder="Ej: 68.5" required 
+                               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'); checkRealisticRange(this, 30, 300);">
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="altura">Altura (cm)</label>
-                        <input type="number" id="altura" name="altura" class="form-control" placeholder="Ej: 172" required>
+                        <input type="number" id="altura" name="altura" class="form-control" placeholder="Ej: 172" required min="100" max="250" maxlength="3" 
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3); checkRealisticRange(this, 100, 250);">
                     </div>
                 </div>
 
@@ -471,71 +606,91 @@
                             <p>Entreno de forma constante (mínimo 3 veces por semana) desde hace meses.</p>
                         </div>
                     </div>
-                    <div class="option-row" onclick="selectSingleRow(this, 'input-experiencia', 'principiante')">
-                        <i class="fa-solid fa-circle-question"></i>
-                        <div class="option-row-content">
-                            <strong>No estoy seguro</strong>
-                            <p>El sistema asignará el nivel Principiante por defecto para empezar seguros.</p>
-                        </div>
-                    </div>
                 </div>
             </div>
 
-            <!-- PASO 4: DISPONIBILIDAD SEMANAL (ÚNICA SELECCIÓN POR DÍA) -->
+            <!-- PASO 4: DISPONIBILIDAD SEMANAL -->
             <div class="wizard-step" id="step-4">
-                <h2 class="step-title">¿Qué disponibilidad tienes para entrenar?</h2>
-                <p class="step-subtitle">Selecciona la franja horaria principal para cada día de la semana.</p>
+                <h2 class="step-title">¿Qué días y en qué horario puedes entrenar?</h2>
+                <p class="step-subtitle">Marca los días que entrenarás y elige su franja horaria correspondiente.</p>
 
                 <div class="schedule-matrix">
+                    <!-- Fila Maestra para Marcar / Desmarcar Todo -->
+                    <div class="schedule-row header-row">
+                        <div class="day-toggle-container">
+                            <input type="checkbox" id="check_all_days" class="day-checkbox" onchange="toggleAllDays(this)">
+                            <label for="check_all_days" class="day-name" style="color: var(--primary-blue);">Marcar todos</label>
+                        </div>
+                        <span style="font-size: 0.8rem; color: var(--text-gray); font-weight: 600;">Selección rápida semanal</span>
+                    </div>
+
                     <!-- Lunes -->
                     <div class="schedule-row">
-                        <span class="day-name">Lunes</span>
-                        <div class="time-slots">
-                            <input type="radio" id="lun_m" name="disponibilidad[lunes]" value="mañana" class="slot-radio" checked><label for="lun_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
+                        <div class="day-toggle-container">
+                            <input type="checkbox" id="check_lunes" class="day-checkbox day-item" onchange="toggleDaySlots('lunes')">
+                            <label for="check_lunes" class="day-name">Lunes</label>
+                        </div>
+                        <div class="time-slots" id="slots_lunes">
+                            <input type="radio" id="lun_m" name="disponibilidad[lunes]" value="mañana" class="slot-radio"><label for="lun_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
                             <input type="radio" id="lun_t" name="disponibilidad[lunes]" value="tarde" class="slot-radio"><label for="lun_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
                             <input type="radio" id="lun_n" name="disponibilidad[lunes]" value="noche" class="slot-radio"><label for="lun_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
                         </div>
                     </div>
                     <!-- Martes -->
                     <div class="schedule-row">
-                        <span class="day-name">Martes</span>
-                        <div class="time-slots">
+                        <div class="day-toggle-container">
+                            <input type="checkbox" id="check_martes" class="day-checkbox day-item" onchange="toggleDaySlots('martes')">
+                            <label for="check_martes" class="day-name">Martes</label>
+                        </div>
+                        <div class="time-slots" id="slots_martes">
                             <input type="radio" id="mar_m" name="disponibilidad[martes]" value="mañana" class="slot-radio"><label for="mar_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
-                            <input type="radio" id="mar_t" name="disponibilidad[martes]" value="tarde" class="slot-radio" checked><label for="mar_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
+                            <input type="radio" id="mar_t" name="disponibilidad[martes]" value="tarde" class="slot-radio"><label for="mar_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
                             <input type="radio" id="mar_n" name="disponibilidad[martes]" value="noche" class="slot-radio"><label for="mar_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
                         </div>
                     </div>
                     <!-- Miércoles -->
                     <div class="schedule-row">
-                        <span class="day-name">Miércoles</span>
-                        <div class="time-slots">
-                            <input type="radio" id="mie_m" name="disponibilidad[miercoles]" value="mañana" class="slot-radio" checked><label for="mie_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
+                        <div class="day-toggle-container">
+                            <input type="checkbox" id="check_miercoles" class="day-checkbox day-item" onchange="toggleDaySlots('miercoles')">
+                            <label for="check_miercoles" class="day-name">Miércoles</label>
+                        </div>
+                        <div class="time-slots" id="slots_miercoles">
+                            <input type="radio" id="mie_m" name="disponibilidad[miercoles]" value="mañana" class="slot-radio"><label for="mie_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
                             <input type="radio" id="mie_t" name="disponibilidad[miercoles]" value="tarde" class="slot-radio"><label for="mie_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
                             <input type="radio" id="mie_n" name="disponibilidad[miercoles]" value="noche" class="slot-radio"><label for="mie_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
                         </div>
                     </div>
                     <!-- Jueves -->
                     <div class="schedule-row">
-                        <span class="day-name">Jueves</span>
-                        <div class="time-slots">
+                        <div class="day-toggle-container">
+                            <input type="checkbox" id="check_jueves" class="day-checkbox day-item" onchange="toggleDaySlots('jueves')">
+                            <label for="check_jueves" class="day-name">Jueves</label>
+                        </div>
+                        <div class="time-slots" id="slots_jueves">
                             <input type="radio" id="jue_m" name="disponibilidad[jueves]" value="mañana" class="slot-radio"><label for="jue_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
-                            <input type="radio" id="jue_t" name="disponibilidad[jueves]" value="tarde" class="slot-radio" checked><label for="jue_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
+                            <input type="radio" id="jue_t" name="disponibilidad[jueves]" value="tarde" class="slot-radio"><label for="jue_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
                             <input type="radio" id="jue_n" name="disponibilidad[jueves]" value="noche" class="slot-radio"><label for="jue_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
                         </div>
                     </div>
                     <!-- Viernes -->
                     <div class="schedule-row">
-                        <span class="day-name">Viernes</span>
-                        <div class="time-slots">
-                            <input type="radio" id="vie_m" name="disponibilidad[viernes]" value="mañana" class="slot-radio" checked><label for="vie_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
+                        <div class="day-toggle-container">
+                            <input type="checkbox" id="check_viernes" class="day-checkbox day-item" onchange="toggleDaySlots('viernes')">
+                            <label for="check_viernes" class="day-name">Viernes</label>
+                        </div>
+                        <div class="time-slots" id="slots_viernes">
+                            <input type="radio" id="vie_m" name="disponibilidad[viernes]" value="mañana" class="slot-radio"><label for="vie_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
                             <input type="radio" id="vie_t" name="disponibilidad[viernes]" value="tarde" class="slot-radio"><label for="vie_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
                             <input type="radio" id="vie_n" name="disponibilidad[viernes]" value="noche" class="slot-radio"><label for="vie_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
                         </div>
                     </div>
                     <!-- Sábado -->
                     <div class="schedule-row">
-                        <span class="day-name">Sábado</span>
-                        <div class="time-slots">
+                        <div class="day-toggle-container">
+                            <input type="checkbox" id="check_sabado" class="day-checkbox day-item" onchange="toggleDaySlots('sabado')">
+                            <label for="check_sabado" class="day-name">Sábado</label>
+                        </div>
+                        <div class="time-slots" id="slots_sabado">
                             <input type="radio" id="sab_m" name="disponibilidad[sabado]" value="mañana" class="slot-radio"><label for="sab_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
                             <input type="radio" id="sab_t" name="disponibilidad[sabado]" value="tarde" class="slot-radio"><label for="sab_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
                             <input type="radio" id="sab_n" name="disponibilidad[sabado]" value="noche" class="slot-radio"><label for="sab_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
@@ -543,8 +698,11 @@
                     </div>
                     <!-- Domingo -->
                     <div class="schedule-row">
-                        <span class="day-name">Domingo</span>
-                        <div class="time-slots">
+                        <div class="day-toggle-container">
+                            <input type="checkbox" id="check_domingo" class="day-checkbox day-item" onchange="toggleDaySlots('domingo')">
+                            <label for="check_domingo" class="day-name">Domingo</label>
+                        </div>
+                        <div class="time-slots" id="slots_domingo">
                             <input type="radio" id="dom_m" name="disponibilidad[domingo]" value="mañana" class="slot-radio"><label for="dom_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
                             <input type="radio" id="dom_t" name="disponibilidad[domingo]" value="tarde" class="slot-radio"><label for="dom_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
                             <input type="radio" id="dom_n" name="disponibilidad[domingo]" value="noche" class="slot-radio"><label for="dom_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
@@ -590,7 +748,7 @@
             <!-- BOTONES DE NAVEGACIÓN -->
             <div class="wizard-buttons">
                 <button type="button" class="btn btn-prev" id="btnPrev" onclick="changeStep(-1)" style="display: none;">Anterior</button>
-                <button type="button" class="btn btn-next" id="btnNext" onclick="changeStep(1)">Comenzar Test</button>
+                <button type="button" class="btn btn-next" id="btnNext" onclick="handleNextStep(event)">Comenzar Test</button>
             </div>
         </form>
     </div>
@@ -598,6 +756,18 @@
     <script>
         let currentStep = 0;
         const totalSteps = 6;
+
+        function handleNextStep(event) {
+            if (currentStep === totalSteps) {
+                return true;
+            }
+            
+            if (!validateCurrentStep(currentStep)) {
+                return; 
+            }
+
+            changeStep(1);
+        }
 
         function changeStep(direction) {
             document.getElementById(`step-${currentStep}`).classList.remove('active');
@@ -630,6 +800,157 @@
                 btnNext.style.backgroundColor = 'var(--primary-blue)';
                 btnNext.type = 'button';
             }
+        }
+
+        function showCustomModal(message) {
+            document.getElementById('modalMessage').innerText = message;
+            document.getElementById('customModal').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').classList.remove('open');
+        }
+
+        function checkRealisticRange(input, min, max) {
+            const val = parseFloat(input.value);
+            if (input.value !== '' && (isNaN(val) || val < min || val > max)) {
+                input.classList.add('is-invalid');
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        }
+
+        // Lógica optimizada y corregida para Marcar / Desmarcar todos los días
+        function toggleAllDays(masterCheckbox) {
+            const days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
+            const isChecked = masterCheckbox.checked;
+
+            days.forEach(day => {
+                const checkbox = document.getElementById(`check_${day}`);
+                const slotsContainer = document.getElementById(`slots_${day}`);
+                
+                if (checkbox) {
+                    checkbox.checked = isChecked;
+                }
+
+                if (slotsContainer) {
+                    const radios = slotsContainer.querySelectorAll('input[type="radio"]');
+                    if (isChecked) {
+                        slotsContainer.classList.add('enabled');
+                        let anyChecked = Array.from(radios).some(r => r.checked);
+                        if (!anyChecked && radios.length > 0) {
+                            radios[0].checked = true; // Selecciona "Mañana" por defecto
+                        }
+                    } else {
+                        slotsContainer.classList.remove('enabled');
+                        radios.forEach(r => r.checked = false);
+                    }
+                }
+            });
+        }
+
+        function toggleDaySlots(day) {
+            const checkbox = document.getElementById(`check_${day}`);
+            const slotsContainer = document.getElementById(`slots_${day}`);
+            
+            if (checkbox && slotsContainer) {
+                const radios = slotsContainer.querySelectorAll('input[type="radio"]');
+                if (checkbox.checked) {
+                    slotsContainer.classList.add('enabled');
+                    let anyChecked = Array.from(radios).some(r => r.checked);
+                    if (!anyChecked && radios.length > 0) {
+                        radios[0].checked = true;
+                    }
+                } else {
+                    slotsContainer.classList.remove('enabled');
+                    radios.forEach(r => r.checked = false);
+                }
+            }
+
+            updateMasterCheckboxState();
+        }
+
+        function updateMasterCheckboxState() {
+            const days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
+            const masterCheckbox = document.getElementById('check_all_days');
+            
+            if (masterCheckbox) {
+                const allChecked = days.every(day => {
+                    const cb = document.getElementById(`check_${day}`);
+                    return cb && cb.checked;
+                });
+                masterCheckbox.checked = allChecked;
+            }
+        }
+
+        function validateCurrentStep(step) {
+            if (step === 1) {
+                const edad = document.getElementById('edad');
+                const peso = document.getElementById('peso');
+                const altura = document.getElementById('altura');
+
+                if (!edad.value || !peso.value || !altura.value) {
+                    showCustomModal('Por favor, completa todos los campos de tus datos físicos base.');
+                    return false;
+                }
+
+                const valEdad = parseFloat(edad.value);
+                const valPeso = parseFloat(peso.value);
+                const valAltura = parseFloat(altura.value);
+
+                if (valEdad < 10 || valEdad > 120) {
+                    edad.classList.add('is-invalid');
+                    showCustomModal('Por favor, ingresa una edad real (entre 10 y 120 años).');
+                    edad.focus();
+                    return false;
+                }
+
+                if (valPeso < 30 || valPeso > 300) {
+                    peso.classList.add('is-invalid');
+                    showCustomModal('Por favor, ingresa un peso real (entre 30 kg y 300 kg).');
+                    peso.focus();
+                    return false;
+                }
+
+                if (valAltura < 100 || valAltura > 250) {
+                    altura.classList.add('is-invalid');
+                    showCustomModal('Por favor, ingresa una altura real (entre 100 cm y 250 cm).');
+                    altura.focus();
+                    return false;
+                }
+            } 
+            else if (step === 4) {
+                const days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
+                let selectedDaysCount = 0;
+
+                for (let day of days) {
+                    const checkbox = document.getElementById(`check_${day}`);
+                    if (checkbox && checkbox.checked) {
+                        selectedDaysCount++;
+                        const timeSelected = document.querySelector(`input[name="disponibilidad[${day}]"]:checked`);
+                        if (!timeSelected) {
+                            showCustomModal(`Selecciona el turno (mañana, tarde o noche) para el día ${day.charAt(0).toUpperCase() + day.slice(1)}.`);
+                            return false;
+                        }
+                    }
+                }
+
+                if (selectedDaysCount === 0) {
+                    showCustomModal('Debes seleccionar al menos un día de la semana para entrenar.');
+                    return false;
+                }
+            } 
+            else if (step === 5) {
+                const lesion = document.getElementById('input-lesion').value;
+                const descLesion = document.getElementById('descripcion_lesion').value.trim();
+                if (lesion === 'si' && descLesion === '') {
+                    showCustomModal('Por favor, describe brevemente tu lesión o condición médica.');
+                    document.getElementById('descripcion_lesion').focus();
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         function selectSingle(element, hiddenInputId, value) {
