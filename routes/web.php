@@ -20,6 +20,7 @@ Route::get('/', function () {
     return view('login');
 })->name('login');
 
+
 // Inicio de sesión
 Route::post('/login', function (Request $request) {
     $credenciales = $request->validate([

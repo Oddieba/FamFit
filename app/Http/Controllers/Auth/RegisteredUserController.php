@@ -36,8 +36,7 @@ class RegisteredUserController extends Controller
         $atributos = [
             'username' => $datos['username'],
             'email' => $datos['email'],
-            'password' => $datos['password'],
-            // ❌ ELIMINAMOS 'profile_visible' de aquí
+            'password' => \Illuminate\Support\Facades\Hash::make($datos['password']), // ✅ Encriptado
         ];
 
         if (Schema::hasColumn('users', 'name')) {
