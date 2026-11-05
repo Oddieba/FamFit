@@ -69,6 +69,34 @@ Route::middleware('auth')->group(function () {
     Route::get('/calendario', [QuestController::class, 'calendar'])
         ->name('calendario');
 
+
+
+Route::post('/login', function (Request $request) {
+    // 1. Validamos que el usuario llene los campos correctamente
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
+
+    // 2. Auth::attempt busca al usuario y verifica la contraseña encriptada automáticamente
+    if (Auth::attempt($credentials)) {
+        // 3. Regeneramos la sesión por seguridad (evita ataques de fijación de sesión)
+        $request->session()->regenerate();
+        
+        // 4. Lo mandamos a la ruta 'test' (puedes cambiar esto por tu ruta de inicio)
+        return redirect()->intended(route('test'));
+    }
+
+    // 5. Si los datos están mal, regresamos con un error
+    return back()->withErrors([
+        'email' => 'El correo o la contraseña son incorrectos.',
+    ])->onlyInput('email'); // 'onlyInput' mantiene el correo escrito para que no lo vuelvan a teclear
+})->name('login.post');
+
+
+
+
+
     Route::get('/social', [QuestController::class, 'social'])
         ->name('social');
 
@@ -93,6 +121,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/configuracion/contrasena', [QuestController::class, 'updatePassword'])
         ->name('configuracion.password');
 
+
+
     // Onboarding
     Route::get('/test', function () {
         return view('test');
@@ -104,6 +134,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/onboarding/guardar', [OnboardingController::class, 'store'])
         ->name('onboarding.guardar');
 
+
+        
     // Eliminar cuenta
     Route::delete('/cuenta', function (Request $request) {
         $request->validate([

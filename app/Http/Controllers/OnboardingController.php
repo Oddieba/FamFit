@@ -44,9 +44,7 @@ class OnboardingController extends Controller
                 ]
             );
         }
-        if (Auth::check()) {
-            dd('¡Alerta! La sesión se perdió antes de llegar aquí.');
-        }
+       
         return redirect()->route('menu')->with('status', '¡Perfil configurado con éxito!');
     }
 }

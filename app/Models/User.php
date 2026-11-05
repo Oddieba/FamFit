@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -21,10 +22,11 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'profile_visible',
+        'role_id',
         'username',
         'email',
         'password',
-        'profile_visible',
         'terms_accepted_at',
         'privacy_accepted_at',
     ];
