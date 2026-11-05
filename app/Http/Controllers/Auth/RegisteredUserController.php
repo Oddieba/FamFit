@@ -32,12 +32,11 @@ class RegisteredUserController extends Controller
             'terminos.accepted' => 'Debes aceptar los términos y la política de privacidad.',
         ]);
 
-        // 1. Preparamos los datos SOLO para la tabla 'users'
         $atributos = [
             'username' => $datos['username'],
             'email' => $datos['email'],
             'password' => $datos['password'],
-            // ❌ ELIMINAMOS 'profile_visible' de aquí
+            'profile_visible' => $request->boolean('visible'),
         ];
 
         if (Schema::hasColumn('users', 'name')) {
@@ -50,18 +49,8 @@ class RegisteredUserController extends Controller
             }
         }
 
-        // 2. Creamos al usuario
         $usuario = User::create($atributos);
 
-        // 3. Creamos su perfil inmediatamente (aquí guardamos la privacidad)
-        $visibilidad = $request->boolean('visible') ? 'community' : 'private';
-        
-        $usuario->profile()->create([
-            'profile_visibility' => $visibilidad,
-            'schedule_visibility' => 'private', // Por defecto, el horario siempre es privado
-        ]);
-
-        // 4. Iniciamos sesión
         Auth::login($usuario);
         $request->session()->regenerate();
 
