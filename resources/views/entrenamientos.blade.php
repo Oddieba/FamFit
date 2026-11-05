@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Configuración Estricta de Paleta Oficial FamFit Quest -->
     <script>
         tailwind.config = {
@@ -118,7 +118,7 @@
 
     <!-- Main Container -->
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full flex flex-col justify-center">
-        
+
         <!-- Header de Sección -->
         <div class="text-center max-w-3xl mx-auto mb-8 sm:mb-10">
             <div class="inline-flex items-center space-x-2 bg-brand-surface-muted border border-brand-border px-3 py-1 rounded-full mb-3">
@@ -158,12 +158,12 @@
                 <div>
                     <!-- Imagen en Recuadro Atractivo -->
                     <div class="relative h-52 sm:h-56 w-full overflow-hidden bg-brand-surface-muted">
-                        <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=80" 
-                             alt="Entrenamiento En Casa" 
+                        <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=80"
+                             alt="Entrenamiento En Casa"
                              class="img-zoom w-full h-full object-cover"
                              onerror="this.src='https://placehold.co/600x400/EEF2F8/172033?text=Entrenamiento+en+Casa'">
                         <div class="absolute inset-0 bg-gradient-to-t from-brand-text-primary/70 via-transparent to-transparent opacity-80"></div>
-                        
+
                         <!-- Badges en Imagen -->
                         <div class="absolute top-3 left-3 flex flex-wrap gap-2">
                             <span class="bg-brand-surface/95 backdrop-blur-md text-brand-text-primary font-bold text-xs px-2.5 py-1 rounded-lg border border-brand-border shadow-sm flex items-center">
@@ -187,7 +187,7 @@
                             <span>En Casa</span>
                             <i class="fa-solid fa-mat-fit text-brand-text-secondary text-sm font-normal"></i>
                         </h2>
-                        
+
                         <p class="text-xs text-brand-text-secondary mb-4 leading-relaxed font-medium">
                             ¡Ejercita tu cuerpo sin necesidad de salir de casa y ponte en forma! Podrás obtener rutinas con base a objetos a tu disposición.
                         </p>
@@ -230,12 +230,12 @@
                 <div>
                     <!-- Imagen en Recuadro Atractivo -->
                     <div class="relative h-52 sm:h-56 w-full overflow-hidden bg-brand-surface-muted">
-                        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80" 
-                             alt="Entrenamiento en Gimnasio" 
+                        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80"
+                             alt="Entrenamiento en Gimnasio"
                              class="img-zoom w-full h-full object-cover"
                              onerror="this.src='https://placehold.co/600x400/EEF2F8/172033?text=Entrenamiento+en+Gimnasio'">
                         <div class="absolute inset-0 bg-gradient-to-t from-brand-text-primary/70 via-transparent to-transparent opacity-80"></div>
-                        
+
                         <!-- Badges en Imagen -->
                         <div class="absolute top-3 left-3 flex flex-wrap gap-2">
                             <span class="bg-brand-surface/95 backdrop-blur-md text-brand-text-primary font-bold text-xs px-2.5 py-1 rounded-lg border border-brand-border shadow-sm flex items-center">
@@ -259,7 +259,7 @@
                             <span>Gimnasio</span>
                             <i class="fa-solid fa-dumbbell text-brand-text-secondary text-sm font-normal"></i>
                         </h2>
-                        
+
                         <p class="text-xs text-brand-text-secondary mb-4 leading-relaxed font-medium">
                             Máquinas, mancuernas y elementos a tu disposición. Utiliza rutinas famosas o obtén una personalizada para ti.
                         </p>
@@ -302,12 +302,12 @@
                 <div>
                     <!-- Imagen en Recuadro Atractivo -->
                     <div class="relative h-52 sm:h-56 w-full overflow-hidden bg-brand-surface-muted">
-                        <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=800&q=80" 
-                             alt="Entrenamiento Al Aire Libre" 
+                        <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=800&q=80"
+                             alt="Entrenamiento Al Aire Libre"
                              class="img-zoom w-full h-full object-cover"
                              onerror="this.src='https://placehold.co/600x400/EEF2F8/172033?text=Al+Aire+Libre'">
                         <div class="absolute inset-0 bg-gradient-to-t from-brand-text-primary/70 via-transparent to-transparent opacity-80"></div>
-                        
+
                         <!-- Badges en Imagen -->
                         <div class="absolute top-3 left-3 flex flex-wrap gap-2">
                             <span class="bg-brand-surface/95 backdrop-blur-md text-brand-text-primary font-bold text-xs px-2.5 py-1 rounded-lg border border-brand-border shadow-sm flex items-center">
@@ -331,7 +331,7 @@
                             <span>Al Aire Libre</span>
                             <i class="fa-solid fa-tree text-brand-text-secondary text-sm font-normal"></i>
                         </h2>
-                        
+
                         <p class="text-xs text-brand-text-secondary mb-4 leading-relaxed font-medium">
                             Realiza trotes, caminatas o sprints mediante geolocalización y cuenta tus calorías quemadas con base en el tiempo.
                         </p>
@@ -460,14 +460,14 @@
             const modalCategoryBadge = document.getElementById('modalCategoryBadge');
 
             modalTitle.innerText = `Rutinas en ${envTitle}`;
-            
+
             // Icono del modal
             if(envKey === 'casa') modalCategoryBadge.innerHTML = '<i class="fa-solid fa-house text-brand-primary"></i>';
             if(envKey === 'gym') modalCategoryBadge.innerHTML = '<i class="fa-solid fa-dumbbell text-brand-primary"></i>';
             if(envKey === 'aire') modalCategoryBadge.innerHTML = '<i class="fa-solid fa-person-running text-brand-habit"></i>';
 
             const routines = mockRoutines[envKey] || [];
-            
+
             modalRoutineList.innerHTML = routines.map(r => `
                 <div class="p-4 rounded-xl border border-brand-border bg-brand-surface-muted hover:bg-brand-surface transition-all flex flex-col justify-between space-y-3 group">
                     <div class="flex items-start justify-between">

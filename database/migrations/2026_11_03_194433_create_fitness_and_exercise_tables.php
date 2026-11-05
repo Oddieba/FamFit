@@ -13,7 +13,6 @@ return new class extends Migration
             $table->id();
             $table->string('slug', 120)->unique();
             $table->string('name', 120);
-            // Nota: MySQL SET no es soportado nativamente por Laravel, usamos JSON/String
             $table->string('environments'); 
             $table->enum('objective', ['strength', 'endurance', 'mobility', 'cardio', 'balance', 'relaxation']);
             $table->string('muscle_group', 60)->nullable();
@@ -100,7 +99,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('routine_id')->nullable();
-            $table->unsignedBigInteger('schedule_item_id')->nullable(); // Se enlaza luego con el calendario
+            $table->unsignedBigInteger('schedule_item_id')->nullable(); 
             $table->enum('environment', ['home', 'outdoor', 'gym'])->nullable();
             $table->enum('status', ['in_progress', 'completed', 'abandoned'])->default('in_progress');
             $table->dateTime('started_at');
@@ -115,7 +114,7 @@ return new class extends Migration
             $table->foreign('routine_id')->references('id')->on('routines')->onDelete('set null');
         });
 
-        // 7. Logs de series (Workout Set Logs)
+        // 7. Logs de series
         Schema::create('workout_set_logs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('session_id');
@@ -146,10 +145,47 @@ return new class extends Migration
             $table->foreign('routine_id')->references('id')->on('routines')->onDelete('cascade');
             $table->foreign('exercise_id')->references('id')->on('exercises')->onDelete('set null');
         });
+
+        // ==========================================
+        // TABLAS DE DEIVER (Módulo Quest)
+        // ==========================================
+        Schema::create('quest_routines', function (Blueprint $table): void {
+            $table->id();
+            $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete();
+            $table->string('name', 80);
+            $table->string('goal', 30);
+            $table->string('experience', 20);
+            $table->timestamps();
+        });
+
+        Schema::create('quest_exercises', function (Blueprint $table): void {
+            $table->id();
+            $table->foreignId('quest_routine_id')->constrained()->cascadeOnDelete();
+            $table->string('name', 80);
+            $table->unsignedTinyInteger('day_of_week');
+            $table->unsignedTinyInteger('sets');
+            $table->unsignedTinyInteger('reps');
+            $table->unsignedSmallInteger('rest_seconds');
+            $table->unsignedTinyInteger('position');
+            $table->timestamps();
+            $table->index(['quest_routine_id', 'day_of_week']);
+        });
+
+        Schema::create('quest_exercise_completions', function (Blueprint $table): void {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('quest_exercise_id')->constrained()->cascadeOnDelete();
+            $table->date('completed_on');
+            $table->timestamps();
+            $table->unique(['user_id', 'quest_exercise_id', 'completed_on'], 'quest_completion_once_per_day');
+        });
     }
 
     public function down(): void
     {
+        Schema::dropIfExists('quest_exercise_completions');
+        Schema::dropIfExists('quest_exercises');
+        Schema::dropIfExists('quest_routines');
         Schema::dropIfExists('progression_proposals');
         Schema::dropIfExists('workout_set_logs');
         Schema::dropIfExists('workout_sessions');

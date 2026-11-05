@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Profile extends Model
 {
-    protected $table = 'profiles';
-    
     protected $fillable = [
         'user_id',
         'age',
@@ -18,6 +16,14 @@ class Profile extends Model
         'experience',
         'availability',
         'has_injury',
-        'injury_description'
+        'injury_description',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'availability' => 'array',
+            'has_injury' => 'boolean',
+        ];
+    }
 }

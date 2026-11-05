@@ -19,6 +19,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->unsignedTinyInteger('role_id')->default(1);
+            $table->string('name')->nullable(); // <-- Agregado de Deiver
             $table->string('username', 30)->unique();
             $table->string('email', 190)->unique();
             $table->string('password');
@@ -56,14 +57,10 @@ return new class extends Migration
             $table->integer('last_activity')->index();
         });
 
-        // 5. Perfiles (Relación 1 a 1 usando el ID del usuario)
-            // 5. Perfiles (Relación 1 a 1 usando user_id)
+        // 5. Perfiles
         Schema::create('profiles', function (Blueprint $table) {
-            $table->id(); // <--- Ahora sí, la llave primaria normal
-            
-            // Agregamos explícitamente la columna user_id
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-
+            $table->id();
+            $table->foreignId('user_id')->unique()->constrained('users')->onDelete('cascade');
             $table->string('display_name', 60)->nullable();
             $table->string('bio', 300)->nullable();
             $table->date('birth_date')->nullable();

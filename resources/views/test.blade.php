@@ -770,6 +770,12 @@
         }
 
         function changeStep(direction) {
+            if (direction > 0) {
+                if (!validateCurrentStep(currentStep)) {
+                    return; // Detiene el avance si falta completar algún campo obligatorio
+                }
+            }
+
             document.getElementById(`step-${currentStep}`).classList.remove('active');
             currentStep += direction;
             document.getElementById(`step-${currentStep}`).classList.add('active');
