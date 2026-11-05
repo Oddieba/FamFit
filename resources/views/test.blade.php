@@ -16,6 +16,7 @@
             --text-dark: #2B3674;
             --text-gray: #A3AED0;
             --white: #FFFFFF;
+            --error-red: #FF4D4D;
         }
 
         * {
@@ -216,11 +217,16 @@
             border: 2px solid #E9ECEF;
             font-size: 0.95rem;
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, background-color 0.2s;
         }
 
         .form-control:focus {
             border-color: var(--primary-blue);
+        }
+
+        .form-control.is-invalid {
+            border-color: var(--error-red) !important;
+            background-color: #FFF5F5;
         }
 
         /* --- MATRIZ DE DISPONIBILIDAD BLOQUEABLE --- */
@@ -244,11 +250,16 @@
             border: 1px solid #E0E5F2;
         }
 
+        .schedule-row.header-row {
+            background: #E8EEFF;
+            border-color: #D0E1FF;
+        }
+
         .day-toggle-container {
             display: flex;
             align-items: center;
             gap: 10px;
-            width: 130px;
+            width: 140px;
         }
 
         .day-checkbox {
@@ -487,15 +498,18 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label" for="edad">Edad (años)</label>
-                        <input type="number" id="edad" name="edad" class="form-control" placeholder="Ej: 24" required min="10" max="100">
+                        <input type="number" id="edad" name="edad" class="form-control" placeholder="Ej: 24" required min="10" max="120" maxlength="3" 
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3); checkRealisticRange(this, 10, 120);">
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="peso">Peso (kg)</label>
-                        <input type="number" step="0.1" id="peso" name="peso" class="form-control" placeholder="Ej: 68.5" required min="30" max="300">
+                        <input type="text" inputmode="decimal" id="peso" name="peso" class="form-control" placeholder="Ej: 68.5" required 
+                               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'); checkRealisticRange(this, 30, 300);">
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="altura">Altura (cm)</label>
-                        <input type="number" id="altura" name="altura" class="form-control" placeholder="Ej: 172" required min="100" max="250">
+                        <input type="number" id="altura" name="altura" class="form-control" placeholder="Ej: 172" required min="100" max="250" maxlength="3" 
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3); checkRealisticRange(this, 100, 250);">
                     </div>
                 </div>
 
@@ -595,17 +609,25 @@
                 </div>
             </div>
 
-            <!-- PASO 4: DISPONIBILIDAD SEMANAL (BLOQUEADA HASTA SELECCIONAR DÍA) -->
+            <!-- PASO 4: DISPONIBILIDAD SEMANAL -->
             <div class="wizard-step" id="step-4">
                 <h2 class="step-title">¿Qué días y en qué horario puedes entrenar?</h2>
                 <p class="step-subtitle">Marca los días que entrenarás y elige su franja horaria correspondiente.</p>
 
                 <div class="schedule-matrix">
-                    <!-- Script generado por bloques para cada día -->
+                    <!-- Fila Maestra para Marcar / Desmarcar Todo -->
+                    <div class="schedule-row header-row">
+                        <div class="day-toggle-container">
+                            <input type="checkbox" id="check_all_days" class="day-checkbox" onchange="toggleAllDays(this)">
+                            <label for="check_all_days" class="day-name" style="color: var(--primary-blue);">Marcar todos</label>
+                        </div>
+                        <span style="font-size: 0.8rem; color: var(--text-gray); font-weight: 600;">Selección rápida semanal</span>
+                    </div>
+
                     <!-- Lunes -->
                     <div class="schedule-row">
                         <div class="day-toggle-container">
-                            <input type="checkbox" id="check_lunes" class="day-checkbox" onchange="toggleDaySlots('lunes')">
+                            <input type="checkbox" id="check_lunes" class="day-checkbox day-item" onchange="toggleDaySlots('lunes')">
                             <label for="check_lunes" class="day-name">Lunes</label>
                         </div>
                         <div class="time-slots" id="slots_lunes">
@@ -617,7 +639,7 @@
                     <!-- Martes -->
                     <div class="schedule-row">
                         <div class="day-toggle-container">
-                            <input type="checkbox" id="check_martes" class="day-checkbox" onchange="toggleDaySlots('martes')">
+                            <input type="checkbox" id="check_martes" class="day-checkbox day-item" onchange="toggleDaySlots('martes')">
                             <label for="check_martes" class="day-name">Martes</label>
                         </div>
                         <div class="time-slots" id="slots_martes">
@@ -629,7 +651,7 @@
                     <!-- Miércoles -->
                     <div class="schedule-row">
                         <div class="day-toggle-container">
-                            <input type="checkbox" id="check_miercoles" class="day-checkbox" onchange="toggleDaySlots('miercoles')">
+                            <input type="checkbox" id="check_miercoles" class="day-checkbox day-item" onchange="toggleDaySlots('miercoles')">
                             <label for="check_miercoles" class="day-name">Miércoles</label>
                         </div>
                         <div class="time-slots" id="slots_miercoles">
@@ -641,7 +663,7 @@
                     <!-- Jueves -->
                     <div class="schedule-row">
                         <div class="day-toggle-container">
-                            <input type="checkbox" id="check_jueves" class="day-checkbox" onchange="toggleDaySlots('jueves')">
+                            <input type="checkbox" id="check_jueves" class="day-checkbox day-item" onchange="toggleDaySlots('jueves')">
                             <label for="check_jueves" class="day-name">Jueves</label>
                         </div>
                         <div class="time-slots" id="slots_jueves">
@@ -653,7 +675,7 @@
                     <!-- Viernes -->
                     <div class="schedule-row">
                         <div class="day-toggle-container">
-                            <input type="checkbox" id="check_viernes" class="day-checkbox" onchange="toggleDaySlots('viernes')">
+                            <input type="checkbox" id="check_viernes" class="day-checkbox day-item" onchange="toggleDaySlots('viernes')">
                             <label for="check_viernes" class="day-name">Viernes</label>
                         </div>
                         <div class="time-slots" id="slots_viernes">
@@ -665,7 +687,7 @@
                     <!-- Sábado -->
                     <div class="schedule-row">
                         <div class="day-toggle-container">
-                            <input type="checkbox" id="check_sabado" class="day-checkbox" onchange="toggleDaySlots('sabado')">
+                            <input type="checkbox" id="check_sabado" class="day-checkbox day-item" onchange="toggleDaySlots('sabado')">
                             <label for="check_sabado" class="day-name">Sábado</label>
                         </div>
                         <div class="time-slots" id="slots_sabado">
@@ -677,7 +699,7 @@
                     <!-- Domingo -->
                     <div class="schedule-row">
                         <div class="day-toggle-container">
-                            <input type="checkbox" id="check_domingo" class="day-checkbox" onchange="toggleDaySlots('domingo')">
+                            <input type="checkbox" id="check_domingo" class="day-checkbox day-item" onchange="toggleDaySlots('domingo')">
                             <label for="check_domingo" class="day-name">Domingo</label>
                         </div>
                         <div class="time-slots" id="slots_domingo">
@@ -726,7 +748,7 @@
             <!-- BOTONES DE NAVEGACIÓN -->
             <div class="wizard-buttons">
                 <button type="button" class="btn btn-prev" id="btnPrev" onclick="changeStep(-1)" style="display: none;">Anterior</button>
-                <button type="button" class="btn btn-next" id="btnNext" onclick="changeStep(1)">Comenzar Test</button>
+                <button type="button" class="btn btn-next" id="btnNext" onclick="handleNextStep(event)">Comenzar Test</button>
             </div>
         </form>
     </div>
@@ -734,6 +756,18 @@
     <script>
         let currentStep = 0;
         const totalSteps = 6;
+
+        function handleNextStep(event) {
+            if (currentStep === totalSteps) {
+                return true;
+            }
+            
+            if (!validateCurrentStep(currentStep)) {
+                return; 
+            }
+
+            changeStep(1);
+        }
 
         function changeStep(direction) {
             if (direction > 0) {
@@ -774,7 +808,6 @@
             }
         }
 
-        // Función para mostrar el modal bonito en lugar del alert tradicional
         function showCustomModal(message) {
             document.getElementById('modalMessage').innerText = message;
             document.getElementById('customModal').classList.add('open');
@@ -784,25 +817,78 @@
             document.getElementById('customModal').classList.remove('open');
         }
 
-        // Habilitar o deshabilitar horarios de un día según se marque el checkbox
+        function checkRealisticRange(input, min, max) {
+            const val = parseFloat(input.value);
+            if (input.value !== '' && (isNaN(val) || val < min || val > max)) {
+                input.classList.add('is-invalid');
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        }
+
+        // Lógica optimizada y corregida para Marcar / Desmarcar todos los días
+        function toggleAllDays(masterCheckbox) {
+            const days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
+            const isChecked = masterCheckbox.checked;
+
+            days.forEach(day => {
+                const checkbox = document.getElementById(`check_${day}`);
+                const slotsContainer = document.getElementById(`slots_${day}`);
+                
+                if (checkbox) {
+                    checkbox.checked = isChecked;
+                }
+
+                if (slotsContainer) {
+                    const radios = slotsContainer.querySelectorAll('input[type="radio"]');
+                    if (isChecked) {
+                        slotsContainer.classList.add('enabled');
+                        let anyChecked = Array.from(radios).some(r => r.checked);
+                        if (!anyChecked && radios.length > 0) {
+                            radios[0].checked = true; // Selecciona "Mañana" por defecto
+                        }
+                    } else {
+                        slotsContainer.classList.remove('enabled');
+                        radios.forEach(r => r.checked = false);
+                    }
+                }
+            });
+        }
+
         function toggleDaySlots(day) {
             const checkbox = document.getElementById(`check_${day}`);
             const slotsContainer = document.getElementById(`slots_${day}`);
             
-            if (checkbox.checked) {
-                slotsContainer.classList.add('enabled');
-                // Seleccionar por defecto "mañana" al activar el día
-                const defaultRadio = document.getElementById(`${day.substring(0,3)}_m`);
-                if(defaultRadio) defaultRadio.checked = true;
-            } else {
-                slotsContainer.classList.remove('enabled');
-                // Limpiar selección de radios
+            if (checkbox && slotsContainer) {
                 const radios = slotsContainer.querySelectorAll('input[type="radio"]');
-                radios.forEach(r => r.checked = false);
+                if (checkbox.checked) {
+                    slotsContainer.classList.add('enabled');
+                    let anyChecked = Array.from(radios).some(r => r.checked);
+                    if (!anyChecked && radios.length > 0) {
+                        radios[0].checked = true;
+                    }
+                } else {
+                    slotsContainer.classList.remove('enabled');
+                    radios.forEach(r => r.checked = false);
+                }
+            }
+
+            updateMasterCheckboxState();
+        }
+
+        function updateMasterCheckboxState() {
+            const days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
+            const masterCheckbox = document.getElementById('check_all_days');
+            
+            if (masterCheckbox) {
+                const allChecked = days.every(day => {
+                    const cb = document.getElementById(`check_${day}`);
+                    return cb && cb.checked;
+                });
+                masterCheckbox.checked = allChecked;
             }
         }
 
-        // Validación paso a paso obligatoria
         function validateCurrentStep(step) {
             if (step === 1) {
                 const edad = document.getElementById('edad');
@@ -810,7 +896,32 @@
                 const altura = document.getElementById('altura');
 
                 if (!edad.value || !peso.value || !altura.value) {
-                    showCustomModal('Por favor, completa todos los campos de tus datos físicos base (edad, peso y altura).');
+                    showCustomModal('Por favor, completa todos los campos de tus datos físicos base.');
+                    return false;
+                }
+
+                const valEdad = parseFloat(edad.value);
+                const valPeso = parseFloat(peso.value);
+                const valAltura = parseFloat(altura.value);
+
+                if (valEdad < 10 || valEdad > 120) {
+                    edad.classList.add('is-invalid');
+                    showCustomModal('Por favor, ingresa una edad real (entre 10 y 120 años).');
+                    edad.focus();
+                    return false;
+                }
+
+                if (valPeso < 30 || valPeso > 300) {
+                    peso.classList.add('is-invalid');
+                    showCustomModal('Por favor, ingresa un peso real (entre 30 kg y 300 kg).');
+                    peso.focus();
+                    return false;
+                }
+
+                if (valAltura < 100 || valAltura > 250) {
+                    altura.classList.add('is-invalid');
+                    showCustomModal('Por favor, ingresa una altura real (entre 100 cm y 250 cm).');
+                    altura.focus();
                     return false;
                 }
             } 
@@ -820,9 +931,8 @@
 
                 for (let day of days) {
                     const checkbox = document.getElementById(`check_${day}`);
-                    if (checkbox.checked) {
+                    if (checkbox && checkbox.checked) {
                         selectedDaysCount++;
-                        // Verificar que tenga un turno seleccionado
                         const timeSelected = document.querySelector(`input[name="disponibilidad[${day}]"]:checked`);
                         if (!timeSelected) {
                             showCustomModal(`Selecciona el turno (mañana, tarde o noche) para el día ${day.charAt(0).toUpperCase() + day.slice(1)}.`);
