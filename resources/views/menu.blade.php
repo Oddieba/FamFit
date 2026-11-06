@@ -38,6 +38,11 @@
                 <small class="fq-muted">{{ 100 - $xpProgress }} XP para el nivel {{ $level + 1 }}</small>
             </div>
 
+            {{-- Botón al editor completo de avatares --}}
+            <a class="fq-button fq-button-primary" href="{{ route('avatar.editar') }}">
+                Editor de avatar <span aria-hidden="true">→</span>
+            </a>
+
             @if($avatarStorageAvailable)
                 <button class="fq-button fq-button-light fq-customize-toggle" type="button" data-toggle-panel="fqAvatarForm" aria-expanded="false">Personalizar avatar</button>
                 <form class="fq-customize-form" id="fqAvatarForm" action="{{ route('avatar.update') }}" method="POST" hidden>
@@ -110,7 +115,7 @@
                 </div>
                 <p class="fq-muted">Los logros se habilitarán cuando se incorpore el sistema de retos. Por ahora, cada ejercicio completado suma 10 XP.</p>
             </article>
-           
+
         </div>
     </section>
 @endsection
