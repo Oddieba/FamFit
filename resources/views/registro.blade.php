@@ -630,7 +630,7 @@
         </div>
         <h2 class="tarjeta__titulo" id="titulo-exito" tabindex="-1">¡Te damos la bienvenida!</h2>
         <p class="tarjeta__subtitulo">Tu cuenta está lista. Ya puedes comenzar a organizar tus rutinas y hábitos.</p>
-        <a class="boton boton--primario" href="{{ route('menu') }}">Continuar</a>
+        <a class="boton boton--primario" href="{{ route('test') }}">Continuar</a>
       </div>
     </section>
 
