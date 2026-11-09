@@ -82,6 +82,15 @@
                     </div>
                 @endif
 
+                                @if ($errors->any())
+                    <div style="color: red; margin-bottom: 10px;">
+                        @foreach ($errors->all() as $error)
+                            <p>{{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
+
+
                 <form action="{{ route('login.post') }}" method="post">
                     @csrf
                     <div class="grupo-input grupo-formulario">
@@ -99,7 +108,7 @@
                             autocomplete="email"
                             required
                         >
-                    </div>
+                     </div>  
 
                     <div class="grupo-input grupo-formulario">
                         <label class="etiqueta" for="contrasena">
