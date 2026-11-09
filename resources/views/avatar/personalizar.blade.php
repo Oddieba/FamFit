@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
-    <meta name="theme-color" content="#030712">
+    <meta name="theme-color" content="#F5F7FB">
 
     <title>Personalizar avatar | FamFit Quest</title>
     <script src="{{ asset('js/theme.js') }}"></script>

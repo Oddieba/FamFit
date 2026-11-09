@@ -1,6 +1,9 @@
 /* =========================================
-   FAMFIT QUEST - EDITOR DE AVATAR (tema oscuro)
-   Se apoya en estandares.css y redefine sus variables SOLO en esta página
+   FAMFIT QUEST - EDITOR DE AVATAR
+   Tema CLARO por defecto; el tema OSCURO se activa cuando la página
+   está en modo oscuro (el mismo interruptor de Configuración).
+   Todos los colores salen de variables, así que claro y oscuro
+   comparten exactamente el mismo diseño.
    ========================================= */
 
 /* 0. TOKENS DE MOVIMIENTO (curvas fuertes, no las de CSS por defecto) */
@@ -9,24 +12,122 @@
     --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-/* 0b. TEMA OSCURO: las variables de estandares.css se reemplazan dentro de esta página */
+/* 1. TEMA CLARO (por defecto) */
 body.avatar-pagina {
+    /* Variables que ya usa general.css: se redefinen solo dentro de esta página */
+    --fondo-principal: #F5F7FB;
+    --fondo-tarjetas: #FFFFFF;
+    --color-principal: #2864F0;
+    --texto-principal: #1F2937;
+    --texto-secundario: #64748B;
+    --borde: #E2E8F0;
+
+    /* Variables propias del editor */
+    --panel: #FFFFFF;
+    --superficie: #F8FAFC;
+    --tarjeta-opcion: #FFFFFF;
+    --azul-vivo: #2864F0;
+    --sombra-panel: 0 4px 16px rgba(15, 23, 42, 0.06);
+    --anillo: 0 0 0 1px rgba(15, 23, 42, 0.10);
+    --anillo-fuerte: 0 0 0 1px rgba(15, 23, 42, 0.26);
+
+    --escenario-fondo: radial-gradient(90% 60% at 50% 45%, rgba(40, 100, 240, 0.16), transparent 70%),
+                       linear-gradient(180deg, #E6EEFF 0%, #F8FAFF 100%);
+    --escenario-lineas: rgba(40, 100, 240, 0.08);
+    --lienzo-borde: rgba(40, 100, 240, 0.30);
+    --suelo: rgba(40, 100, 240, 0.25);
+
+    --seleccion-fondo: #EFF5FF;
+    --seleccion-brillo: 0 0 0 2px var(--color-principal), 0 4px 14px rgba(40, 100, 240, 0.18);
+    --imagen-brillo: rgba(40, 100, 240, 0.10);
+
+    --tab-activa: #2864F0;
+    --hover-nav: rgba(15, 23, 42, 0.04);
+    --oscurecer-icono: 32%;
+
+    --riel: rgba(15, 23, 42, 0.14);
+    --thumb-sombra: 0 0 0 2px var(--color-principal), 0 1px 4px rgba(15, 23, 42, 0.3);
+    --muestra-inset: inset 0 0 0 1px rgba(15, 23, 42, 0.14);
+    --caja-fondo: #F8FAFC;
+    --foco: rgba(40, 100, 240, 0.55);
+
+    --boton-fondo: linear-gradient(90deg, #2864F0 0%, #4A8CFF 100%);
+    --boton-sombra: 0 8px 20px rgba(40, 100, 240, 0.30), inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+
+    --exito-texto: #365314;
+    --exito-fondo: #F0FCE4;
+    --exito-borde: #D9F7B5;
+    --error-texto: #991B1B;
+    --error-fondo: #FEF2F2;
+    --error-borde: #FECACA;
+
+    color-scheme: light;
+}
+
+/* 2. TEMA OSCURO (diseño del mockup).
+   Cubre las formas habituales de marcar el modo oscuro en <html> o <body>.
+   Si tu theme.js usa otra, agrega aquí su selector. */
+html body.avatar-pagina.dark,
+html.dark body.avatar-pagina,
+html[data-theme="dark"] body.avatar-pagina,
+html[data-tema="oscuro"] body.avatar-pagina,
+html[data-bs-theme="dark"] body.avatar-pagina,
+body.avatar-pagina[data-theme="dark"],
+body.avatar-pagina[data-tema="oscuro"] {
     --fondo-principal: #030712;
     --fondo-tarjetas: #0A1430;
-    --color-principal: #2F6BFF;
     --texto-principal: #F1F5FF;
     --texto-secundario: #8FA3C7;
     --borde: rgba(148, 177, 255, 0.14);
-    --sombra: none;
+    --color-principal: #2F6BFF;
 
     --panel: #050D1F;
-    --panel-claro: #0A1530;
+    --superficie: rgba(255, 255, 255, 0.03);
+    --tarjeta-opcion: #0A1530;
     --azul-vivo: #1F63FF;
+    --sombra-panel: none;
     --anillo: 0 0 0 1px rgba(148, 177, 255, 0.14);
     --anillo-fuerte: 0 0 0 1px rgba(148, 177, 255, 0.36);
 
-    margin: 0;
+    --escenario-fondo: radial-gradient(90% 60% at 50% 45%, rgba(47, 107, 255, 0.20), transparent 70%),
+                       linear-gradient(180deg, #081631 0%, #040A1B 100%);
+    --escenario-lineas: rgba(120, 160, 255, 0.07);
+    --lienzo-borde: rgba(148, 177, 255, 0.25);
+    --suelo: rgba(20, 200, 220, 0.35);
+
+    --seleccion-fondo: #0B1A3C;
+    --seleccion-brillo: 0 0 0 2px var(--color-principal), 0 0 22px rgba(47, 107, 255, 0.28);
+    --imagen-brillo: rgba(47, 107, 255, 0.18);
+
+    --tab-activa: #FFFFFF;
+    --hover-nav: rgba(255, 255, 255, 0.07);
+    --oscurecer-icono: 0%;
+
+    --riel: rgba(148, 177, 255, 0.2);
+    --thumb-sombra: 0 1px 6px rgba(0, 0, 0, 0.5);
+    --muestra-inset: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+    --caja-fondo: rgba(255, 255, 255, 0.02);
+    --foco: rgba(110, 160, 255, 0.85);
+
+    --boton-fondo: linear-gradient(90deg, #0A5CF5 0%, #2FA3FF 100%);
+    --boton-sombra: 0 8px 24px rgba(31, 99, 255, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+
+    --exito-texto: #B8F7D0;
+    --exito-fondo: rgba(34, 197, 94, 0.14);
+    --exito-borde: rgba(34, 197, 94, 0.35);
+    --error-texto: #FECACA;
+    --error-fondo: rgba(220, 38, 38, 0.14);
+    --error-borde: rgba(220, 38, 38, 0.4);
+
     color-scheme: dark;
+}
+
+/* 3. BASE */
+html body.avatar-pagina {
+    margin: 0;
+    color: var(--texto-principal);
+    background: var(--fondo-principal);
+    transition: background-color 0.3s, color 0.3s;
 }
 
 html {
@@ -35,7 +136,7 @@ html {
 }
 
 .avatar-pagina :focus-visible {
-    outline-color: rgba(110, 160, 255, 0.85);
+    outline-color: var(--foco);
 }
 
 .avatar-pagina a,
@@ -56,19 +157,7 @@ html {
     -webkit-touch-callout: none;
 }
 
-.solo-lectores {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    border: 0;
-    clip: rect(0 0 0 0);
-}
-
-/* 1. DISPOSICIÓN: menú lateral + escenario + panel */
+/* 4. DISPOSICIÓN: menú lateral + escenario + panel */
 .avatar-app {
     display: grid;
     grid-template-columns: 104px minmax(0, 1fr) minmax(0, 1.2fr);
@@ -81,7 +170,7 @@ html {
              max(16px, env(safe-area-inset-left, 0px));
 }
 
-/* 2. MENÚ LATERAL */
+/* 5. MENÚ LATERAL */
 .barra-lateral {
     display: flex;
     flex-direction: column;
@@ -92,6 +181,7 @@ html {
     background: var(--panel);
     border: 1px solid var(--borde);
     border-radius: 22px;
+    box-shadow: var(--sombra-panel);
 }
 
 .logo-lateral {
@@ -100,10 +190,14 @@ html {
     justify-content: center;
     gap: 4px;
     margin-bottom: 10px;
-    color: #FFFFFF;
+    color: var(--texto-principal);
     font-size: 17px;
     font-weight: 800;
     letter-spacing: -0.02em;
+}
+
+.logo-lateral:hover {
+    color: var(--texto-principal);
 }
 
 .logo-lateral svg {
@@ -118,7 +212,7 @@ html {
     align-items: center;
     gap: 6px;
     padding: 12px 2px 10px;
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--superficie);
     border-radius: 14px;
     box-shadow: var(--anillo);
     font-size: 11px;
@@ -137,14 +231,18 @@ html {
 .nav-item svg {
     width: 26px;
     height: 26px;
-    color: var(--icono, #8FA3C7);
+    color: var(--icono, #64748B);
+    /* En tema claro el color se oscurece un poco para que se lea sobre fondo blanco */
+    color: color-mix(in srgb, var(--icono, #64748B) calc(100% - var(--oscurecer-icono)), #000 var(--oscurecer-icono));
 }
 
 .nav-item:active {
     transform: scale(0.97);
 }
 
-.nav-item.activo {
+.nav-item.activo,
+.nav-item.activo:hover {
+    color: #FFFFFF;
     background: var(--azul-vivo);
     box-shadow: none;
 }
@@ -157,7 +255,7 @@ html {
     margin-top: auto;
 }
 
-/* 3. ESCENARIO DEL AVATAR */
+/* 6. ESCENARIO DEL AVATAR */
 .escenario {
     position: relative;
     display: flex;
@@ -165,10 +263,10 @@ html {
     min-height: 0;
     padding: 16px;
     overflow: hidden;
-    background: radial-gradient(90% 60% at 50% 45%, rgba(47, 107, 255, 0.20), transparent 70%),
-                linear-gradient(180deg, #081631 0%, #040A1B 100%);
+    background: var(--escenario-fondo);
     border: 1px solid var(--borde);
     border-radius: 22px;
+    box-shadow: var(--sombra-panel);
 }
 
 /* Líneas geométricas sutiles de fondo */
@@ -177,8 +275,8 @@ html {
     position: absolute;
     inset: 0;
     background:
-        linear-gradient(135deg, transparent 0 48%, rgba(120, 160, 255, 0.07) 48% 48.2%, transparent 48.2% 100%),
-        linear-gradient(45deg, transparent 0 62%, rgba(120, 160, 255, 0.06) 62% 62.2%, transparent 62.2% 100%);
+        linear-gradient(135deg, transparent 0 48%, var(--escenario-lineas) 48% 48.2%, transparent 48.2% 100%),
+        linear-gradient(45deg, transparent 0 62%, var(--escenario-lineas) 62% 62.2%, transparent 62.2% 100%);
     pointer-events: none;
 }
 
@@ -192,7 +290,7 @@ html {
     min-height: 0;
     padding: 16px;
     color: var(--texto-secundario);
-    border: 2px dashed rgba(148, 177, 255, 0.25);
+    border: 2px dashed var(--lienzo-borde);
     border-radius: 18px;
     font-size: 14px;
     text-align: center;
@@ -206,12 +304,12 @@ html {
     left: 50%;
     width: 60%;
     height: 30px;
-    background: radial-gradient(closest-side, rgba(20, 200, 220, 0.35), transparent);
+    background: radial-gradient(closest-side, var(--suelo), transparent);
     transform: translateX(-50%);
     pointer-events: none;
 }
 
-/* 4. PANEL DE PERSONALIZACIÓN */
+/* 7. PANEL DE PERSONALIZACIÓN */
 .editor {
     display: flex;
     flex-direction: column;
@@ -221,6 +319,7 @@ html {
     background: var(--panel);
     border: 1px solid var(--borde);
     border-radius: 22px;
+    box-shadow: var(--sombra-panel);
 }
 
 .editor-titulo {
@@ -238,15 +337,15 @@ html {
 }
 
 .aviso-exito {
-    color: #B8F7D0;
-    background: rgba(34, 197, 94, 0.14);
-    box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.35);
+    color: var(--exito-texto);
+    background: var(--exito-fondo);
+    box-shadow: 0 0 0 1px var(--exito-borde);
 }
 
 .aviso-error {
-    color: #FECACA;
-    background: rgba(220, 38, 38, 0.14);
-    box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.4);
+    color: var(--error-texto);
+    background: var(--error-fondo);
+    box-shadow: 0 0 0 1px var(--error-borde);
 }
 
 .lista-errores {
@@ -254,7 +353,7 @@ html {
     padding-left: 20px;
 }
 
-/* 4b. PESTAÑAS (radios ocultos + labels) */
+/* 7b. PESTAÑAS (radios ocultos + labels) */
 .pestana-radio,
 .subpestana-radio {
     position: absolute;
@@ -313,7 +412,7 @@ html {
 #tab-ropa:checked ~ .editor-pestanas label[for="tab-ropa"],
 #tab-accesorios:checked ~ .editor-pestanas label[for="tab-accesorios"],
 #tab-colores:checked ~ .editor-pestanas label[for="tab-colores"] {
-    color: #FFFFFF;
+    color: var(--tab-activa);
 }
 
 #tab-cabello:checked ~ .editor-pestanas label[for="tab-cabello"]::after,
@@ -329,19 +428,19 @@ html {
 #tab-ropa:focus-visible ~ .editor-pestanas label[for="tab-ropa"],
 #tab-accesorios:focus-visible ~ .editor-pestanas label[for="tab-accesorios"],
 #tab-colores:focus-visible ~ .editor-pestanas label[for="tab-colores"] {
-    outline: 3px solid rgba(110, 160, 255, 0.85);
+    outline: 3px solid var(--foco);
     outline-offset: -3px;
     border-radius: 8px;
 }
 
-/* 4c. PANELES (scroll propio: el botón Guardar siempre queda visible) */
+/* 7c. PANELES (scroll propio: el botón Guardar siempre queda visible) */
 .editor-panel {
     display: none;
     min-height: 0;
     padding: 4px 8px 4px 2px;
     overflow-y: auto;
     overscroll-behavior: contain;
-    scrollbar-color: rgba(148, 177, 255, 0.3) transparent;
+    scrollbar-color: var(--riel) transparent;
     scrollbar-width: thin;
 }
 
@@ -367,7 +466,7 @@ html {
     }
 }
 
-/* 5. SUBPESTAÑAS DE LA ROPA (superior / inferior / calzado) */
+/* 8. SUBPESTAÑAS DE LA ROPA (superior / inferior / calzado) */
 .subpestanas {
     position: sticky;
     top: -4px;
@@ -383,7 +482,7 @@ html {
     flex: 1;
     padding: 8px 12px;
     color: var(--texto-secundario);
-    background: var(--panel-claro);
+    background: var(--tarjeta-opcion);
     border-radius: 999px;
     box-shadow: var(--anillo);
     font-size: 14px;
@@ -409,7 +508,7 @@ html {
 #sub-superior:focus-visible ~ .subpestanas label[for="sub-superior"],
 #sub-inferior:focus-visible ~ .subpestanas label[for="sub-inferior"],
 #sub-calzado:focus-visible ~ .subpestanas label[for="sub-calzado"] {
-    outline: 3px solid rgba(110, 160, 255, 0.85);
+    outline: 3px solid var(--foco);
     outline-offset: 2px;
 }
 
@@ -433,7 +532,7 @@ html {
     }
 }
 
-/* 6. GRUPOS (fieldset + legend) */
+/* 9. GRUPOS (fieldset + legend) */
 .editor-grupo {
     min-width: 0;
     margin: 0 0 20px;
@@ -457,12 +556,12 @@ html {
 /* Grupo dentro de una caja tenue (paleta, ajustes), como en el diseño */
 .editor-grupo.caja {
     padding: 16px 18px 12px;
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--caja-fondo);
     border-radius: 16px;
     box-shadow: var(--anillo);
 }
 
-/* 7. OPCIONES (tarjetas seleccionables: radio o checkbox) */
+/* 10. OPCIONES (tarjetas seleccionables: radio o checkbox) */
 .opciones {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -489,7 +588,7 @@ html {
     gap: 8px;
     height: 100%;
     padding: 10px 12px 12px;
-    background: var(--panel-claro);
+    background: var(--tarjeta-opcion);
     border-radius: 14px;
     box-shadow: var(--anillo);
     transition: transform 160ms var(--ease-out), box-shadow 150ms ease,
@@ -517,7 +616,7 @@ html {
     justify-content: center;
     aspect-ratio: 16 / 10;
     overflow: hidden;
-    background: radial-gradient(70% 70% at 50% 40%, rgba(47, 107, 255, 0.18), transparent 75%);
+    background: radial-gradient(70% 70% at 50% 40%, var(--imagen-brillo), transparent 75%);
     border-radius: 10px;
     font-size: 34px;
 }
@@ -542,8 +641,8 @@ html {
 }
 
 .opcion input:checked + .opcion-tarjeta {
-    background: #0B1A3C;
-    box-shadow: 0 0 0 2px var(--color-principal), 0 0 22px rgba(47, 107, 255, 0.28);
+    background: var(--seleccion-fondo);
+    box-shadow: var(--seleccion-brillo);
 }
 
 .opcion input:checked + .opcion-tarjeta::after {
@@ -552,7 +651,7 @@ html {
 }
 
 .opcion input:focus-visible + .opcion-tarjeta {
-    outline: 3px solid rgba(110, 160, 255, 0.85);
+    outline: 3px solid var(--foco);
     outline-offset: 2px;
 }
 
@@ -581,7 +680,7 @@ html {
     margin-top: -10px;
 }
 
-/* 8. PALETA DE COLORES */
+/* 11. PALETA DE COLORES */
 .paleta {
     display: flex;
     flex-wrap: wrap;
@@ -615,7 +714,7 @@ html {
     height: 52px;
     background: var(--muestra);
     border-radius: 50%;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), 0 0 0 0 transparent;
+    box-shadow: var(--muestra-inset), 0 0 0 0 transparent;
     transition: transform 160ms var(--ease-out), box-shadow 150ms ease;
 }
 
@@ -624,7 +723,7 @@ html {
 }
 
 .muestra input:checked + .muestra-circulo {
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), 0 0 0 3px var(--panel), 0 0 0 5px #FFFFFF;
+    box-shadow: var(--muestra-inset), 0 0 0 3px var(--panel), 0 0 0 5px var(--texto-principal);
 }
 
 .muestra input:checked ~ .muestra-nombre {
@@ -632,11 +731,11 @@ html {
 }
 
 .muestra input:focus-visible + .muestra-circulo {
-    outline: 3px solid rgba(110, 160, 255, 0.85);
+    outline: 3px solid var(--foco);
     outline-offset: 7px;
 }
 
-/* 9. DESLIZADORES */
+/* 12. DESLIZADORES */
 .ajuste {
     display: grid;
     grid-template-columns: 150px minmax(0, 1fr) 48px;
@@ -670,7 +769,7 @@ html {
 
 .deslizador::-webkit-slider-runnable-track {
     height: 6px;
-    background: linear-gradient(to right, var(--color-principal) var(--v, 50%), rgba(148, 177, 255, 0.2) var(--v, 50%));
+    background: linear-gradient(to right, var(--color-principal) var(--v, 50%), var(--riel) var(--v, 50%));
     border-radius: 3px;
 }
 
@@ -681,14 +780,14 @@ html {
     background: #FFFFFF;
     border: 0;
     border-radius: 50%;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--thumb-sombra);
     -webkit-appearance: none;
     appearance: none;
 }
 
 .deslizador::-moz-range-track {
     height: 6px;
-    background: rgba(148, 177, 255, 0.2);
+    background: var(--riel);
     border-radius: 3px;
 }
 
@@ -704,10 +803,10 @@ html {
     background: #FFFFFF;
     border: 0;
     border-radius: 50%;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--thumb-sombra);
 }
 
-/* 10. BOTÓN GUARDAR (siempre a la vista) */
+/* 13. BOTÓN GUARDAR (siempre a la vista) */
 .editor-acciones {
     margin-top: 16px;
 }
@@ -719,10 +818,10 @@ html {
     min-height: 54px;
     padding: 12px 20px;
     color: #FFFFFF;
-    background: linear-gradient(90deg, #0A5CF5 0%, #2FA3FF 100%);
+    background: var(--boton-fondo);
     border: 0;
     border-radius: 14px;
-    box-shadow: 0 8px 24px rgba(31, 99, 255, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+    box-shadow: var(--boton-sombra);
     font: inherit;
     font-size: 18px;
     font-weight: 700;
@@ -758,19 +857,19 @@ html {
     transform: none;
 }
 
-/* 11. HOVER: solo en dispositivos con mouse (en táctiles se queda "pegado") */
+/* 14. HOVER: solo en dispositivos con mouse (en táctiles se queda "pegado") */
 @media (hover: hover) and (pointer: fine) {
     .nav-item:not(.activo):hover {
-        background: rgba(255, 255, 255, 0.07);
+        background: var(--hover-nav);
         box-shadow: var(--anillo-fuerte);
     }
 
     .editor-pestanas label:hover {
-        color: #FFFFFF;
+        color: var(--tab-activa);
     }
 
     .subpestanas label:hover {
-        color: #FFFFFF;
+        color: var(--texto-principal);
         box-shadow: var(--anillo-fuerte);
     }
 
@@ -778,8 +877,13 @@ html {
         box-shadow: var(--anillo-fuerte);
     }
 
+    .opcion input:checked + .opcion-tarjeta:hover,
+    .opcion:hover input:checked + .opcion-tarjeta {
+        box-shadow: var(--seleccion-brillo);
+    }
+
     .muestra:hover .muestra-circulo {
-        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), 0 0 0 3px rgba(255, 255, 255, 0.18);
+        box-shadow: var(--muestra-inset), 0 0 0 3px var(--riel);
     }
 
     .btn-guardar:hover {
@@ -787,7 +891,7 @@ html {
     }
 }
 
-/* 12. RESPONSIVE */
+/* 15. RESPONSIVE */
 @media (max-width: 1100px) {
     .editor {
         padding: 20px;
@@ -888,7 +992,7 @@ html {
     }
 }
 
-/* 13. MOVIMIENTO REDUCIDO: se mantiene la opacidad, se quita el desplazamiento */
+/* 16. MOVIMIENTO REDUCIDO: se mantiene la opacidad, se quita el desplazamiento */
 @media (prefers-reduced-motion: reduce) {
     .editor-panel,
     .subpanel {
