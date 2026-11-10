@@ -32,13 +32,20 @@ Route::post('/login', function (Request $request) {
         'email' => ['required', 'email'],
         'password' => ['required'],
     ]);
+            // 2. Intentamos iniciar sesión
+           if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            
+            // 🔥 AQUÍ ESTÁ LA MAGIA 🔥
+            // Preguntamos: ¿Este usuario ya tiene un test guardado?
+            if (!Auth::user()->currentAssessment) {
+                // Si NO tiene, es su primera vez. Lo mandamos a hacer el test.
+                return redirect()->intended(route('onboarding')); 
+            }
 
-    // 2. Intentamos iniciar sesión
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
-        return redirect()->intended(route('test')); // Si funciona, va al test
-    }
-
+            // Si SÍ tiene test, lo mandamos directo al menú principal.
+            return redirect()->intended(route('menu'));
+        }
     // 3. Si falla, regresa con error
     return back()->withErrors([
         'email' => 'El correo o la contraseña son incorrectos.',
@@ -165,7 +172,14 @@ Route::middleware('auth')->group(function () {
         return view('test');
     })->name('test');
 
-    Route::get('/onboarding', [OnboardingController::class, 'index'])->name('onboarding');
+     // Rutas protegidas para que no repita el test
+    Route::get('/onboarding', function () {
+        if (Auth::user()->currentAssessment) {
+            return redirect()->route('menu')->with('info', 'Ya completaste el test inicial.');
+        }
+        return app(OnboardingController::class)->index();
+    })->name('onboarding');
+    
     Route::post('/onboarding/guardar', [OnboardingController::class, 'store'])->name('onboarding.guardar');
 
     // Eliminar cuenta

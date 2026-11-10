@@ -13,7 +13,7 @@ class OnboardingController extends Controller
         return view('test');
     }
 
-    public function store(Request $request)
+      public function store(Request $request)
     {
         $request->validate([
             'edad' => 'required|integer',
@@ -24,11 +24,11 @@ class OnboardingController extends Controller
             'experiencia_ejercicio' => 'required|string',
         ]);
         
-        // Le indicamos explícitamente al editor el tipo de modelo
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        if ($user) {
+               if ($user) {
+            // 1. Guardar en el Perfil
             $user->profile()->updateOrCreate(
                 ['user_id' => $user->id],
                 [
@@ -43,6 +43,35 @@ class OnboardingController extends Controller
                     'injury_description' => $request->descripcion_lesion,
                 ]
             );
+
+            // 2. Traducir las respuestas para la tabla initial_assessments
+            $objetivoTraducido = match($request->objetivo) {
+                'ganar_musculo' => 'strength',
+                'perder_grasa' => 'endurance',
+                'resistencia' => 'endurance',
+                'flexibilidad' => 'mobility',
+                default => 'general_fitness',
+            };
+
+            $experienciaTraducida = match($request->experiencia_ejercicio) {
+                'principiante' => 'beginner',
+                'intermedio' => 'intermediate',
+                'avanzado' => 'advanced',
+                default => 'unsure',
+            };
+
+            // 3. PRIMERO: Desmarcar tests anteriores
+            $user->initialAssessments()->update(['is_current' => false]);
+
+            // 4. SEGUNDO: Crear el nuevo test con los datos YA traducidos
+            $user->initialAssessments()->create([
+                'questionnaire_version' => '1.0',
+                'main_goal'             => $objetivoTraducido, 
+                'experience_level'      => $experienciaTraducida, 
+                'answers'               => $request->all(), 
+                'is_current'            => true,
+                'completed_at'          => now(),
+            ]);
         }
        
         return redirect()->route('menu')->with('status', '¡Perfil configurado con éxito!');

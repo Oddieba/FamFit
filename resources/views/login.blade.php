@@ -88,13 +88,6 @@
                     </div>
                 @endif
 
-                                @if ($errors->any())
-                    <div style="color: red; margin-bottom: 10px;">
-                        @foreach ($errors->all() as $error)
-                            <p>{{ $error }}</p>
-                        @endforeach
-                    </div>
-                @endif
 
 
                 <form action="{{ route('login.post') }}" method="post">
