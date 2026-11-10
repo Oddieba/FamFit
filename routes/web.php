@@ -6,6 +6,7 @@ use App\Http\Controllers\OnboardingController;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
-
+use App\Http\Controllers\Auth\PasswordResetController;
 /*
 |--------------------------------------------------------------------------
 | Rutas Públicas (No requieren iniciar sesión)
@@ -62,28 +63,11 @@ Route::post('/registro', [RegisteredUserController::class, 'store'])
     ->name('registro.store');
 
 // Recuperar contraseña
-Route::get('/olv_contra', function () {
-    return view('olv_contra');
-})->name('olv_contra');
+Route::get('/forgot-password', function () {
+    return view('forgot-password');
+})->name('forgot-password');
 
-Route::post('/forgot-password', function (Request $request) {
-    $request->validate([
-        'email' => ['required', 'email'],
-    ]);
 
-    $status = Password::sendResetLink($request->only('email'));
-
-    if ($status === Password::RESET_THROTTLED) {
-        return redirect()->route('olv_contra')->withErrors([
-            'email' => __($status),
-        ]);
-    }
-
-    return redirect()->route('olv_contra')->with(
-        'status',
-        'Si existe una cuenta con ese correo, recibirás un enlace para restablecer tu contraseña.'
-    );
-})->name('password.email');
 
 // Mostrar formulario de restablecimiento
 Route::get('/reset-password/{token}', function (string $token, Request $request) {
@@ -193,3 +177,18 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('login');
     })->name('cuenta.destroy');
 });
+Route::get('/forgot-password', [PasswordResetController::class, 'create'])
+    ->name('password.request');
+
+Route::post('/forgot-password', [PasswordResetController::class, 'store'])
+    ->name('password.email');
+
+Route::get('/reset-password/{token}', [
+    PasswordResetController::class,
+    'edit'
+])->name('password.reset');
+
+Route::post('/reset-password', [
+    PasswordResetController::class,
+    'update'
+])->name('password.update');
