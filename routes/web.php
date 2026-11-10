@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use App\Http\Controllers\AvatarController;
 
 /*
 |--------------------------------------------------------------------------
@@ -193,3 +194,11 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('login');
     })->name('cuenta.destroy');
 });
+
+Route::get('/avatar', [AvatarController::class, 'editar'])
+    ->middleware(['auth'])
+    ->name('avatar.editar');
+
+Route::post('/avatar', [AvatarController::class, 'guardar'])
+    ->middleware(['auth'])
+    ->name('avatar.guardar');
