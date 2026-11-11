@@ -7,13 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-
+use App\Http\Controllers\Auth\RegisteredUserController;
 class PasswordResetController extends Controller
 {
     // Mostrar formulario para solicitar recuperación
     public function create()
     {
-        return view('auth.forgot-password');
+        return view('forgot-password');
     }
 
     // Enviar enlace al correo

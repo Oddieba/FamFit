@@ -145,7 +145,7 @@
                             Recordarme
                         </label>
 
-                        <a href="{{ route('olv_contra') }}">¿Olvidaste tu contraseña?</a>
+                        <a href="{{ route('password.request') }}">¿Olvidaste tu contraseña?</a>
 
                     </div>
 
