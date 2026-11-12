@@ -9,9 +9,13 @@ use App\Models\Profile;            // Soluciona el error de la clase Profile
 class OnboardingController extends Controller
 {
     public function index()
-    {
-        return view('test');
-    }
+{
+    // Buscamos el perfil del usuario actual (si es que tiene)
+    $perfil = Auth::user()->profile;
+    
+    // Enviamos ese perfil a la vista
+    return view('test', compact('perfil'));
+}
 
       public function store(Request $request)
     {

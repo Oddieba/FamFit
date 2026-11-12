@@ -48,407 +48,76 @@
         }
 
         /* --- BARRA DE PROGRESO --- */
-        .progress-header {
-            margin-bottom: 28px;
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: var(--primary-blue);
-        }
-
-        .progress-bar-bg {
-            background-color: #E9ECEF;
-            height: 10px;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            background: linear-gradient(90deg, var(--primary-blue), var(--accent-teal));
-            height: 100%;
-            width: 0%; 
-            border-radius: 10px;
-            transition: width 0.4s ease;
-        }
+        .progress-header { margin-bottom: 28px; }
+        .progress-info { display: flex; justify-content: space-between; align-items: center; font-weight: 700; margin-bottom: 10px; color: var(--primary-blue); }
+        .progress-bar-bg { background-color: #E9ECEF; height: 10px; border-radius: 10px; overflow: hidden; }
+        .progress-bar-fill { background: linear-gradient(90deg, var(--primary-blue), var(--accent-teal)); height: 100%; width: 0%; border-radius: 10px; transition: width 0.4s ease; }
 
         /* --- PASOS DEL CUESTIONARIO --- */
-        .wizard-step {
-            display: none;
-            animation: fadeIn 0.4s ease-in-out;
-        }
-
-        .wizard-step.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .step-title {
-            font-size: 1.35rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: var(--text-dark);
-            text-align: center;
-        }
-
-        .step-subtitle {
-            font-size: 0.9rem;
-            color: var(--text-gray);
-            margin-bottom: 24px;
-            text-align: center;
-        }
-
-        .welcome-hero {
-            text-align: center;
-            padding: 10px 0;
-        }
-
-        .welcome-hero i {
-            font-size: 3.5rem;
-            color: var(--primary-blue);
-            margin-bottom: 16px;
-        }
+        .wizard-step { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .wizard-step.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .step-title { font-size: 1.35rem; font-weight: 700; margin-bottom: 8px; color: var(--text-dark); text-align: center; }
+        .step-subtitle { font-size: 0.9rem; color: var(--text-gray); margin-bottom: 24px; text-align: center; }
+        .welcome-hero { text-align: center; padding: 10px 0; }
+        .welcome-hero i { font-size: 3.5rem; color: var(--primary-blue); margin-bottom: 16px; }
 
         /* --- GRID Y TARJETAS DE OPCIONES --- */
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .options-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .option-card {
-            border: 2px solid #E9ECEF;
-            border-radius: 16px;
-            padding: 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: var(--white);
-        }
-
-        .option-card i {
-            font-size: 1.6rem;
-            color: var(--primary-blue);
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .option-card span {
-            font-weight: 600;
-            font-size: 0.88rem;
-        }
-
-        .option-row {
-            border: 2px solid #E9ECEF;
-            border-radius: 14px;
-            padding: 14px 18px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: var(--white);
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-        }
-
-        .option-row i {
-            font-size: 1.2rem;
-            color: var(--primary-blue);
-            margin-top: 2px;
-        }
-
-        .option-row-content strong {
-            display: block;
-            font-size: 0.95rem;
-            margin-bottom: 2px;
-            color: var(--text-dark);
-        }
-
-        .option-row-content p {
-            font-size: 0.82rem;
-            color: var(--text-gray);
-            margin: 0;
-        }
-
-        .option-card.selected, .option-row.selected {
-            border-color: var(--primary-blue);
-            background-color: #F0F5FF;
-            box-shadow: 0 4px 12px rgba(40, 100, 240, 0.12);
-        }
+        .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .options-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .option-card { border: 2px solid #E9ECEF; border-radius: 16px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.2s ease; background: var(--white); }
+        .option-card i { font-size: 1.6rem; color: var(--primary-blue); margin-bottom: 8px; display: block; }
+        .option-card span { font-weight: 600; font-size: 0.88rem; }
+        .option-row { border: 2px solid #E9ECEF; border-radius: 14px; padding: 14px 18px; cursor: pointer; transition: all 0.2s ease; background: var(--white); display: flex; align-items: flex-start; gap: 12px; }
+        .option-row i { font-size: 1.2rem; color: var(--primary-blue); margin-top: 2px; }
+        .option-row-content strong { display: block; font-size: 0.95rem; margin-bottom: 2px; color: var(--text-dark); }
+        .option-row-content p { font-size: 0.82rem; color: var(--text-gray); margin: 0; }
+        .option-card.selected, .option-row.selected { border-color: var(--primary-blue); background-color: #F0F5FF; box-shadow: 0 4px 12px rgba(40, 100, 240, 0.12); }
 
         /* --- FORMULARIOS E INPUTS --- */
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: 2px solid #E9ECEF;
-            font-size: 0.95rem;
-            outline: none;
-            transition: border-color 0.2s, background-color 0.2s;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-blue);
-        }
-
-        .form-control.is-invalid {
-            border-color: var(--error-red) !important;
-            background-color: #FFF5F5;
-        }
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; }
+        .form-control { width: 100%; padding: 12px 16px; border-radius: 12px; border: 2px solid #E9ECEF; font-size: 0.95rem; outline: none; transition: border-color 0.2s, background-color 0.2s; }
+        .form-control:focus { border-color: var(--primary-blue); }
+        .form-control.is-invalid { border-color: var(--error-red) !important; background-color: #FFF5F5; }
 
         /* --- MATRIZ DE DISPONIBILIDAD BLOQUEABLE --- */
-        .schedule-matrix {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 10px;
-            max-height: 340px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        .schedule-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--soft-bg);
-            padding: 10px 14px;
-            border-radius: 12px;
-            border: 1px solid #E0E5F2;
-        }
-
-        .schedule-row.header-row {
-            background: #E8EEFF;
-            border-color: #D0E1FF;
-        }
-
-        .day-toggle-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 140px;
-        }
-
-        .day-checkbox {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--primary-blue);
-            cursor: pointer;
-        }
-
-        .day-name {
-            font-weight: 700;
-            font-size: 0.88rem;
-            color: var(--text-dark);
-            cursor: pointer;
-        }
-
-        .time-slots {
-            display: flex;
-            gap: 6px;
-            opacity: 0.3;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .time-slots.enabled {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .slot-radio {
-            display: none;
-        }
-
-        .slot-label {
-            padding: 6px 10px;
-            border-radius: 8px;
-            border: 1px solid #E0E5F2;
-            background: white;
-            font-size: 0.78rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .slot-radio:checked + .slot-label {
-            background: var(--accent-green);
-            color: #1A3E00;
-            border-color: var(--accent-green);
-        }
-
-        .injury-details-container {
-            display: none;
-            margin-top: 12px;
-            animation: fadeIn 0.3s ease;
-        }
+        .schedule-matrix { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; max-height: 340px; overflow-y: auto; padding-right: 5px; }
+        .schedule-row { display: flex; align-items: center; justify-content: space-between; background: var(--soft-bg); padding: 10px 14px; border-radius: 12px; border: 1px solid #E0E5F2; }
+        .schedule-row.header-row { background: #E8EEFF; border-color: #D0E1FF; }
+        .day-toggle-container { display: flex; align-items: center; gap: 10px; width: 140px; }
+        .day-checkbox { width: 18px; height: 18px; accent-color: var(--primary-blue); cursor: pointer; }
+        .day-name { font-weight: 700; font-size: 0.88rem; color: var(--text-dark); cursor: pointer; }
+        .time-slots { display: flex; gap: 6px; opacity: 0.3; pointer-events: none; transition: opacity 0.3s ease; }
+        .time-slots.enabled { opacity: 1; pointer-events: auto; }
+        .slot-radio { display: none; }
+        .slot-label { padding: 6px 10px; border-radius: 8px; border: 1px solid #E0E5F2; background: white; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 4px; }
+        .slot-radio:checked + .slot-label { background: var(--accent-green); color: #1A3E00; border-color: var(--accent-green); }
+        .injury-details-container { display: none; margin-top: 12px; animation: fadeIn 0.3s ease; }
 
         /* --- BOTONES DE NAVEGACIÓN --- */
-        .wizard-buttons {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 24px;
-        }
+        .wizard-buttons { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
+        .btn { padding: 12px 24px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; }
+        .btn-prev { background: #E9ECEF; color: var(--text-dark); }
+        .btn-next { background: var(--primary-blue); color: var(--white); box-shadow: 0 4px 12px rgba(40, 100, 240, 0.3); }
+        .btn-next:hover { background: #1B52D8; }
 
-        .btn {
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-prev {
-            background: #E9ECEF;
-            color: var(--text-dark);
-        }
-
-        .btn-next {
-            background: var(--primary-blue);
-            color: var(--white);
-            box-shadow: 0 4px 12px rgba(40, 100, 240, 0.3);
-        }
-
-        .btn-next:hover {
-            background: #1B52D8;
-        }
-
-        .reward-card {
-            text-align: center;
-            padding: 20px 0;
-        }
-
-        .reward-icon {
-            font-size: 4rem;
-            color: #FFC107;
-            margin-bottom: 16px;
-            animation: bounce 1s infinite alternate;
-        }
-
-        @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-10px); }
-        }
+        /* --- RECOMPENSA --- */
+        .reward-card { text-align: center; padding: 20px 0; }
+        .reward-icon { font-size: 4rem; color: #FFC107; margin-bottom: 16px; animation: bounce 1s infinite alternate; }
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
 
         /* --- MODAL BONITO CON CSS --- */
-        .custom-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(43, 54, 116, 0.4);
-            backdrop-filter: blur(4px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .custom-modal-overlay.open {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .custom-modal-box {
-            background: var(--white);
-            border-radius: 20px;
-            width: 90%;
-            max-width: 380px;
-            padding: 28px;
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            transform: scale(0.8);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .custom-modal-overlay.open .custom-modal-box {
-            transform: scale(1);
-        }
-
-        .modal-icon-container {
-            width: 60px;
-            height: 60px;
-            background: #FFF4E5;
-            color: #FF9800;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.6rem;
-            margin: 0 auto 16px auto;
-        }
-
-        .modal-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 8px;
-        }
-
-        .modal-message {
-            font-size: 0.9rem;
-            color: var(--text-gray);
-            margin-bottom: 24px;
-            line-height: 1.4;
-        }
-
-        .btn-modal-action {
-            background: var(--primary-blue);
-            color: var(--white);
-            border: none;
-            width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn-modal-action:hover {
-            background: #1B52D8;
-        }
+        .custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(43, 54, 116, 0.4); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        .custom-modal-overlay.open { opacity: 1; visibility: visible; }
+        .custom-modal-box { background: var(--white); border-radius: 20px; width: 90%; max-width: 380px; padding: 28px; text-align: center; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .custom-modal-overlay.open .custom-modal-box { transform: scale(1); }
+        .modal-icon-container { width: 60px; height: 60px; background: #FFF4E5; color: #FF9800; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 16px auto; }
+        .modal-title { font-size: 1.2rem; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
+        .modal-message { font-size: 0.9rem; color: var(--text-gray); margin-bottom: 24px; line-height: 1.4; }
+        .btn-modal-action { background: var(--primary-blue); color: var(--white); border: none; width: 100%; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+        .btn-modal-action:hover { background: #1B52D8; }
     </style>
 </head>
 <body>
@@ -465,6 +134,29 @@
         </div>
     </div>
 
+    <!-- MODAL DE CONFIRMACIÓN PARA CANCELAR EL TEST -->
+    <div class="custom-modal-overlay" id="confirmCancelModal">
+        <div class="custom-modal-box">
+            <div class="modal-icon-container" style="background: #FEE2E2; color: #DC2626;">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="modal-title">¿Descartar cambios?</h3>
+            <p class="modal-message">¿Seguro que quieres descartar los cambios? Si sales ahora, no se guardará nada de lo que has modificado.</p>
+            <div style="display: flex; gap: 10px;">
+                <button type="button" class="btn-modal-action" style="background: #E5E7EB; color: #374151;" onclick="closeConfirmModal()">Volver</button>
+                <a href="{{ route('perfil') }}" class="btn-modal-action" style="background: #DC2626; text-decoration: none; text-align: center; display: block; padding: 12px 0;">Sí, cancelar</a>
+            </div>
+        </div>
+    </div>
+
+    @php
+        // Si la variable $perfil no existe (usuario nuevo), la declaramos como null
+        $perfil = $perfil ?? null; 
+        
+        // Decodificamos el JSON de disponibilidad si existe
+        $disponibilidad = ($perfil && $perfil->availability) ? json_decode($perfil->availability, true) : [];
+    @endphp
+
     <div class="quest-wizard-card">
         <!-- BARRA DE PROGRESO -->
         <div class="progress-header" id="progressHeader" style="display: none;">
@@ -478,7 +170,6 @@
         </div>
 
         <form id="onboardingForm" action="{{ route('onboarding.guardar') }}" method="POST">
-            <!-- Token de seguridad CSRF de Laravel -->
             @csrf
 
             <!-- PASO 0: BIENVENIDA -->
@@ -498,34 +189,40 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label" for="edad">Edad (años)</label>
-                        <input type="number" id="edad" name="edad" class="form-control" placeholder="Ej: 24" required min="10" max="120" maxlength="3" 
+                        <input type="number" id="edad" name="edad" class="form-control" 
+                               value="{{ old('edad', $perfil->age ?? '') }}" 
+                               placeholder="Ej: 24" required min="10" max="120" maxlength="3" 
                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3); checkRealisticRange(this, 10, 120);">
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="peso">Peso (kg)</label>
-                        <input type="text" inputmode="decimal" id="peso" name="peso" class="form-control" placeholder="Ej: 68.5" required 
+                        <input type="text" inputmode="decimal" id="peso" name="peso" class="form-control" 
+                               value="{{ old('peso', $perfil->weight ?? '') }}" 
+                               placeholder="Ej: 68.5" required 
                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'); checkRealisticRange(this, 30, 300);">
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="altura">Altura (cm)</label>
-                        <input type="number" id="altura" name="altura" class="form-control" placeholder="Ej: 172" required min="100" max="250" maxlength="3" 
+                        <input type="number" id="altura" name="altura" class="form-control" 
+                               value="{{ old('altura', $perfil->height ?? '') }}" 
+                               placeholder="Ej: 172" required min="100" max="250" maxlength="3" 
                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3); checkRealisticRange(this, 100, 250);">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Género:</label>
-                    <input type="hidden" name="genero" id="input-genero" value="masculino">
+                    <input type="hidden" name="genero" id="input-genero" value="{{ old('genero', $perfil->gender ?? 'masculino') }}">
                     <div class="options-grid">
-                        <div class="option-card selected" onclick="selectSingle(this, 'input-genero', 'masculino')">
+                        <div class="option-card {{ (old('genero', $perfil->gender ?? 'masculino') == 'masculino') ? 'selected' : '' }}" onclick="selectSingle(this, 'input-genero', 'masculino')">
                             <i class="fa-solid fa-mars"></i>
                             <span>Masculino</span>
                         </div>
-                        <div class="option-card" onclick="selectSingle(this, 'input-genero', 'femenino')">
+                        <div class="option-card {{ (old('genero', $perfil->gender ?? '') == 'femenino') ? 'selected' : '' }}" onclick="selectSingle(this, 'input-genero', 'femenino')">
                             <i class="fa-solid fa-venus"></i>
                             <span>Femenino</span>
                         </div>
-                        <div class="option-card" onclick="selectSingle(this, 'input-genero', 'otro')">
+                        <div class="option-card {{ (old('genero', $perfil->gender ?? '') == 'otro') ? 'selected' : '' }}" onclick="selectSingle(this, 'input-genero', 'otro')">
                             <i class="fa-solid fa-genderless"></i>
                             <span>Otro</span>
                         </div>
@@ -538,37 +235,37 @@
                 <h2 class="step-title">¿Cuál es tu objetivo principal en este momento?</h2>
                 <p class="step-subtitle">Esto orientará el tipo de recompensas y misiones principales que recibirás.</p>
 
-                <input type="hidden" name="objetivo" id="input-objetivo" value="perder_grasa">
+                <input type="hidden" name="objetivo" id="input-objetivo" value="{{ old('objetivo', $perfil->goals ?? 'perder_grasa') }}">
                 <div class="options-list">
-                    <div class="option-row selected" onclick="selectSingleRow(this, 'input-objetivo', 'perder_grasa')">
+                    <div class="option-row {{ (old('objetivo', $perfil->goals ?? 'perder_grasa') == 'perder_grasa') ? 'selected' : '' }}" onclick="selectSingleRow(this, 'input-objetivo', 'perder_grasa')">
                         <i class="fa-solid fa-fire"></i>
                         <div class="option-row-content">
                             <strong>Perder grasa / Bajar de peso</strong>
                             <p>Enfoque en definición, quema calórica y déficit controlado.</p>
                         </div>
                     </div>
-                    <div class="option-row" onclick="selectSingleRow(this, 'input-objetivo', 'ganar_musculo')">
+                    <div class="option-row {{ (old('objetivo', $perfil->goals ?? '') == 'ganar_musculo') ? 'selected' : '' }}" onclick="selectSingleRow(this, 'input-objetivo', 'ganar_musculo')">
                         <i class="fa-solid fa-dumbbell"></i>
                         <div class="option-row-content">
                             <strong>Ganar masa muscular / Fuerza</strong>
                             <p>Enfoque en hipertrofia, aumento de carga y resistencia muscular.</p>
                         </div>
                     </div>
-                    <div class="option-row" onclick="selectSingleRow(this, 'input-objetivo', 'resistencia_cardio')">
+                    <div class="option-row {{ (old('objetivo', $perfil->goals ?? '') == 'resistencia_cardio') ? 'selected' : '' }}" onclick="selectSingleRow(this, 'input-objetivo', 'resistencia_cardio')">
                         <i class="fa-solid fa-heart-pulse"></i>
                         <div class="option-row-content">
                             <strong>Mejorar resistencia / Cardio</strong>
                             <p>Enfoque en capacidad pulmonar, agilidad y rendimiento cardiovascular.</p>
                         </div>
                     </div>
-                    <div class="option-row" onclick="selectSingleRow(this, 'input-objetivo', 'activo_saludable')">
+                    <div class="option-row {{ (old('objetivo', $perfil->goals ?? '') == 'activo_saludable') ? 'selected' : '' }}" onclick="selectSingleRow(this, 'input-objetivo', 'activo_saludable')">
                         <i class="fa-solid fa-leaf"></i>
                         <div class="option-row-content">
                             <strong>Mantenerme activo y saludable</strong>
                             <p>Enfoque en bienestar general, constancia y hábitos diarios.</p>
                         </div>
                     </div>
-                    <div class="option-row" onclick="selectSingleRow(this, 'input-objetivo', 'flexibilidad_movilidad')">
+                    <div class="option-row {{ (old('objetivo', $perfil->goals ?? '') == 'flexibilidad_movilidad') ? 'selected' : '' }}" onclick="selectSingleRow(this, 'input-objetivo', 'flexibilidad_movilidad')">
                         <i class="fa-solid fa-child-reaching"></i>
                         <div class="option-row-content">
                             <strong>Flexibilidad y movilidad</strong>
@@ -583,23 +280,23 @@
                 <h2 class="step-title">¿Cómo describirías tu experiencia actual haciendo ejercicio?</h2>
                 <p class="step-subtitle">Calibraremos la dificultad inicial de tus desafíos y rutinas.</p>
 
-                <input type="hidden" name="experiencia_ejercicio" id="input-experiencia" value="principiante">
+                <input type="hidden" name="experiencia_ejercicio" id="input-experiencia" value="{{ old('experiencia_ejercicio', $perfil->experience ?? 'principiante') }}">
                 <div class="options-list">
-                    <div class="option-row selected" onclick="selectSingleRow(this, 'input-experiencia', 'principiante')">
+                    <div class="option-row {{ (old('experiencia_ejercicio', $perfil->experience ?? 'principiante') == 'principiante') ? 'selected' : '' }}" onclick="selectSingleRow(this, 'input-experiencia', 'principiante')">
                         <i class="fa-solid fa-seedling"></i>
                         <div class="option-row-content">
                             <strong>Principiante</strong>
                             <p>Casi nunca hago ejercicio o llevo mucho tiempo inactivo.</p>
                         </div>
                     </div>
-                    <div class="option-row" onclick="selectSingleRow(this, 'input-experiencia', 'intermedio')">
+                    <div class="option-row {{ (old('experiencia_ejercicio', $perfil->experience ?? '') == 'intermedio') ? 'selected' : '' }}" onclick="selectSingleRow(this, 'input-experiencia', 'intermedio')">
                         <i class="fa-solid fa-bolt"></i>
                         <div class="option-row-content">
                             <strong>Intermedio</strong>
                             <p>Hago ejercicio de forma ocasional o he retomado hace poco.</p>
                         </div>
                     </div>
-                    <div class="option-row" onclick="selectSingleRow(this, 'input-experiencia', 'avanzado')">
+                    <div class="option-row {{ (old('experiencia_ejercicio', $perfil->experience ?? '') == 'avanzado') ? 'selected' : '' }}" onclick="selectSingleRow(this, 'input-experiencia', 'avanzado')">
                         <i class="fa-solid fa-trophy"></i>
                         <div class="option-row-content">
                             <strong>Avanzado</strong>
@@ -624,90 +321,34 @@
                         <span style="font-size: 0.8rem; color: var(--text-gray); font-weight: 600;">Selección rápida semanal</span>
                     </div>
 
-                    <!-- Lunes -->
+                    @php
+                        $diasSemana = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
+                        $nombresDias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+                    @endphp
+
+                    @foreach($diasSemana as $index => $dia)
                     <div class="schedule-row">
                         <div class="day-toggle-container">
-                            <input type="checkbox" id="check_lunes" class="day-checkbox day-item" onchange="toggleDaySlots('lunes')">
-                            <label for="check_lunes" class="day-name">Lunes</label>
+                            <input type="checkbox" id="check_{{ $dia }}" class="day-checkbox day-item" 
+                                   onchange="toggleDaySlots('{{ $dia }}')" 
+                                   {{ isset($disponibilidad[$dia]) ? 'checked' : '' }}>
+                            <label for="check_{{ $dia }}" class="day-name">{{ $nombresDias[$index] }}</label>
                         </div>
-                        <div class="time-slots" id="slots_lunes">
-                            <input type="radio" id="lun_m" name="disponibilidad[lunes]" value="mañana" class="slot-radio"><label for="lun_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
-                            <input type="radio" id="lun_t" name="disponibilidad[lunes]" value="tarde" class="slot-radio"><label for="lun_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
-                            <input type="radio" id="lun_n" name="disponibilidad[lunes]" value="noche" class="slot-radio"><label for="lun_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
-                        </div>
-                    </div>
-                    <!-- Martes -->
-                    <div class="schedule-row">
-                        <div class="day-toggle-container">
-                            <input type="checkbox" id="check_martes" class="day-checkbox day-item" onchange="toggleDaySlots('martes')">
-                            <label for="check_martes" class="day-name">Martes</label>
-                        </div>
-                        <div class="time-slots" id="slots_martes">
-                            <input type="radio" id="mar_m" name="disponibilidad[martes]" value="mañana" class="slot-radio"><label for="mar_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
-                            <input type="radio" id="mar_t" name="disponibilidad[martes]" value="tarde" class="slot-radio"><label for="mar_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
-                            <input type="radio" id="mar_n" name="disponibilidad[martes]" value="noche" class="slot-radio"><label for="mar_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
+                        <div class="time-slots {{ isset($disponibilidad[$dia]) ? 'enabled' : '' }}" id="slots_{{ $dia }}">
+                            <input type="radio" id="{{ substr($dia, 0, 3) }}_m" name="disponibilidad[{{ $dia }}]" value="mañana" class="slot-radio"
+                                   {{ (isset($disponibilidad[$dia]) && $disponibilidad[$dia] == 'mañana') ? 'checked' : '' }}>
+                            <label for="{{ substr($dia, 0, 3) }}_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
+                            
+                            <input type="radio" id="{{ substr($dia, 0, 3) }}_t" name="disponibilidad[{{ $dia }}]" value="tarde" class="slot-radio"
+                                   {{ (isset($disponibilidad[$dia]) && $disponibilidad[$dia] == 'tarde') ? 'checked' : '' }}>
+                            <label for="{{ substr($dia, 0, 3) }}_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
+                            
+                            <input type="radio" id="{{ substr($dia, 0, 3) }}_n" name="disponibilidad[{{ $dia }}]" value="noche" class="slot-radio"
+                                   {{ (isset($disponibilidad[$dia]) && $disponibilidad[$dia] == 'noche') ? 'checked' : '' }}>
+                            <label for="{{ substr($dia, 0, 3) }}_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
                         </div>
                     </div>
-                    <!-- Miércoles -->
-                    <div class="schedule-row">
-                        <div class="day-toggle-container">
-                            <input type="checkbox" id="check_miercoles" class="day-checkbox day-item" onchange="toggleDaySlots('miercoles')">
-                            <label for="check_miercoles" class="day-name">Miércoles</label>
-                        </div>
-                        <div class="time-slots" id="slots_miercoles">
-                            <input type="radio" id="mie_m" name="disponibilidad[miercoles]" value="mañana" class="slot-radio"><label for="mie_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
-                            <input type="radio" id="mie_t" name="disponibilidad[miercoles]" value="tarde" class="slot-radio"><label for="mie_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
-                            <input type="radio" id="mie_n" name="disponibilidad[miercoles]" value="noche" class="slot-radio"><label for="mie_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
-                        </div>
-                    </div>
-                    <!-- Jueves -->
-                    <div class="schedule-row">
-                        <div class="day-toggle-container">
-                            <input type="checkbox" id="check_jueves" class="day-checkbox day-item" onchange="toggleDaySlots('jueves')">
-                            <label for="check_jueves" class="day-name">Jueves</label>
-                        </div>
-                        <div class="time-slots" id="slots_jueves">
-                            <input type="radio" id="jue_m" name="disponibilidad[jueves]" value="mañana" class="slot-radio"><label for="jue_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
-                            <input type="radio" id="jue_t" name="disponibilidad[jueves]" value="tarde" class="slot-radio"><label for="jue_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
-                            <input type="radio" id="jue_n" name="disponibilidad[jueves]" value="noche" class="slot-radio"><label for="jue_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
-                        </div>
-                    </div>
-                    <!-- Viernes -->
-                    <div class="schedule-row">
-                        <div class="day-toggle-container">
-                            <input type="checkbox" id="check_viernes" class="day-checkbox day-item" onchange="toggleDaySlots('viernes')">
-                            <label for="check_viernes" class="day-name">Viernes</label>
-                        </div>
-                        <div class="time-slots" id="slots_viernes">
-                            <input type="radio" id="vie_m" name="disponibilidad[viernes]" value="mañana" class="slot-radio"><label for="vie_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
-                            <input type="radio" id="vie_t" name="disponibilidad[viernes]" value="tarde" class="slot-radio"><label for="vie_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
-                            <input type="radio" id="vie_n" name="disponibilidad[viernes]" value="noche" class="slot-radio"><label for="vie_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
-                        </div>
-                    </div>
-                    <!-- Sábado -->
-                    <div class="schedule-row">
-                        <div class="day-toggle-container">
-                            <input type="checkbox" id="check_sabado" class="day-checkbox day-item" onchange="toggleDaySlots('sabado')">
-                            <label for="check_sabado" class="day-name">Sábado</label>
-                        </div>
-                        <div class="time-slots" id="slots_sabado">
-                            <input type="radio" id="sab_m" name="disponibilidad[sabado]" value="mañana" class="slot-radio"><label for="sab_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
-                            <input type="radio" id="sab_t" name="disponibilidad[sabado]" value="tarde" class="slot-radio"><label for="sab_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
-                            <input type="radio" id="sab_n" name="disponibilidad[sabado]" value="noche" class="slot-radio"><label for="sab_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
-                        </div>
-                    </div>
-                    <!-- Domingo -->
-                    <div class="schedule-row">
-                        <div class="day-toggle-container">
-                            <input type="checkbox" id="check_domingo" class="day-checkbox day-item" onchange="toggleDaySlots('domingo')">
-                            <label for="check_domingo" class="day-name">Domingo</label>
-                        </div>
-                        <div class="time-slots" id="slots_domingo">
-                            <input type="radio" id="dom_m" name="disponibilidad[domingo]" value="mañana" class="slot-radio"><label for="dom_m" class="slot-label"><i class="fa-solid fa-sun"></i> Mañana</label>
-                            <input type="radio" id="dom_t" name="disponibilidad[domingo]" value="tarde" class="slot-radio"><label for="dom_t" class="slot-label"><i class="fa-solid fa-cloud-sun"></i> Tarde</label>
-                            <input type="radio" id="dom_n" name="disponibilidad[domingo]" value="noche" class="slot-radio"><label for="dom_n" class="slot-label"><i class="fa-solid fa-moon"></i> Noche</label>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
 
@@ -716,22 +357,25 @@
                 <h2 class="step-title">¿Tienes alguna lesión, molestia o condición médica que debamos tener en cuenta?</h2>
                 <p class="step-subtitle">Tu seguridad es nuestra prioridad al sugerir ejercicios y adaptaciones.</p>
 
-                <input type="hidden" name="tiene_lesion" id="input-lesion" value="no">
+                <input type="hidden" name="tiene_lesion" id="input-lesion" value="{{ old('tiene_lesion', $perfil->has_injury ?? 'no') }}">
+                
                 <div class="options-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 15px;">
-                    <div class="option-card selected" id="card-lesion-no" onclick="toggleLesion('no')">
+                    <div class="option-card {{ (old('tiene_lesion', $perfil->has_injury ?? 'no') == 'no') ? 'selected' : '' }}" id="card-lesion-no" onclick="toggleLesion('no')">
                         <i class="fa-solid fa-circle-check"></i>
                         <span>No</span>
                     </div>
-                    <div class="option-card" id="card-lesion-si" onclick="toggleLesion('si')">
+                    <div class="option-card {{ (old('tiene_lesion', $perfil->has_injury ?? '') == 'si') ? 'selected' : '' }}" id="card-lesion-si" onclick="toggleLesion('si')">
                         <i class="fa-solid fa-triangle-exclamation"></i>
                         <span>Sí</span>
                     </div>
                 </div>
 
-                <div class="injury-details-container" id="injuryDetails">
+                <div class="injury-details-container" id="injuryDetails" style="{{ (old('tiene_lesion', $perfil->has_injury ?? 'no') == 'si') ? 'display: block;' : 'display: none;' }}">
                     <div class="form-group">
                         <label class="form-label" for="descripcion_lesion">Especifica brevemente la lesión o condición:</label>
-                        <input type="text" id="descripcion_lesion" name="descripcion_lesion" class="form-control" placeholder="Ej: Molestia leve en la rodilla derecha, dolor lumbar ocasional...">
+                        <input type="text" id="descripcion_lesion" name="descripcion_lesion" class="form-control" 
+                               value="{{ old('descripcion_lesion', $perfil->injury_description ?? '') }}"
+                               placeholder="Ej: Molestia leve en la rodilla derecha, dolor lumbar ocasional...">
                     </div>
                 </div>
             </div>
@@ -747,19 +391,55 @@
 
             <!-- BOTONES DE NAVEGACIÓN -->
             <div class="wizard-buttons">
-                <button type="button" class="btn btn-prev" id="btnPrev" onclick="changeStep(-1)" style="display: none;">Anterior</button>
-                <button type="button" class="btn btn-next" id="btnNext" onclick="handleNextStep(event)">Comenzar Test</button>
+                <!-- Botón Anterior (Izquierda) -->
+                <div>
+                    <button type="button" class="btn btn-prev" id="btnPrev" onclick="changeStep(-1)" style="display: none;">Anterior</button>
+                </div>
+
+                <!-- Botones de la Derecha (Cancelar y Siguiente) -->
+                <div style="display: flex; gap: 12px; align-items: stretch;">
+                    
+                    <!-- 🚨 BOTÓN CANCELAR: Solo se muestra si el usuario viene a repetir el test (?retake=1) -->
+                    @if(request()->has('retake'))
+                    <a href="#" onclick="confirmCancelTest(event)" 
+                       style="background-color: #DC2626; color: white; display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 0.95rem; transition: all 0.2s; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);">
+                        <i class="fa-solid fa-xmark" style="margin-right: 8px; font-size: 1.1rem;"></i> Cancelar test
+                    </a>
+                    @endif
+
+                    <!-- Botón Siguiente / Guardar -->
+                    <button type="button" class="btn btn-next" id="btnNext" onclick="handleNextStep(event)">Comenzar Test</button>
+                </div>
             </div>
-        </form>
-    </div>
+            
+        </form> <!-- ✅ EL FORMULARIO SE CIERRA AQUÍ CORRECTAMENTE -->
+    </div> <!-- Cierre de quest-wizard-card -->
 
     <script>
         let currentStep = 0;
         const totalSteps = 6;
 
+        // Prevenir que el formulario se envíe si el usuario presiona "Enter" accidentalmente
+        document.getElementById('onboardingForm').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            updateMasterCheckboxState();
+        });
+
         function handleNextStep(event) {
+            if (event) {
+                event.preventDefault(); 
+            }
+            
+            // Si ya estamos en el último paso (Recompensa), enviamos el formulario
             if (currentStep === totalSteps) {
-                return true;
+                document.getElementById('onboardingForm').submit();
+                return;
             }
             
             if (!validateCurrentStep(currentStep)) {
@@ -772,7 +452,7 @@
         function changeStep(direction) {
             if (direction > 0) {
                 if (!validateCurrentStep(currentStep)) {
-                    return; // Detiene el avance si falta completar algún campo obligatorio
+                    return;
                 }
             }
 
@@ -800,11 +480,31 @@
             } else if (currentStep === totalSteps) {
                 btnNext.innerText = 'Guardar y Ver Panel';
                 btnNext.style.backgroundColor = 'var(--accent-teal)';
-                btnNext.type = 'submit'; 
             } else {
                 btnNext.innerText = 'Siguiente';
                 btnNext.style.backgroundColor = 'var(--primary-blue)';
-                btnNext.type = 'button';
+            }
+        }
+
+        // --- FUNCIÓN DE LESIONES BLINDADA ---
+        function toggleLesion(option) {
+            const inputLesion = document.getElementById('input-lesion');
+            const container = document.getElementById('injuryDetails');
+            
+            const todasLasTarjetas = document.querySelectorAll('#step-5 .option-card');
+            todasLasTarjetas.forEach(tarjeta => {
+                tarjeta.classList.remove('selected');
+            });
+
+            if (option === 'si') {
+                document.getElementById('card-lesion-si').classList.add('selected');
+                inputLesion.value = 'si';
+                container.style.display = 'block';
+            } else {
+                document.getElementById('card-lesion-no').classList.add('selected');
+                inputLesion.value = 'no';
+                container.style.display = 'none';
+                document.getElementById('descripcion_lesion').value = '';
             }
         }
 
@@ -826,7 +526,6 @@
             }
         }
 
-        // Lógica optimizada y corregida para Marcar / Desmarcar todos los días
         function toggleAllDays(masterCheckbox) {
             const days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
             const isChecked = masterCheckbox.checked;
@@ -845,7 +544,7 @@
                         slotsContainer.classList.add('enabled');
                         let anyChecked = Array.from(radios).some(r => r.checked);
                         if (!anyChecked && radios.length > 0) {
-                            radios[0].checked = true; // Selecciona "Mañana" por defecto
+                            radios[0].checked = true; 
                         }
                     } else {
                         slotsContainer.classList.remove('enabled');
@@ -975,24 +674,13 @@
             document.getElementById(hiddenInputId).value = value;
         }
 
-        function toggleLesion(option) {
-            const cardNo = document.getElementById('card-lesion-no');
-            const cardSi = document.getElementById('card-lesion-si');
-            const inputLesion = document.getElementById('input-lesion');
-            const container = document.getElementById('injuryDetails');
+        function confirmCancelTest(event) {
+            event.preventDefault(); 
+            document.getElementById('confirmCancelModal').classList.add('open');
+        }
 
-            if (option === 'si') {
-                cardSi.classList.add('selected');
-                cardNo.classList.remove('selected');
-                inputLesion.value = 'si';
-                container.style.display = 'block';
-            } else {
-                cardNo.classList.add('selected');
-                cardSi.classList.remove('selected');
-                inputLesion.value = 'no';
-                container.style.display = 'none';
-                document.getElementById('descripcion_lesion').value = '';
-            }
+        function closeConfirmModal() {
+            document.getElementById('confirmCancelModal').classList.remove('open');
         }
     </script>
 </body>
