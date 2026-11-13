@@ -8,6 +8,7 @@
     <script src="{{ asset('js/theme.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('estilos/tema-oscuro.css') }}">
     <link rel="stylesheet" href="{{ asset('estilos/quest.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="fq-app">
     <button class="fq-mobile-toggle" id="fqMobileToggle" type="button" aria-label="Abrir menú" aria-controls="fqSidebar" aria-expanded="false">

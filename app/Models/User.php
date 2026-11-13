@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Profile;
+use App\Models\InitialAssessment;
 
 
 class User extends Authenticatable
@@ -22,7 +24,6 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'profile_visible',
         'role_id',
         'username',
         'email',
@@ -74,4 +75,18 @@ class User extends Authenticatable
     {
         return $this->hasMany(QuestExerciseCompletion::class);
     }
+
+    // Relación con los Tests Iniciales (1 a muchos)
+    public function initialAssessments()
+    {
+        return $this->hasMany(InitialAssessment::class);
+    }
+
+    // Obtener el test actual (el que está activo)
+    public function currentAssessment()
+    {
+        return $this->hasOne(InitialAssessment::class)->where('is_current', true);
+    }
+
 }
+
