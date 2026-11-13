@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use Illuminate\Auth\Events\PasswordReset;
 class PasswordResetController extends Controller
 {
     // Mostrar formulario para solicitar recuperación
@@ -17,26 +18,31 @@ class PasswordResetController extends Controller
     }
 
     // Enviar enlace al correo
-    public function store(Request $request)
-    {
-        $request->validate([
-            'email' => ['required', 'email'],
-        ]);
+   
+public function store(Request $request)
+{
+    $request->validate([
+        'email' => ['required', 'email'],
+    ]);
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+    $status = Password::sendResetLink(
+        $request->only('email')
+    );
 
-        return back()->with(
-            'status',
-            __($status)
-        );
+    if ($status === Password::RESET_LINK_SENT) {
+        return back()->with('status', __($status));
     }
+
+    return back()
+        ->withErrors(['email' => __($status)])
+        ->onlyInput('email');
+}
+
 
     // Mostrar formulario para cambiar contraseña
     public function edit(Request $request, string $token)
     {
-        return view('auth.reset-password', [
+      return view('restablecer', [
             'token' => $token,
             'email' => $request->email,
         ]);
@@ -63,6 +69,7 @@ class PasswordResetController extends Controller
                     'password' => Hash::make($password),
                     'remember_token' => Str::random(60),
                 ])->save();
+                event(new PasswordReset($user));
             }
         );
 

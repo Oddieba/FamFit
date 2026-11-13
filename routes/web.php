@@ -177,18 +177,21 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('login');
     })->name('cuenta.destroy');
 });
+
+// Recuperación de contraseña
 Route::get('/forgot-password', [PasswordResetController::class, 'create'])
+    ->middleware('guest')
     ->name('password.request');
 
 Route::post('/forgot-password', [PasswordResetController::class, 'store'])
+    ->middleware('guest')
     ->name('password.email');
 
-Route::get('/reset-password/{token}', [
-    PasswordResetController::class,
-    'edit'
-])->name('password.reset');
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'edit'])
+    ->middleware('guest')
+    ->name('password.reset');
 
-Route::post('/reset-password', [
-    PasswordResetController::class,
-    'update'
-])->name('password.update');
+Route::post('/reset-password', [PasswordResetController::class, 'update'])
+    ->middleware('guest')
+    ->name('password.update');
+
