@@ -408,7 +408,7 @@
                     @endif
 
                     <!-- Botón Siguiente / Guardar -->
-                    <button type="button" class="btn btn-next" id="btnNext" onclick="handleNextStep(event)">Comenzar Test</button><
+                    <button type="button" class="btn btn-next" id="btnNext" onclick="handleNextStep(event)">Comenzar Test</button>
                 </div>
             </div>
             
@@ -684,4 +684,3 @@
         }
     </script>
 </body>
-</html>

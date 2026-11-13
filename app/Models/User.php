@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Profile;
 use App\Models\InitialAssessment;
-
+use App\Models\Role;
 
 class User extends Authenticatable
 {
@@ -88,5 +88,9 @@ class User extends Authenticatable
         return $this->hasOne(InitialAssessment::class)->where('is_current', true);
     }
 
+    public function role()
+    {
+    return $this->belongsTo(Role::class);
+    }
 }
 
