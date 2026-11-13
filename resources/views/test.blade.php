@@ -402,13 +402,13 @@
                     <!-- 🚨 BOTÓN CANCELAR: Solo se muestra si el usuario viene a repetir el test (?retake=1) -->
                     @if(request()->has('retake'))
                     <a href="#" onclick="confirmCancelTest(event)" 
-                       style="background-color: #DC2626; color: white; display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 0.95rem; transition: all 0.2s; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);">
-                        <i class="fa-solid fa-xmark" style="margin-right: 8px; font-size: 1.1rem;"></i> Cancelar test
+                       style="background-color: #DC2626; color: white; display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 0.83rem; transition: all 0.2s; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);">
+                        <i class="fa-solid fa-xmark" style="margin-right: 8px; font-size: 1.1rem;"></i> Cancelar Test
                     </a>
                     @endif
 
                     <!-- Botón Siguiente / Guardar -->
-                    <button type="button" class="btn btn-next" id="btnNext" onclick="handleNextStep(event)">Comenzar Test</button>
+                    <button type="button" class="btn btn-next" id="btnNext" onclick="handleNextStep(event)">Comenzar Test</button><
                 </div>
             </div>
             
