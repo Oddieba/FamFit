@@ -7,6 +7,7 @@ use App\Http\Controllers\OnboardingController;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use App\Http\Controllers\AvatarController;
-
+use App\Http\Controllers\Auth\PasswordResetController;
 /*
 |--------------------------------------------------------------------------
 | Rutas Públicas (No requieren iniciar sesión)
@@ -34,13 +35,20 @@ Route::post('/login', function (Request $request) {
         'email' => ['required', 'email'],
         'password' => ['required'],
     ]);
+            // 2. Intentamos iniciar sesión
+           if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            
+            // 🔥 AQUÍ ESTÁ LA MAGIA 🔥
+            // Preguntamos: ¿Este usuario ya tiene un test guardado?
+            if (!Auth::user()->currentAssessment) {
+                // Si NO tiene, es su primera vez. Lo mandamos a hacer el test.
+                return redirect()->intended(route('onboarding')); 
+            }
 
-    // 2. Intentamos iniciar sesión
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
-        return redirect()->intended(route('test')); // Si funciona, va al test
-    }
-
+            // Si SÍ tiene test, lo mandamos directo al menú principal.
+            return redirect()->intended(route('menu'));
+        }
     // 3. Si falla, regresa con error
     return back()->withErrors([
         'email' => 'El correo o la contraseña son incorrectos.',
@@ -64,28 +72,11 @@ Route::post('/registro', [RegisteredUserController::class, 'store'])
     ->name('registro.store');
 
 // Recuperar contraseña
-Route::get('/olv_contra', function () {
-    return view('olv_contra');
-})->name('olv_contra');
+Route::get('/forgot-password', function () {
+    return view('forgot-password');
+})->name('forgot-password');
 
-Route::post('/forgot-password', function (Request $request) {
-    $request->validate([
-        'email' => ['required', 'email'],
-    ]);
 
-    $status = Password::sendResetLink($request->only('email'));
-
-    if ($status === Password::RESET_THROTTLED) {
-        return redirect()->route('olv_contra')->withErrors([
-            'email' => __($status),
-        ]);
-    }
-
-    return redirect()->route('olv_contra')->with(
-        'status',
-        'Si existe una cuenta con ese correo, recibirás un enlace para restablecer tu contraseña.'
-    );
-})->name('password.email');
 
 // Mostrar formulario de restablecimiento
 Route::get('/reset-password/{token}', function (string $token, Request $request) {
@@ -144,8 +135,16 @@ Route::get('/entrenamientos', function () {
 
 Route::middleware('auth')->group(function () {
 
-    // Menú y funciones principales de FamFit Quest
-    Route::get('/menu', [QuestController::class, 'home'])->name('menu');
+       // 🛡️ GUARDIA DE SEGURIDAD: Si no ha hecho el test, lo obligamos a hacerlo
+    Route::get('/menu', function (Request $request) { // <-- Agregamos Request aquí
+        if (!Auth::user()->currentAssessment) {
+            return redirect()->route('test')->with('info', 'Debes completar tu test inicial primero.');
+        }
+        // Si ya hizo el test, cargamos el controlador pasándole el $request
+        return app(\App\Http\Controllers\QuestController::class)->home($request); // <-- Se lo pasamos aquí
+    })->name('menu');
+
+    // El resto de rutas (sin duplicar el menú)
     Route::get('/entreno', [QuestController::class, 'training'])->name('entreno');
     Route::post('/entreno/rutinas', [QuestController::class, 'storeRoutine'])->name('entreno.rutinas.store');
     Route::post('/entreno/ejercicios/{exercise}/completar', [QuestController::class, 'completeExercise'])->name('entreno.ejercicios.complete');
@@ -163,18 +162,29 @@ Route::middleware('auth')->group(function () {
     Route::get('/perfil', [QuestController::class, 'profile'])->name('perfil');
     Route::put('/perfil', [QuestController::class, 'updateProfile'])->name('perfil.update');
     Route::put('/avatar', [QuestController::class, 'updateAvatar'])->name('avatar.update');
-    
+
     Route::get('/configuracion', [QuestController::class, 'settings'])->name('configuracion');
     Route::put('/configuracion', [QuestController::class, 'updateSettings'])->name('configuracion.update');
     Route::put('/configuracion/tema', [QuestController::class, 'updateTheme'])->name('configuracion.theme');
     Route::put('/configuracion/contrasena', [QuestController::class, 'updatePassword'])->name('configuracion.password');
 
-    // Test Inicial y Onboarding
-    Route::get('/test', function () {
-        return view('test');
-    })->name('test');
+    // Test Inicial y Onboarding (Asegúrate de usar el controlador aquí para pasar la variable $perfil)
+    Route::get('/test', [OnboardingController::class, 'index'])->name('test');
 
-    Route::get('/onboarding', [OnboardingController::class, 'index'])->name('onboarding');
+    // Rutas protegidas para que no repita el test
+    Route::get('/onboarding', function () {
+        /** @var \App\Models\User $user */ // 👈 Esto le dice a VS Code que es un User
+        $user = Auth::user(); 
+
+        // Si el usuario ya tiene un test, Y NO viene con la intención de repetirlo, lo sacamos.
+        if ($user->currentAssessment && !request()->has('retake')) {
+            return redirect()->route('menu')->with('info', 'Ya completaste el test inicial.');
+        }
+        
+        // Si no tiene test, o si viene con el ?retake=1, lo dejamos pasar
+        return app(OnboardingController::class)->index();
+    })->name('onboarding');
+    
     Route::post('/onboarding/guardar', [OnboardingController::class, 'store'])->name('onboarding.guardar');
 
     // Eliminar cuenta
@@ -210,3 +220,20 @@ Route::get('/avatar', [AvatarController::class, 'editar'])
 Route::post('/avatar', [AvatarController::class, 'guardar'])
     ->middleware(['auth'])
     ->name('avatar.guardar');
+// Recuperación de contraseña
+Route::get('/forgot-password', [PasswordResetController::class, 'create'])
+    ->middleware('guest')
+    ->name('password.request');
+
+Route::post('/forgot-password', [PasswordResetController::class, 'store'])
+    ->middleware('guest')
+    ->name('password.email');
+
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'edit'])
+    ->middleware('guest')
+    ->name('password.reset');
+
+Route::post('/reset-password', [PasswordResetController::class, 'update'])
+    ->middleware('guest')
+    ->name('password.update');
+

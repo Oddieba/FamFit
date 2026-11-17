@@ -106,8 +106,7 @@
                     <span class="fq-card-icon fq-icon-green" aria-hidden="true">📅</span>
                 </div>
                 <p class="fq-muted">Consulta los días de entrenamiento y las actividades completadas.</p>
-                <a class="fq-text-link" href="{{ route('calendario') }}">Abrir calendario <span aria-hidden="true">→</span></a>
-            </article>
+           
             <article class="fq-card fq-achievements">
                 <div class="fq-card-heading">
                     <div><p class="fq-eyebrow">TUS LOGROS</p><h2>Un paso a la vez</h2></div>
