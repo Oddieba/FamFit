@@ -117,7 +117,7 @@
     </header>
 
     <!-- Main Container -->
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full flex flex-col justify-center">
+    <main class="grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full flex flex-col justify-center">
 
         <!-- Header de Sección -->
         <div class="text-center max-w-3xl mx-auto mb-8 sm:mb-10">
@@ -162,7 +162,7 @@
                              alt="Entrenamiento En Casa"
                              class="img-zoom w-full h-full object-cover"
                              onerror="this.src='https://placehold.co/600x400/EEF2F8/172033?text=Entrenamiento+en+Casa'">
-                        <div class="absolute inset-0 bg-gradient-to-t from-brand-text-primary/70 via-transparent to-transparent opacity-80"></div>
+                        <div class="absolute inset-0 bg-linear-to-t from-brand-text-primary/70 via-transparent to-transparent opacity-80"></div>
 
                         <!-- Badges en Imagen -->
                         <div class="absolute top-3 left-3 flex flex-wrap gap-2">
@@ -196,19 +196,19 @@
                             <span class="text-[11px] font-bold uppercase tracking-wider text-brand-primary block mb-2">Lo que incluye:</span>
                             <ul class="text-xs text-brand-text-secondary space-y-2.5">
                                 <li class="flex items-start">
-                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 flex-shrink-0"></i>
+                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 shrink-0"></i>
                                     <span><strong>Calistenia avanzada:</strong> Ejercicios con peso corporal adaptables.</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 flex-shrink-0"></i>
+                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 shrink-0"></i>
                                     <span><strong>Entrenamiento silencioso:</strong> Rutinas sin saltos ni ruido para apartamentos.</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 flex-shrink-0"></i>
+                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 shrink-0"></i>
                                     <span><strong>Corrección postural:</strong> Pausas activas para trabajo y estudio prolongado.</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 flex-shrink-0"></i>
+                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 shrink-0"></i>
                                     <span><strong>Duración flexible:</strong> Sesiones exprés de 15 min hasta completas de 45 min.</span>
                                 </li>
                             </ul>
@@ -231,10 +231,10 @@
                     <!-- Imagen en Recuadro Atractivo -->
                     <div class="relative h-52 sm:h-56 w-full overflow-hidden bg-brand-surface-muted">
                         <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80"
-                             alt="Entrenamiento en Gimnasio"
-                             class="img-zoom w-full h-full object-cover"
-                             onerror="this.src='https://placehold.co/600x400/EEF2F8/172033?text=Entrenamiento+en+Gimnasio'">
-                        <div class="absolute inset-0 bg-gradient-to-t from-brand-text-primary/70 via-transparent to-transparent opacity-80"></div>
+                            alt="Entrenamiento en Gimnasio"
+                            class="img-zoom w-full h-full object-cover"
+                            onerror="this.src='https://placehold.co/600x400/EEF2F8/172033?text=Entrenamiento+en+Gimnasio'">
+                        <div class="absolute inset-0 bg-linear-to-t from-brand-text-primary/70 via-transparent to-transparent opacity-80"></div>
 
                         <!-- Badges en Imagen -->
                         <div class="absolute top-3 left-3 flex flex-wrap gap-2">
@@ -303,10 +303,10 @@
                     <!-- Imagen en Recuadro Atractivo -->
                     <div class="relative h-52 sm:h-56 w-full overflow-hidden bg-brand-surface-muted">
                         <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=800&q=80"
-                             alt="Entrenamiento Al Aire Libre"
-                             class="img-zoom w-full h-full object-cover"
-                             onerror="this.src='https://placehold.co/600x400/EEF2F8/172033?text=Al+Aire+Libre'">
-                        <div class="absolute inset-0 bg-gradient-to-t from-brand-text-primary/70 via-transparent to-transparent opacity-80"></div>
+                            alt="Entrenamiento Al Aire Libre"
+                            class="img-zoom w-full h-full object-cover"
+                            onerror="this.src='https://placehold.co/600x400/EEF2F8/172033?text=Al+Aire+Libre'">
+                        <div class="absolute inset-0 bg-linear- to-t from-brand-text-primary/70 via-transparent to-transparent opacity-80"></div>
 
                         <!-- Badges en Imagen -->
                         <div class="absolute top-3 left-3 flex flex-wrap gap-2">
@@ -340,19 +340,19 @@
                             <span class="text-[11px] font-bold uppercase tracking-wider text-brand-primary block mb-2">Lo que incluye:</span>
                             <ul class="text-xs text-brand-text-secondary space-y-2.5">
                                 <li class="flex items-start">
-                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 flex-shrink-0"></i>
+                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 shrink-0"></i>
                                     <span><strong>Circuitos urbanos:</strong> Calistenia en barras fijas y parque público.</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 flex-shrink-0"></i>
+                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 shrink-0"></i>
                                     <span><strong>Mapa GPS en vivo:</strong> Mapeo de ritmo promedio, elevación y distancia.</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 flex-shrink-0"></i>
+                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 shrink-0"></i>
                                     <span><strong>Misiones secundarias:</strong> Bonos extra por metas de pasos e hidratación.</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 flex-shrink-0"></i>
+                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 shrink-0"></i>
                                     <span><strong>Comunidad local:</strong> Desafíos de racha compartidos con amigos.</span>
                                 </li>
                             </ul>
@@ -387,7 +387,7 @@
     </footer>
 
     <!-- MODAL DE PREVISUALIZACIÓN Y SELECCIÓN DE RUTINAS -->
-    <div id="routineModal" class="fixed inset-0 bg-brand-text-primary/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div id="routineModal" class="fixed inset-0 bg-brand-text-primary/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-brand-surface rounded-2xl border border-brand-border shadow-2xl max-w-lg w-full overflow-hidden transform transition-all">
             <!-- Header Modal -->
             <div class="bg-brand-surface-muted px-6 py-4 border-b border-brand-border flex items-center justify-between">
@@ -422,7 +422,7 @@
 
     <!-- NOTIFICACIÓN TIPO TOAST INTERACTIVA -->
     <div id="toastNotification" class="fixed bottom-6 right-6 translate-y-20 opacity-0 transition-all duration-300 bg-brand-surface border border-brand-border text-brand-text-primary p-4 rounded-2xl shadow-2xl flex items-center space-x-3 z-50 max-w-sm pointer-events-none">
-        <div id="toastIconContainer" class="w-10 h-10 rounded-xl bg-brand-habit/20 text-brand-habit flex items-center justify-center flex-shrink-0">
+        <div id="toastIconContainer" class="w-10 h-10 rounded-xl bg-brand-habit/20 text-brand-habit flex items-center justify-center shrink-0">
             <i id="toastIcon" class="fa-solid fa-circle-check text-lg"></i>
         </div>
         <div>

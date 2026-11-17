@@ -76,5 +76,6 @@
         </div>
     </main>
     <script src="{{ asset('js/quest.js') }}" defer></script>
+    @stack('scripts')
 </body>
 </html>

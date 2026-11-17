@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\FamFitActivity;
 use App\Models\QuestExerciseCompletion;
 use App\Models\User;
 use Illuminate\Database\Schema\Blueprint;
@@ -30,6 +31,103 @@ class QuestExperienceTest extends TestCase
         }
     }
 
+    public function test_famfit_calendar_routes_are_available_for_authenticated_users(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $this->get(route('famfit.calendar'))
+            ->assertOk()
+            ->assertSee('0.00 h')
+            ->assertDontSee('data-day-create', false);
+
+        $this->post(route('famfit.activities.store'), [
+            'title' => 'Caminata matutina',
+            'activity_type' => 'Caminata',
+            'activity_date' => today()->toDateString(),
+            'start_time' => '00:00',
+            'end_time' => '01:00',
+            'status' => 'planned',
+        ])->assertRedirect();
+
+        $activity = FamFitActivity::query()->firstOrFail();
+        $this->assertSame('00:00', substr((string) $activity->start_time, 0, 5));
+
+        $this->put(route('famfit.activities.update', $activity), [
+            'title' => 'Caminata actualizada',
+            'activity_type' => 'Caminata',
+            'activity_date' => today()->toDateString(),
+            'start_time' => '08:15',
+            'end_time' => '09:15',
+            'status' => 'completed',
+        ])->assertRedirect();
+
+        $this->delete(route('famfit.activities.destroy', $activity))->assertRedirect();
+    }
+
+    public function test_weekly_availability_is_saved_and_restricts_activity_schedules(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $this->put(route('famfit.availability.update'), [
+            'availability' => [
+                'lunes' => ['mañana', 'noche'],
+            ],
+        ])->assertRedirect()->assertSessionHas('success');
+
+        $this->assertSame(
+            ['mañana', 'noche'],
+            $user->profile()->firstOrFail()->availability['lunes']
+        );
+
+        $this->get(route('famfit.calendar'))
+            ->assertOk()
+            ->assertSee('Disponibilidad semanal')
+            ->assertSee('Mañana · 06:00–12:00');
+
+        $monday = now()->startOfWeek(\Carbon\Carbon::MONDAY)->toDateString();
+
+        $this->from(route('famfit.calendar'))
+            ->post(route('famfit.activities.store'), [
+                'title' => 'Actividad fuera de disponibilidad',
+                'activity_type' => 'Ejercicio',
+                'activity_date' => $monday,
+                'start_time' => '13:00',
+                'end_time' => '14:00',
+                'status' => 'planned',
+            ])
+            ->assertRedirect(route('famfit.calendar'))
+            ->assertSessionHasErrors('start_time');
+
+        $this->assertSame(0, FamFitActivity::query()->count());
+
+        $this->post(route('famfit.activities.store'), [
+            'title' => 'Actividad disponible',
+            'activity_type' => 'Ejercicio',
+            'activity_date' => $monday,
+            'start_time' => '08:00',
+            'end_time' => '09:00',
+            'status' => 'planned',
+        ])->assertRedirect()->assertSessionHasNoErrors();
+
+        $activity = FamFitActivity::query()->firstOrFail();
+        $this->from(route('famfit.calendar'))
+            ->put(route('famfit.activities.update', $activity), [
+                'title' => 'Actividad movida fuera de disponibilidad',
+                'activity_type' => 'Ejercicio',
+                'activity_date' => $monday,
+                'start_time' => '13:00',
+                'end_time' => '14:00',
+                'status' => 'planned',
+            ])
+            ->assertRedirect(route('famfit.calendar'))
+            ->assertSessionHasErrors('start_time');
+
+        $this->assertSame(1, FamFitActivity::query()->count());
+        $this->assertSame('08:00', substr((string) $activity->fresh()->start_time, 0, 5));
+    }
+
     public function test_optional_sections_remain_available_when_quest_tables_are_missing(): void
     {
         Schema::dropIfExists('quest_exercise_completions');
@@ -43,7 +141,12 @@ class QuestExperienceTest extends TestCase
         $this->from(route('entreno'))
             ->post(route('entreno.ejercicios.complete', 1), ['completed_on' => today()->toDateString()])
             ->assertRedirect(route('entreno'));
-        $this->get(route('calendario'))->assertOk();
+        $this->get(route('calendario'))
+            ->assertOk()
+            ->assertSee('Calendario inteligente')
+            ->assertSee('Nueva actividad')
+            ->assertSee('Reducir calendario')
+            ->assertSee('Agrandar calendario');
         $this->get(route('perfil'))->assertOk();
     }
 
@@ -117,8 +220,8 @@ class QuestExperienceTest extends TestCase
 
         $this->get(route('calendario', ['date' => today()->toDateString()]))
             ->assertOk()
-            ->assertSee('VISTA MENSUAL')
-            ->assertSee('actividad completada');
+            ->assertSee('Calendario inteligente')
+            ->assertSee('Nueva actividad');
 
         $this->assertSame(10, $user->fresh()->xp);
         $this->assertSame(1, QuestExerciseCompletion::query()->count());
