@@ -41,12 +41,13 @@
             <a class="fq-nav-link {{ request()->routeIs('social') ? 'is-active' : '' }}" href="{{ route('social') }}" @if(request()->routeIs('social')) aria-current="page" @endif>
                 <span class="fq-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-1a6 6 0 0 1 12 0v1zM16 5.5a3 3 0 0 1 0 5.8M18 14a5 5 0 0 1 3 4.6v1"></path></svg></span><span class="fq-nav-label">Social</span>
             </a>
-            <a class="fq-nav-link {{ request()->routeIs('configuracion') ? 'is-active' : '' }}" href="{{ route('configuracion') }}" @if(request()->routeIs('configuracion')) aria-current="page" @endif>
-                <span class="fq-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"></path><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.6.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.6-.9l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.9l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.6-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.6.9l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1-.1 1.8Z"></path></svg></span><span class="fq-nav-label">Configuración</span>
-            </a>
             <a class="fq-nav-link {{ request()->routeIs('perfil*') ? 'is-active' : '' }}" href="{{ route('perfil') }}" @if(request()->routeIs('perfil*')) aria-current="page" @endif>
                 <span class="fq-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg></span><span class="fq-nav-label">Perfil</span>
             </a>
+            <a class="fq-nav-link {{ request()->routeIs('configuracion') ? 'is-active' : '' }}" href="{{ route('configuracion') }}" @if(request()->routeIs('configuracion')) aria-current="page" @endif>
+                <span class="fq-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"></path><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.6.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.6-.9l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.9l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.6-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.6.9l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1-.1 1.8Z"></path></svg></span><span class="fq-nav-label">Configuración</span>
+            </a>
+           
         </nav>
 
         <div class="fq-sidebar-bottom">

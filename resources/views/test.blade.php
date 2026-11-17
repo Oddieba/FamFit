@@ -153,8 +153,7 @@
         // Si la variable $perfil no existe (usuario nuevo), la declaramos como null
         $perfil = $perfil ?? null; 
         
-        // Decodificamos el JSON de disponibilidad si existe
-        $disponibilidad = ($perfil && $perfil->availability) ? json_decode($perfil->availability, true) : [];
+        $disponibilidad = $perfil?->availability ?? [];
     @endphp
 
     <div class="quest-wizard-card">
