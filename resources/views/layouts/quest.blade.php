@@ -8,6 +8,7 @@
     <script src="{{ asset('js/theme.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('estilos/tema-oscuro.css') }}">
     <link rel="stylesheet" href="{{ asset('estilos/quest.css') }}">
+    @stack('styles')
 </head>
 <body class="fq-app">
     <button class="fq-mobile-toggle" id="fqMobileToggle" type="button" aria-label="Abrir menú" aria-controls="fqSidebar" aria-expanded="false">
@@ -75,5 +76,6 @@
         </div>
     </main>
     <script src="{{ asset('js/quest.js') }}" defer></script>
+    @stack('scripts')
 </body>
 </html>

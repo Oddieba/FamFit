@@ -22,7 +22,6 @@ return new class extends Migration
                 $table->unsignedInteger('created_at');
             });
         }
-
         if (! Schema::hasTable('job_batches')) {
             Schema::create('job_batches', function (Blueprint $table): void {
                 $table->string('id')->primary();

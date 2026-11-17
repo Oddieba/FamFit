@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\FamFitCalendarController;
 use App\Http\Controllers\QuestController;
 use App\Http\Controllers\OnboardingController;
 use App\Models\User;
@@ -148,8 +149,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/entreno', [QuestController::class, 'training'])->name('entreno');
     Route::post('/entreno/rutinas', [QuestController::class, 'storeRoutine'])->name('entreno.rutinas.store');
     Route::post('/entreno/ejercicios/{exercise}/completar', [QuestController::class, 'completeExercise'])->name('entreno.ejercicios.complete');
-    Route::get('/calendario', [QuestController::class, 'calendar'])->name('calendario');
+    Route::get('/calendario', [FamFitCalendarController::class, 'index'])->name('calendario');
     Route::get('/social', [QuestController::class, 'social'])->name('social');
+
+    // Calendario compartido FamFit
+    Route::get('/famfit/calendario', [FamFitCalendarController::class, 'index'])->name('famfit.calendar');
+    Route::put('/famfit/calendario/disponibilidad', [FamFitCalendarController::class, 'updateAvailability'])->name('famfit.availability.update');
+    Route::post('/famfit/actividades', [FamFitCalendarController::class, 'store'])->name('famfit.activities.store');
+    Route::put('/famfit/actividades/{activity}', [FamFitCalendarController::class, 'update'])->name('famfit.activities.update');
+    Route::delete('/famfit/actividades/{activity}', [FamFitCalendarController::class, 'destroy'])->name('famfit.activities.destroy');
 
     // Perfil y Configuración
     Route::get('/perfil', [QuestController::class, 'profile'])->name('perfil');
