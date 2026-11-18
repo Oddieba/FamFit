@@ -64,8 +64,31 @@
 
         return false;
     };
+    const scheduleHasConflict = () => {
+        if (!fields.date.value || !fields.start.value || !fields.end.value) return false;
+
+        return [...document.querySelectorAll('[data-activity]')].some(button => {
+            const activity = JSON.parse(button.dataset.activity);
+            if (activity.activity_date.substring(0, 10) !== fields.date.value) return false;
+            if (originalSchedule
+                && activity.activity_date.substring(0, 10) === originalSchedule.date
+                && activity.start_time.substring(0, 5) === originalSchedule.start
+                && activity.end_time.substring(0, 5) === originalSchedule.end) {
+                return false;
+            }
+
+            return fields.start.value < activity.end_time.substring(0, 5)
+                && fields.end.value > activity.start_time.substring(0, 5);
+        });
+    };
     const updateAvailabilityFeedback = () => {
         const available = scheduleIsAvailable();
+        const conflict = scheduleHasConflict();
+
+        if (conflict) {
+            fields.availabilityFeedback.textContent = 'Ya tienes otra actividad en ese horario. Cambia la hora antes de guardar.';
+            return false;
+        }
 
         if (!hasConfiguredAvailability) {
             fields.availabilityFeedback.textContent = 'No configuraste franjas disponibles; no hay restricciones de horario.';

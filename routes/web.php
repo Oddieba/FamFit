@@ -4,17 +4,11 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\FamFitCalendarController;
 use App\Http\Controllers\QuestController;
 use App\Http\Controllers\OnboardingController;
-use App\Models\User;
-use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
 use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\Auth\PasswordResetController;
 /*
@@ -71,51 +65,17 @@ Route::get('/registro', function () {
 Route::post('/registro', [RegisteredUserController::class, 'store'])
     ->name('registro.store');
 
-// Recuperar contraseña
-Route::get('/forgot-password', function () {
-    return view('forgot-password');
-})->name('forgot-password');
-
-
-
-// Mostrar formulario de restablecimiento
-Route::get('/reset-password/{token}', function (string $token, Request $request) {
-    return view('restablecer', [
-        'token' => $token,
-        'email' => $request->query('email'),
-    ]);
-})->name('password.reset');
-
-// Guardar nueva contraseña
-Route::post('/reset-password', function (Request $request) {
-    $request->validate([
-        'token' => ['required'],
-        'email' => ['required', 'email'],
-        'password' => ['required', 'string', 'min:8', 'confirmed'],
-    ]);
-
-    $status = Password::reset(
-        $request->only('email', 'password', 'password_confirmation', 'token'),
-        function (User $user, string $password): void {
-            $user->forceFill([
-                'password' => Hash::make($password),
-                'remember_token' => Str::random(60),
-            ])->save();
-
-            event(new PasswordReset($user));
-        }
-    );
-
-    if ($status === Password::PASSWORD_RESET) {
-        return redirect()
-            ->route('login')
-            ->with('status', 'Tu contraseña se actualizó correctamente. Ya puedes iniciar sesión.');
-    }
-
-    return back()
-        ->withInput($request->only('email'))
-        ->withErrors(['email' => __($status)]);
-})->name('password.update');
+// Recuperación de contraseña
+Route::middleware('guest')->group(function () {
+    Route::get('/forgot-password', [PasswordResetController::class, 'create'])
+        ->name('password.request');
+    Route::post('/forgot-password', [PasswordResetController::class, 'store'])
+        ->name('password.email');
+    Route::get('/reset-password/{token}', [PasswordResetController::class, 'edit'])
+        ->name('password.reset');
+    Route::post('/reset-password', [PasswordResetController::class, 'update'])
+        ->name('password.update');
+});
 
 // Rutas públicas adicionales que tenías
 Route::get('/progreso', function () {
@@ -141,7 +101,7 @@ Route::middleware('auth')->group(function () {
             return redirect()->route('test')->with('info', 'Debes completar tu test inicial primero.');
         }
         // Si ya hizo el test, cargamos el controlador pasándole el $request
-        return app(\App\Http\Controllers\QuestController::class)->home($request); // <-- Se lo pasamos aquí
+        return app(QuestController::class)->home($request); // <-- Se lo pasamos aquí
     })->name('menu');
 
     // El resto de rutas (sin duplicar el menú)
@@ -162,6 +122,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/perfil', [QuestController::class, 'profile'])->name('perfil');
     Route::put('/perfil', [QuestController::class, 'updateProfile'])->name('perfil.update');
     Route::put('/avatar', [QuestController::class, 'updateAvatar'])->name('avatar.update');
+    Route::get('/avatar', [AvatarController::class, 'editar'])->name('avatar.editar');
+    Route::post('/avatar', [AvatarController::class, 'guardar'])->name('avatar.guardar');
 
     Route::get('/configuracion', [QuestController::class, 'settings'])->name('configuracion');
     Route::put('/configuracion', [QuestController::class, 'updateSettings'])->name('configuracion.update');
@@ -212,28 +174,4 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('login');
     })->name('cuenta.destroy');
 });
-
-Route::get('/avatar', [AvatarController::class, 'editar'])
-    ->middleware(['auth'])
-    ->name('avatar.editar');
-
-Route::post('/avatar', [AvatarController::class, 'guardar'])
-    ->middleware(['auth'])
-    ->name('avatar.guardar');
-// Recuperación de contraseña
-Route::get('/forgot-password', [PasswordResetController::class, 'create'])
-    ->middleware('guest')
-    ->name('password.request');
-
-Route::post('/forgot-password', [PasswordResetController::class, 'store'])
-    ->middleware('guest')
-    ->name('password.email');
-
-Route::get('/reset-password/{token}', [PasswordResetController::class, 'edit'])
-    ->middleware('guest')
-    ->name('password.reset');
-
-Route::post('/reset-password', [PasswordResetController::class, 'update'])
-    ->middleware('guest')
-    ->name('password.update');
 

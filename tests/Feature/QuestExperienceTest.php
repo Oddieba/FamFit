@@ -67,6 +67,32 @@ class QuestExperienceTest extends TestCase
         $this->delete(route('famfit.activities.destroy', $activity))->assertRedirect();
     }
 
+    public function test_calendar_rejects_overlapping_activities(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $this->post(route('famfit.activities.store'), [
+            'title' => 'Primera actividad',
+            'activity_type' => 'Ejercicio',
+            'activity_date' => today()->toDateString(),
+            'start_time' => '09:00',
+            'end_time' => '10:00',
+            'status' => 'planned',
+        ])->assertRedirect()->assertSessionHasNoErrors();
+
+        $this->post(route('famfit.activities.store'), [
+            'title' => 'Actividad superpuesta',
+            'activity_type' => 'Caminata',
+            'activity_date' => today()->toDateString(),
+            'start_time' => '09:30',
+            'end_time' => '10:30',
+            'status' => 'planned',
+        ])->assertRedirect()->assertSessionHasErrors('start_time');
+
+        $this->assertSame(1, FamFitActivity::where('user_id', $user->id)->count());
+    }
+
     public function test_calendar_activities_are_isolated_by_user(): void
     {
         $owner = User::factory()->create();

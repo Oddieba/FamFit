@@ -107,6 +107,7 @@ class FamFitCalendarController extends Controller
     {
         $data = $this->validatedData($request);
         $this->ensureActivityWithinAvailability($data, $request);
+        $this->ensureNoScheduleConflict($data, $request);
         $duration = $this->durationInMinutes($data['start_time'], $data['end_time']);
 
         FamFitActivity::create([
@@ -130,6 +131,7 @@ class FamFitCalendarController extends Controller
 
         if ($scheduleChanged) {
             $this->ensureActivityWithinAvailability($data, $request);
+            $this->ensureNoScheduleConflict($data, $request, $activity->id);
         }
 
         $duration = $this->durationInMinutes($data['start_time'], $data['end_time']);
@@ -206,6 +208,23 @@ class FamFitCalendarController extends Controller
         throw ValidationException::withMessages([
             'start_time' => 'La actividad debe estar dentro de los días y franjas que configuraste en tu disponibilidad semanal.',
         ]);
+    }
+
+    private function ensureNoScheduleConflict(array $data, Request $request, ?int $exceptActivityId = null): void
+    {
+        $conflict = FamFitActivity::query()
+            ->where('user_id', $request->user()->id)
+            ->whereDate('activity_date', $data['activity_date'])
+            ->where('start_time', '<', $data['end_time'])
+            ->where('end_time', '>', $data['start_time'])
+            ->when($exceptActivityId !== null, fn ($query) => $query->where('id', '!=', $exceptActivityId))
+            ->exists();
+
+        if ($conflict) {
+            throw ValidationException::withMessages([
+                'start_time' => 'Ya tienes otra actividad en ese horario. Cambia la hora antes de guardar.',
+            ]);
+        }
     }
 
     private function normalizeAvailability(mixed $availability): array

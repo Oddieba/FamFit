@@ -268,19 +268,19 @@
                             <span class="text-[11px] font-bold uppercase tracking-wider text-brand-primary block mb-2">Lo que incluye:</span>
                             <ul class="text-xs text-brand-text-secondary space-y-2.5">
                                 <li class="flex items-start">
-                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 flex-shrink-0"></i>
+                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 shrink-0"></i>
                                     <span><strong>Guía de técnica postural:</strong> Animaciones explicativas paso a paso.</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 flex-shrink-0"></i>
+                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 shrink-0"></i>
                                     <span><strong>Bitácora de cargas:</strong> Registro preciso de series, peso y repeticiones.</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 flex-shrink-0"></i>
+                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 shrink-0"></i>
                                     <span><strong>Sobrecarga progresiva:</strong> Recomendaciones automáticas de incremento.</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 flex-shrink-0"></i>
+                                    <i class="fa-solid fa-circle-check text-brand-habit text-sm mt-0.5 mr-2 shrink-0"></i>
                                     <span><strong>Temporizador de descanso:</strong> Alertador de intervalos entre series.</span>
                                 </li>
                             </ul>
