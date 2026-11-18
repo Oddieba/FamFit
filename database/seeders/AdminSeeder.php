@@ -14,8 +14,11 @@ class AdminSeeder extends Seeder
             ['email' => 'admin@famfit.com'],
             [
                 'name' => 'Administrador',
+                'username' => 'admin', //
                 'password' => Hash::make('Admin12345'),
                 'role_id' => 1,
+                 'terms_accepted_at' => now(),
+                'privacy_accepted_at' => now(),
             ]
         );
     }
