@@ -8,6 +8,7 @@
     <script src="{{ asset('js/theme.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('estilos/tema-oscuro.css') }}">
     <link rel="stylesheet" href="{{ asset('estilos/quest.css') }}">
+    @stack('styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="fq-app">
@@ -35,7 +36,7 @@
             <a class="fq-nav-link {{ request()->routeIs('entreno*') ? 'is-active' : '' }}" href="{{ route('entreno') }}" @if(request()->routeIs('entreno*')) aria-current="page" @endif>
                 <span class="fq-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 8v8m12-8v8M3 10v4m18-4v4M6 12h12"></path></svg></span><span class="fq-nav-label">Entreno</span>
             </a>
-            <a class="fq-nav-link {{ request()->routeIs('calendario') ? 'is-active' : '' }}" href="{{ route('calendario') }}" @if(request()->routeIs('calendario')) aria-current="page" @endif>
+            <a class="fq-nav-link {{ request()->routeIs('calendario') || request()->routeIs('famfit.calendar') ? 'is-active' : '' }}" href="{{ route('calendario') }}" @if(request()->routeIs('calendario') || request()->routeIs('famfit.calendar')) aria-current="page" @endif>
                 <span class="fq-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></svg></span><span class="fq-nav-label">Calendario</span>
             </a>
             <a class="fq-nav-link {{ request()->routeIs('social') ? 'is-active' : '' }}" href="{{ route('social') }}" @if(request()->routeIs('social')) aria-current="page" @endif>
