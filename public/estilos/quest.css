@@ -117,7 +117,7 @@ body.fq-app {
 .fq-customize-form { display: grid; gap: 13px; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--fq-border); }
 .fq-customize-form[hidden] { display: none; }
 .fq-customize-form fieldset { margin: 0; padding: 0; border: 0; }
-.fq-customize-form legend, .fq-field-label { display: block; margin-bottom: 7px; color: #34425A; font-size: .82rem; font-weight: 730; }
+.fq-customize-form legend, .fq-field-label { display: block; margin-bottom: 7px; color: var(--fq-text); font-size: .82rem; font-weight: 730; }
 .fq-choice-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .fq-avatar-choice { position: relative; cursor: pointer; }
 .fq-avatar-choice input { position: absolute; width: 1px; height: 1px; opacity: 0; }
@@ -248,7 +248,7 @@ body.fq-app {
 .fq-danger-zone { border-color: #F0DFDF; }
 .fq-account-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .fq-danger-zone > .fq-muted { margin: 12px 0 0; font-size: .84rem; }
-.fq-dialog { width: min(480px, calc(100vw - 32px)); padding: 26px; border: 1px solid var(--fq-border); border-radius: 20px; box-shadow: 0 24px 70px rgba(23, 32, 51, .22); }
+.fq-dialog { width: min(480px, calc(100vw - 32px)); padding: 26px; border: 1px solid var(--fq-border); border-radius: 20px; background: var(--fq-surface); color: var(--fq-text); box-shadow: 0 24px 70px rgba(23, 32, 51, .22); }
 .fq-dialog::backdrop { background: rgba(15, 23, 42, .48); backdrop-filter: blur(2px); }
 .fq-dialog h2 { margin-bottom: 9px; }
 .fq-dialog .fq-muted { margin-bottom: 20px; }
