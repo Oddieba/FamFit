@@ -26,39 +26,33 @@
                     <h2>FamFit Quest</h2>
                 </div>
 
-                <div class="ilustracion">
-                    <div class="circulo circulo-uno"></div>
-                    <div class="circulo circulo-dos"></div>
+                <img
+                    src="{{ asset('imagenes/aas.png') }}"
+                    class="ilustracion-logo"
+                    alt="Logo FamFit"
+                >
 
-                    <div class="personajes">
-                        👨‍👩‍👧
-                        <span class="corazon">💚</span>
-                    </div>
-                </div>
-
-                <h1>¡Crezcamos juntos!</h1>
+                
 
                 <p class="descripcion">
-                    Pequeños hábitos, grandes logros.
-                    Convierte cada día en una nueva aventura
-                    para cuidar de ti y de tu familia.
+                    Pequeños hábitos, grandes logros. Entrena a tu ritmo, organiza tus actividades y construye una vida más saludable mientras avanzas en tus objetivos.
                 </p>
 
                 <div class="beneficios">
 
                     <div class="beneficio">
-                        <span>🏃</span>
-                        <p>Muévete cada día</p>
+                        <span>🏋🏿‍♀️</span>
+                        <p>Entrena a tu propio ritmo</p>
                     </div>
 
                     <div class="beneficio">
-                        <span>⭐</span>
-                        <p>Supera tus retos</p>
+                        <span>📆</span>
+                        <p>Organiza tus hábitos saludables</p>
                     </div>
 
                     <div class="beneficio">
-                        <span>👨‍👩‍👧</span>
-                        <p>Comparte en familia</p>
+                        <span>🏆</span>
+                        <p>Supera retos y comparte tus logros</p>
                     </div>
 
                 </div>
@@ -88,13 +82,6 @@
                     </div>
                 @endif
 
-                                @if ($errors->any())
-                    <div style="color: red; margin-bottom: 10px;">
-                        @foreach ($errors->all() as $error)
-                            <p>{{ $error }}</p>
-                        @endforeach
-                    </div>
-                @endif
 
 
                 <form action="{{ route('login.post') }}" method="post">
@@ -151,7 +138,7 @@
                             Recordarme
                         </label>
 
-                        <a href="{{ route('olv_contra') }}">¿Olvidaste tu contraseña?</a>
+                        <a href="{{ route('password.request') }}">¿Olvidaste tu contraseña?</a>
 
                     </div>
 
@@ -172,7 +159,7 @@
                 </p>
 
                 <div class="mensaje-inferior">
-                    🌱 Cada pequeño paso cuenta.
+                    Construye hábitos, transforma tu vida
                 </div>
 
             </div>

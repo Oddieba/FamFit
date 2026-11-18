@@ -54,6 +54,11 @@
                 <div><label class="fq-field-label" for="newPassword">Nueva contraseña</label><input class="fq-input" id="newPassword" name="password" type="password" minlength="8" autocomplete="new-password" required></div>
                 <div><label class="fq-field-label" for="confirmPassword">Confirmar nueva contraseña</label><input class="fq-input" id="confirmPassword" name="password_confirmation" type="password" minlength="8" autocomplete="new-password" required></div>
             </div>
+            
+          <a href="{{ route('password.email') }}">¿Olvidaste tu contraseña?</a>
+        
+
+        
             <button class="fq-button fq-button-primary" type="submit">Actualizar contraseña</button>
         </form>
     </section>
