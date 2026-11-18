@@ -27,12 +27,12 @@
                 </div>
 
                 <img
-                    src="{{ asset('imagenes/logo-famfit-sin-fondo.png') }}"
+                    src="{{ asset('imagenes/aas.png') }}"
                     class="ilustracion-logo"
                     alt="Logo FamFit"
                 >
 
-                <h1>¡Crezcamos juntos!</h1>
+                
 
                 <p class="descripcion">
                     Pequeños hábitos, grandes logros. Entrena a tu ritmo, organiza tus actividades y construye una vida más saludable mientras avanzas en tus objetivos.
