@@ -42,7 +42,7 @@ class OnboardingController extends Controller
                     'gender'             => $request->genero,
                     'goals'              => $request->objetivo,
                     'experience'         => $request->experiencia_ejercicio,
-                    'availability'       => json_encode($request->disponibilidad),
+                    'availability'       => $request->input('disponibilidad', []),
                     'has_injury'         => $request->tiene_lesion,
                     'injury_description' => $request->descripcion_lesion,
                 ]
