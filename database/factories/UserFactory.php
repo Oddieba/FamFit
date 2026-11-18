@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -24,7 +25,13 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $role = Role::query()->firstOrCreate(
+            ['name' => 'Usuario'],
+            ['description' => 'Usuario registrado']
+        );
+
         return [
+            'role_id' => $role->id,
             'name' => fake()->name(),
             'username' => fake()->unique()->userName(),
             'email' => fake()->unique()->safeEmail(),

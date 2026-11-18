@@ -82,7 +82,6 @@
         });
     };
     const updateAvailabilityFeedback = () => {
-        const available = scheduleIsAvailable();
         const conflict = scheduleHasConflict();
 
         if (conflict) {
@@ -90,21 +89,8 @@
             return false;
         }
 
-        if (!hasConfiguredAvailability) {
-            fields.availabilityFeedback.textContent = 'No configuraste franjas disponibles; no hay restricciones de horario.';
-            return true;
-        }
-
-        if (scheduleIsUnchanged() && !available) {
-            fields.availabilityFeedback.textContent = 'El horario actual se conserva. Si cambias la fecha u hora, debe estar dentro de tu disponibilidad.';
-            return true;
-        }
-
-        fields.availabilityFeedback.textContent = available
-            ? 'El horario elegido está dentro de tu disponibilidad.'
-            : 'Ese horario no está disponible. Cambia el día o la hora antes de guardar.';
-
-        return available;
+        fields.availabilityFeedback.textContent = 'Puedes programar la actividad en cualquier día y horario.';
+        return true;
     };
     const resetForm = (date = defaultDate) => {
         form.reset();
@@ -122,28 +108,6 @@
         fields.deleteForm.removeAttribute('action');
         updateAvailabilityFeedback();
     };
-    const timeValue = minutes => {
-        const hours = String(Math.floor(minutes / 60)).padStart(2, '0');
-        const remainder = String(minutes % 60).padStart(2, '0');
-        return `${hours}:${remainder}`;
-    };
-    const createAtTime = (column, event) => {
-        const bounds = column.getBoundingClientRect();
-        const hourHeight = Number.parseFloat(
-            getComputedStyle(document.documentElement).getPropertyValue('--ff-hour-height')
-        );
-        const elapsed = Math.max(0, Math.min(event.clientY - bounds.top, hourHeight * 24));
-        const startMinutes = Math.min(23 * 60 + 45, Math.floor(elapsed / hourHeight * 4) * 15);
-        const endMinutes = Math.min(startMinutes + 60, 23 * 60 + 59);
-
-        resetForm(column.dataset.date);
-        fields.start.value = timeValue(startMinutes);
-        fields.end.value = timeValue(endMinutes);
-        fields.end.min = fields.start.value;
-        updateAvailabilityFeedback();
-        openModal();
-    };
-
     document.querySelectorAll('[data-open-create]').forEach(button => {
         button.addEventListener('click', () => {
             resetForm();
@@ -160,14 +124,7 @@
         if (event.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
     });
 
-    document.querySelectorAll('[data-day-column]').forEach(column => {
-        column.addEventListener('click', event => {
-            if (event.target.closest('.ff-event')) return;
-            createAtTime(column, event);
-        });
-    });
-
-    document.querySelectorAll('[data-activity]').forEach(button => {
+    document.querySelectorAll('[data-activity][data-update-url]').forEach(button => {
         button.addEventListener('click', () => {
             const activity = JSON.parse(button.dataset.activity);
             resetForm(activity.activity_date.substring(0, 10));
@@ -212,31 +169,7 @@
             event.preventDefault();
             return;
         }
-
-        if (!scheduleIsUnchanged() && !updateAvailabilityFeedback()) {
-            event.preventDefault();
-        }
     });
-
-    const updateCurrentTime = () => {
-        document.querySelectorAll('.ff-current-time').forEach(line => line.remove());
-        const grid = document.querySelector('.ff-week-grid');
-        if (!grid) return;
-
-        const todayColumn = [...grid.querySelectorAll('[data-day-column]')]
-            .find(column => column.dataset.date === grid.dataset.today);
-        if (!todayColumn) return;
-
-        const now = new Date();
-        const hourHeight = Number.parseFloat(
-            getComputedStyle(document.documentElement).getPropertyValue('--ff-hour-height')
-        );
-        const top = (now.getHours() * 60 + now.getMinutes()) / 60 * hourHeight;
-        const line = document.createElement('div');
-        line.className = 'ff-current-time';
-        line.style.top = `${top}px`;
-        todayColumn.appendChild(line);
-    };
 
     const zoomOut = document.querySelector('[data-calendar-zoom="out"]');
     const zoomIn = document.querySelector('[data-calendar-zoom="in"]');
@@ -255,7 +188,6 @@
         zoomLevel.value = `${Math.round(hourHeight / baseHourHeight * 100)}%`;
         zoomOut.disabled = hourHeight <= minHourHeight;
         zoomIn.disabled = hourHeight >= maxHourHeight;
-        updateCurrentTime();
     };
 
     zoomOut.addEventListener('click', () => {
@@ -272,6 +204,4 @@
     });
 
     updateZoom();
-    updateCurrentTime();
-    window.setInterval(updateCurrentTime, 60_000);
 })();

@@ -56,7 +56,7 @@
                     <span class="ff-eyebrow">VISTA SEMANAL</span>
                     <h2>{{ $weekStart->locale('es')->translatedFormat('j M') }} –
                         {{ $weekEnd->locale('es')->translatedFormat('j M Y') }}</h2>
-                    <p>Selecciona un horario para crear una actividad o elige una existente para editarla.</p>
+                    <p>Usa el botón “Nueva actividad” para agregar una actividad al calendario.</p>
                 </div>
                 <div class="ff-calendar-toolbar-actions">
                     <nav class="ff-calendar-actions" aria-label="Navegación del calendario">
@@ -106,8 +106,7 @@
                         @endforeach
                     </div>
                     <div class="ff-availability-footer">
-                        <p>Las actividades deben quedar dentro de tus días y franjas disponibles. Si no seleccionas franjas,
-                            no se restringirá el horario.</p>
+                        <p>Guarda tus preferencias semanales. Las actividades pueden programarse en cualquier día y horario.</p>
                         <button class="ff-btn ff-btn-primary" type="submit">Guardar disponibilidad</button>
                     </div>
                 </form>

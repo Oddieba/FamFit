@@ -100,7 +100,7 @@ class FamFitCalendarController extends Controller
         $availability = $this->normalizeAvailability($validated['availability'] ?? []);
         $request->user()->profile()->updateOrCreate([], ['availability' => $availability]);
 
-        return back()->with('success', 'Disponibilidad guardada. Las actividades deben coincidir con tus días y franjas seleccionados. Si no seleccionas franjas, no habrá restricciones.');
+        return back()->with('success', 'Disponibilidad guardada como preferencia. Las actividades pueden programarse en cualquier día y horario.');
     }
 
     public function store(Request $request): RedirectResponse
@@ -175,39 +175,9 @@ class FamFitCalendarController extends Controller
 
     private function ensureActivityWithinAvailability(array $data, Request $request): void
     {
-        $availability = $this->normalizeAvailability($request->user()->profile?->availability);
-        $hasConfiguredSlots = collect($availability)->contains(fn (array $slots) => $slots !== []);
-
-        if (! $hasConfiguredSlots) {
-            return;
-        }
-
-        $dayKey = array_keys(self::AVAILABILITY_DAYS)[Carbon::parse($data['activity_date'])->dayOfWeekIso - 1];
-        $activityStart = Carbon::createFromFormat('H:i', $data['start_time']);
-        $activityEnd = Carbon::createFromFormat('H:i', $data['end_time']);
-        $start = $activityStart->hour * 60 + $activityStart->minute;
-        $end = $activityEnd->hour * 60 + $activityEnd->minute;
-        $cursor = $start;
-
-        foreach (self::AVAILABILITY_SLOTS as $slotKey => $slot) {
-            if (! in_array($slotKey, $availability[$dayKey], true) || $slot['end'] <= $cursor) {
-                continue;
-            }
-
-            if ($slot['start'] > $cursor) {
-                break;
-            }
-
-            $cursor = max($cursor, $slot['end']);
-
-            if ($cursor >= $end) {
-                return;
-            }
-        }
-
-        throw ValidationException::withMessages([
-            'start_time' => 'La actividad debe estar dentro de los días y franjas que configuraste en tu disponibilidad semanal.',
-        ]);
+        // Se permite programar actividades en cualquier horario.
+        // La disponibilidad semanal se conserva como preferencia visible,
+        // pero no bloquea la creación de actividades.
     }
 
     private function ensureNoScheduleConflict(array $data, Request $request, ?int $exceptActivityId = null): void

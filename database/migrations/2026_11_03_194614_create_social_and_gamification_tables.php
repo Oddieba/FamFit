@@ -94,8 +94,17 @@ return new class extends Migration
             $table->unsignedBigInteger('requester_id');
             $table->unsignedBigInteger('addressee_id');
             $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
-            $table->unsignedBigInteger('user_low_id')->virtualAs('least(requester_id, addressee_id)');
-            $table->unsignedBigInteger('user_high_id')->virtualAs('greatest(requester_id, addressee_id)');
+            if (config('database.default') === 'sqlite') {
+                $table->unsignedBigInteger('user_low_id')->virtualAs(
+                    'case when requester_id < addressee_id then requester_id else addressee_id end'
+                );
+                $table->unsignedBigInteger('user_high_id')->virtualAs(
+                    'case when requester_id > addressee_id then requester_id else addressee_id end'
+                );
+            } else {
+                $table->unsignedBigInteger('user_low_id')->virtualAs('least(requester_id, addressee_id)');
+                $table->unsignedBigInteger('user_high_id')->virtualAs('greatest(requester_id, addressee_id)');
+            }
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('responded_at')->nullable();
 

@@ -114,12 +114,24 @@ button.ff-mini-day { padding: 0; border: 0; background: transparent; cursor: poi
 .ff-week-heading.is-today strong { color: #fff; background: var(--ff-primary); }
 .ff-week-heading.is-selected:not(.is-today) strong { outline: 1px solid var(--ff-primary); color: var(--ff-primary); }
 .ff-week-grid { position: relative; height: calc(var(--ff-hour-height) * 24); }
-.ff-day-column { position: relative; min-width: 0; border-right: 1px solid #e8edf4; background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--ff-hour-height) - 1px), #e8edf4 calc(var(--ff-hour-height) - 1px), #e8edf4 var(--ff-hour-height)); cursor: crosshair; }
+.ff-day-column { position: relative; min-width: 0; border-right: 1px solid #e8edf4; background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--ff-hour-height) - 1px), #e8edf4 calc(var(--ff-hour-height) - 1px), #e8edf4 var(--ff-hour-height)); cursor: default; }
 .ff-day-column:last-child { border-right: 0; }
 .ff-day-column:nth-child(odd) { background-color: #fcfdff; }
 .ff-day-column.is-today { background-color: #f5f8ff; }
 .ff-event { position: absolute; z-index: 2; left: 3px; right: 3px; display: flex; flex-direction: column; gap: 3px; min-width: 0; overflow: hidden; padding: 6px 7px; border: 0; border-left: 3px solid var(--ff-primary); border-radius: 6px; background: #2864f018; color: #214ba8; text-align: left; font-size: 10px; cursor: pointer; }
 .ff-event:hover { filter: brightness(.96); box-shadow: 0 3px 8px #17203320; }
+.ff-empty-calendar,
+.ff-management-list,
+.ff-edit-panel { padding: 18px; }
+.ff-empty-calendar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.ff-management-list { display: grid; gap: 10px; }
+.ff-management-card { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px; border: 1px solid var(--ff-border); border-radius: 10px; background: #fff; }
+.ff-management-card > div { display: grid; gap: 3px; }
+.ff-management-card span,
+.ff-management-card small { color: var(--ff-text-secondary); }
+.ff-edit-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.ff-edit-form .ff-field-full { grid-column: 1 / -1; }
+.ff-edit-form .ff-modal-actions { grid-column: 1 / -1; }
 .ff-event strong, .ff-event span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ff-event strong { font-size: 10px; }
 .ff-event span { font-size: 9px; font-weight: 650; }
@@ -136,8 +148,6 @@ button.ff-mini-day { padding: 0; border: 0; background: transparent; cursor: poi
 .legend-teal { background: var(--ff-habit); }
 .legend-blue { background: var(--ff-primary); }
 .legend-green { background: var(--ff-success); }
-.ff-current-time { position: absolute; z-index: 4; left: 0; right: 0; border-top: 2px solid #dc5361; pointer-events: none; }
-.ff-current-time::before { position: absolute; top: -5px; left: -4px; width: 7px; height: 7px; border-radius: 50%; background: #dc5361; content: ""; }
 .ff-footer { padding: 18px 4px 0; text-align: center; color: var(--ff-text-secondary); font-size: 10px; }
 .ff-alert { margin: 0 0 15px; padding: 12px 14px; border-radius: 10px; font-size: 12px; }
 .ff-alert-success { background: #a7e66d35; color: #355f13; }
