@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\FamFitActivity;
+use App\Models\QuestExercise;
 use App\Models\QuestExerciseCompletion;
+use App\Models\QuestRoutine;
 use App\Models\User;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -63,6 +65,44 @@ class QuestExperienceTest extends TestCase
         ])->assertRedirect();
 
         $this->delete(route('famfit.activities.destroy', $activity))->assertRedirect();
+    }
+
+    public function test_calendar_activities_are_isolated_by_user(): void
+    {
+        $owner = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        $this->actingAs($owner)->post(route('famfit.activities.store'), [
+            'title' => 'Actividad privada',
+            'activity_type' => 'Caminata',
+            'activity_date' => today()->toDateString(),
+            'start_time' => '09:00',
+            'end_time' => '10:00',
+            'status' => 'planned',
+        ])->assertRedirect();
+
+        $activity = FamFitActivity::query()->firstOrFail();
+        $this->assertSame($owner->id, $activity->user_id);
+
+        $this->actingAs($otherUser)
+            ->get(route('famfit.calendar'))
+            ->assertOk()
+            ->assertDontSee('Actividad privada');
+
+        $this->actingAs($otherUser)
+            ->put(route('famfit.activities.update', $activity), [
+                'title' => 'Actividad modificada',
+                'activity_type' => 'Caminata',
+                'activity_date' => today()->toDateString(),
+                'start_time' => '10:00',
+                'end_time' => '11:00',
+                'status' => 'planned',
+            ])
+            ->assertForbidden();
+
+        $this->actingAs($otherUser)
+            ->delete(route('famfit.activities.destroy', $activity))
+            ->assertForbidden();
     }
 
     public function test_weekly_availability_is_saved_and_restricts_activity_schedules(): void

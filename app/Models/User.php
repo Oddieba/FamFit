@@ -76,6 +76,11 @@ class User extends Authenticatable
         return $this->hasMany(QuestExerciseCompletion::class);
     }
 
+    public function calendarActivities(): HasMany
+    {
+        return $this->hasMany(FamFitActivity::class, 'user_id');
+    }
+
     // Relación con los Tests Iniciales (1 a muchos)
     public function initialAssessments()
     {

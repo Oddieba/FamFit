@@ -49,6 +49,7 @@ class FamFitCalendarController extends Controller
         $weekEnd = $weekStart->copy()->endOfWeek(WeekDay::Sunday);
 
         $activities = FamFitActivity::query()
+            ->where('user_id', $request->user()->id)
             ->whereBetween('activity_date', [$weekStart->toDateString(), $weekEnd->toDateString()])
             ->orderBy('start_time')
             ->get()
@@ -57,6 +58,7 @@ class FamFitCalendarController extends Controller
         $miniStart = $currentMonth->copy()->startOfMonth()->startOfWeek(WeekDay::Monday);
         $miniEnd = $currentMonth->copy()->endOfMonth()->endOfWeek(WeekDay::Sunday);
         $miniActivityDates = FamFitActivity::query()
+            ->where('user_id', $request->user()->id)
             ->whereBetween('activity_date', [$miniStart->toDateString(), $miniEnd->toDateString()])
             ->distinct()
             ->pluck('activity_date')
@@ -64,6 +66,7 @@ class FamFitCalendarController extends Controller
             ->flip();
 
         $weekActivities = FamFitActivity::query()
+            ->where('user_id', $request->user()->id)
             ->whereBetween('activity_date', [$weekStart->toDateString(), $weekEnd->toDateString()]);
         $availability = $this->normalizeAvailability($request->user()->profile?->availability);
 
@@ -108,6 +111,7 @@ class FamFitCalendarController extends Controller
 
         FamFitActivity::create([
             ...$data,
+            'user_id' => $request->user()->id,
             'duration_minutes' => $duration,
             'points' => $data['status'] === 'completed' ? intdiv($duration, 30) * 10 : 0,
         ]);
@@ -117,6 +121,8 @@ class FamFitCalendarController extends Controller
 
     public function update(Request $request, FamFitActivity $activity): RedirectResponse
     {
+        abort_unless($activity->user_id === $request->user()->id, 403);
+
         $data = $this->validatedData($request);
         $scheduleChanged = $activity->activity_date->toDateString() !== $data['activity_date']
             || substr((string) $activity->start_time, 0, 5) !== $data['start_time']
@@ -137,8 +143,10 @@ class FamFitCalendarController extends Controller
         return back()->with('success', 'Actividad actualizada correctamente.');
     }
 
-    public function destroy(FamFitActivity $activity): RedirectResponse
+    public function destroy(Request $request, FamFitActivity $activity): RedirectResponse
     {
+        abort_unless($activity->user_id === $request->user()->id, 403);
+
         $activity->delete();
 
         return back()->with('success', 'Actividad eliminada.');

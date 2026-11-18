@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FamFitActivity extends Model
 {
     protected $table = 'calendars';
 
     protected $fillable = [
+        'user_id',
         'title',
         'activity_type',
         'activity_date',
@@ -25,4 +27,9 @@ class FamFitActivity extends Model
         'duration_minutes' => 'integer',
         'points' => 'integer',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }
