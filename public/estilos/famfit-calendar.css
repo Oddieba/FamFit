@@ -149,12 +149,14 @@ button.ff-mini-day { padding: 0; border: 0; background: transparent; cursor: poi
 .ff-modal-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
 .ff-modal-head h2 { margin: 6px 0 0; font-size: 21px; }
 .ff-close { width: 32px; height: 32px; border: 0; border-radius: 9px; background: var(--ff-surface-muted); color: var(--ff-text-secondary); font-size: 23px; cursor: pointer; }
+#activityForm { min-height: 0; overflow-y: auto; }
 .ff-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .ff-field { display: grid; gap: 7px; color: var(--ff-text-secondary); font-size: 11px; font-weight: 750; }
 .ff-field-full { grid-column: 1 / -1; }
 .ff-field input, .ff-field select, .ff-field textarea { width: 100%; min-width: 0; padding: 11px 12px; border: 1px solid var(--ff-border); border-radius: 9px; outline: 0; background: #fff; color: var(--ff-text-primary); font-size: 12px; font-weight: 500; }
 .ff-field input:focus, .ff-field select:focus, .ff-field textarea:focus { border-color: var(--ff-primary); box-shadow: 0 0 0 3px #2864f018; }
 .ff-field textarea { resize: none; }
+.ff-availability-feedback { margin: 12px 0 0; color: var(--ff-text-secondary); font-size: 11px; }
 .ff-points-hint { margin: 15px 0 0; padding: 10px; border-radius: 8px; background: #f2b85b20; color: #80570f; font-size: 10px; }
 .ff-modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
 .ff-delete-form { margin-top: 12px; text-align: right; }

@@ -7,7 +7,7 @@
 @endpush
 
 @push('scripts')
-    <script src="{{ asset('js/famfit-calendar.js') }}" defer></script>
+    <script src="{{ asset('js/famfit-calendar.js') }}?v={{ filemtime(public_path('js/famfit-calendar.js')) }}" defer></script>
 @endpush
 
 @section('content')
@@ -190,7 +190,7 @@
             <div><span class="ff-eyebrow">PLANIFICACIÓN FAMFIT</span><h2 id="modalTitle">Nueva actividad</h2></div>
             <button type="button" class="ff-close" data-close-modal aria-label="Cerrar">×</button>
         </div>
-        <form id="activityForm" method="POST" action="{{ route('famfit.activities.store') }}" data-store-url="{{ route('famfit.activities.store') }}" data-today="{{ now()->toDateString() }}">
+        <form id="activityForm" method="POST" action="{{ route('famfit.activities.store') }}" data-store-url="{{ route('famfit.activities.store') }}" data-today="{{ now()->toDateString() }}" data-availability='@json($availability)' data-availability-slots='@json($availabilitySlots)'>
             @csrf
             <input type="hidden" name="_method" id="formMethod" value="POST">
             <div class="ff-form-grid">
@@ -218,6 +218,7 @@
                     <textarea name="notes" id="activityNotes" rows="3" maxlength="1000" placeholder="Agrega detalles de tu actividad..."></textarea>
                 </label>
             </div>
+            <p class="ff-availability-feedback" id="availabilityFeedback" aria-live="polite"></p>
             <p class="ff-points-hint">★ Las actividades completadas generan 10 puntos por cada 30 minutos.</p>
             <div class="ff-modal-actions">
                 <button type="button" class="ff-btn ff-btn-ghost" data-close-modal>Cancelar</button>

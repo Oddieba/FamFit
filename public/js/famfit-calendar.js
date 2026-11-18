@@ -14,10 +14,16 @@
         notes: document.getElementById('activityNotes'),
         titleModal: document.getElementById('modalTitle'),
         save: document.getElementById('saveActivityBtn'),
+        availabilityFeedback: document.getElementById('availabilityFeedback'),
         deleteForm: document.getElementById('deleteForm'),
     };
     const defaultDate = form.dataset.today;
+    const availability = JSON.parse(form.dataset.availability || '{}');
+    const availabilitySlots = JSON.parse(form.dataset.availabilitySlots || '{}');
+    const availabilityDayKeys = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+    const hasConfiguredAvailability = Object.values(availability).some(slots => Array.isArray(slots) && slots.length > 0);
     let returnFocusTo = null;
+    let originalSchedule = null;
 
     const openModal = () => {
         returnFocusTo = document.activeElement;
@@ -32,9 +38,55 @@
         document.body.style.overflow = '';
         if (returnFocusTo instanceof HTMLElement) returnFocusTo.focus();
     };
+    const scheduleIsUnchanged = () => originalSchedule
+        && fields.date.value === originalSchedule.date
+        && fields.start.value === originalSchedule.start
+        && fields.end.value === originalSchedule.end;
+    const scheduleIsAvailable = () => {
+        if (!hasConfiguredAvailability) return true;
+
+        const [year, month, day] = fields.date.value.split('-').map(Number);
+        const dayKey = availabilityDayKeys[new Date(year, month - 1, day, 12).getDay()];
+        const selectedSlots = availability[dayKey] || [];
+        const [startHour, startMinute] = fields.start.value.split(':').map(Number);
+        const [endHour, endMinute] = fields.end.value.split(':').map(Number);
+        const start = startHour * 60 + startMinute;
+        const end = endHour * 60 + endMinute;
+        let cursor = start;
+
+        for (const [slotKey, slot] of Object.entries(availabilitySlots)) {
+            if (!selectedSlots.includes(slotKey) || slot.end <= cursor) continue;
+            if (slot.start > cursor) break;
+
+            cursor = Math.max(cursor, slot.end);
+            if (cursor >= end) return true;
+        }
+
+        return false;
+    };
+    const updateAvailabilityFeedback = () => {
+        const available = scheduleIsAvailable();
+
+        if (!hasConfiguredAvailability) {
+            fields.availabilityFeedback.textContent = 'No configuraste franjas disponibles; no hay restricciones de horario.';
+            return true;
+        }
+
+        if (scheduleIsUnchanged() && !available) {
+            fields.availabilityFeedback.textContent = 'El horario actual se conserva. Si cambias la fecha u hora, debe estar dentro de tu disponibilidad.';
+            return true;
+        }
+
+        fields.availabilityFeedback.textContent = available
+            ? 'El horario elegido está dentro de tu disponibilidad.'
+            : 'Ese horario no está disponible. Cambia el día o la hora antes de guardar.';
+
+        return available;
+    };
     const resetForm = (date = defaultDate) => {
         form.reset();
         form.action = form.dataset.storeUrl;
+        originalSchedule = null;
         fields.method.value = 'POST';
         fields.date.value = date;
         fields.start.value = '09:00';
@@ -45,6 +97,7 @@
         fields.save.textContent = 'Guardar actividad';
         fields.deleteForm.hidden = true;
         fields.deleteForm.removeAttribute('action');
+        updateAvailabilityFeedback();
     };
     const timeValue = minutes => {
         const hours = String(Math.floor(minutes / 60)).padStart(2, '0');
@@ -64,6 +117,7 @@
         fields.start.value = timeValue(startMinutes);
         fields.end.value = timeValue(endMinutes);
         fields.end.min = fields.start.value;
+        updateAvailabilityFeedback();
         openModal();
     };
 
@@ -101,6 +155,11 @@
             fields.date.value = activity.activity_date.substring(0, 10);
             fields.start.value = activity.start_time.substring(0, 5);
             fields.end.value = activity.end_time.substring(0, 5);
+            originalSchedule = {
+                date: fields.date.value,
+                start: fields.start.value,
+                end: fields.end.value,
+            };
             fields.end.min = fields.start.value;
             fields.status.value = activity.status;
             fields.notes.value = activity.notes || '';
@@ -108,6 +167,7 @@
             fields.save.textContent = 'Guardar cambios';
             fields.deleteForm.action = button.dataset.deleteUrl;
             fields.deleteForm.hidden = false;
+            updateAvailabilityFeedback();
             openModal();
         });
     });
@@ -118,10 +178,19 @@
     };
     fields.start.addEventListener('input', clearEndTimeError);
     fields.end.addEventListener('input', clearEndTimeError);
+    [fields.date, fields.start, fields.end].forEach(field => {
+        field.addEventListener('input', updateAvailabilityFeedback);
+        field.addEventListener('change', updateAvailabilityFeedback);
+    });
     form.addEventListener('submit', event => {
         if (fields.end.value <= fields.start.value) {
             fields.end.setCustomValidity('La hora de finalización debe ser posterior a la de inicio.');
             fields.end.reportValidity();
+            event.preventDefault();
+            return;
+        }
+
+        if (!scheduleIsUnchanged() && !updateAvailabilityFeedback()) {
             event.preventDefault();
         }
     });
