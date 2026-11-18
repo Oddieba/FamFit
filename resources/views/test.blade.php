@@ -429,6 +429,14 @@
 
         document.addEventListener("DOMContentLoaded", function() {
             updateMasterCheckboxState();
+            
+            
+            // 👇 ESTO ARREGLA EL BUG DE LAS TARJETAS AL CARGAR LA PÁGINA 👇
+            const inputLesion = document.getElementById('input-lesion');
+            if (inputLesion) {
+                // Forzamos a que se pinte la opción que dice el input oculto
+                toggleLesion(inputLesion.value === 'si' ? 'si' : 'no');
+            }
         });
 
         function handleNextStep(event) {
