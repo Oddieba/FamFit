@@ -18,12 +18,12 @@
     <div class="fq-overlay" id="fqOverlay"></div>
     <aside class="fq-sidebar" id="fqSidebar" aria-label="Menú principal">
         <div class="fq-sidebar-top">
-            <a class="fq-brand" href="{{ route('menu') }}" aria-label="FamFit Quest, Inicio">
+           
                 <span class="fq-brand-mark" aria-hidden="true">
                     <svg viewBox="0 0 24 24"><path d="M6 19V5h13v3H9v3h8v3H9v5z"></path></svg>
                 </span>
-                <span class="fq-brand-name">FamFit <b>Quest</b></span>
-            </a>
+                <span class="fq-brand-name">zdx</span>
+          
             <button class="fq-menu-toggle" id="fqMenuToggle" type="button" aria-label="Abrir menú" aria-controls="fqSidebar" aria-expanded="false">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
