@@ -126,6 +126,11 @@ Route::get('/entrenamientos', function () {
     return view('entrenamientos');
 })->name('entrenamientos');
 
+// Ruta dinámica que recibe el entorno (casa, gym o aire)
+    Route::get('/entrenamientos/{entorno}', function ($entorno) {
+        // Aquí luego podrás buscar en la base de datos las rutinas para este entorno
+        return view('rutinas', compact('entorno'));
+    })->name('entrenamientos.rutinas');
 
 /*
 |--------------------------------------------------------------------------
