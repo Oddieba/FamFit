@@ -19,6 +19,9 @@ use Illuminate\Support\Str;
 use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Models\Routine;
+use App\Models\Exercise;
+
+
 /*
 |--------------------------------------------------------------------------
 | Rutas Públicas (No requieren iniciar sesión)
@@ -128,7 +131,15 @@ Route::get('/entrenamientos', function () {
     return view('entrenamientos');
 })->name('entrenamientos');
 
+// 1. PRIMERO la ruta estática (Crear)
+Route::get('/entrenamientos/crear', function () {
+    // ... lógica de crear_rutina
+    return view('crear_rutina');
+})->name('entrenamientos.crear');
 
+Route::post('/entrenamientos/crear', function (Request $request) {
+    // ... lógica para guardar
+})->name('entrenamientos.crear.guardar');
 
 Route::get('/entrenamientos/{entorno}', function ($entorno) {
     /** @var \App\Models\User $user */
@@ -208,6 +219,70 @@ Route::middleware('auth')->group(function () {
     Route::put('/configuracion', [QuestController::class, 'updateSettings'])->name('configuracion.update');
     Route::put('/configuracion/tema', [QuestController::class, 'updateTheme'])->name('configuracion.theme');
     Route::put('/configuracion/contrasena', [QuestController::class, 'updatePassword'])->name('configuracion.password');
+
+
+
+    // 1. Mostrar el creador de rutinas
+Route::get('/entrenamientos/crear', function () {
+    $perfil = Auth::user()->profile;
+    
+    // El algoritmo de recomendación: Traemos los ejercicios que sirven para su objetivo
+    $objetivoDb = match($perfil->goals ?? 'general_fitness') {
+        'ganar_musculo' => 'strength',
+        'perder_grasa' => 'endurance',
+        'resistencia_cardio' => 'cardio',
+        'flexibilidad_movilidad' => 'mobility',
+        default => 'general_fitness',
+    };
+
+    // Traemos TODOS los ejercicios (para que el usuario pueda elegir)
+    $todosLosEjercicios = Exercise::all();
+    
+    // Marcamos cuáles le recomendamos
+    $recomendados = $todosLosEjercicios->filter(function($ex) use ($objetivoDb) {
+        return $ex->objective === $objetivoDb;
+    })->pluck('id')->toArray();
+
+    return view('crear_rutina', compact('todosLosEjercicios', 'recomendados', 'perfil'));
+})->name('entrenamientos.crear');
+
+// 2. Guardar la rutina
+Route::post('/entrenamientos/crear', function (Request $request) {
+    // Validación básica
+    $request->validate([
+        'name' => 'required|string|max:120',
+        'environment' => 'required|in:home,outdoor,gym',
+        'difficulty' => 'required|in:beginner,intermediate,advanced',
+        'exercises' => 'required|array|min:1'
+    ]);
+
+    // Crear la rutina
+    $routine = Routine::create([
+        'owner_user_id' => Auth::id(),
+        'name' => $request->name,
+        'description' => $request->description ?? 'Rutina personalizada',
+        'environment' => $request->environment,
+        'difficulty' => $request->difficulty,
+        'estimated_minutes' => count($request->exercises) * 10, // Cálculo rápido (10 min por ejercicio)
+        'source' => 'user',
+        'visibility' => 'private'
+    ]);
+
+    // Guardar los ejercicios en la tabla pivote
+    foreach ($request->exercises as $index => $ex) {
+        $routine->exercises()->attach($ex['id'], [
+            'position' => $index + 1,
+            'sets' => $ex['sets'],
+            'reps' => $ex['reps'],
+            'rest_seconds' => $ex['rest'],
+        ]);
+    }
+
+    return redirect()->route('entrenamientos.rutinas', $request->environment)
+                     ->with('success', '¡Rutina creada con éxito!');
+})->name('entrenamientos.crear.guardar');
+
+
 
     // Test Inicial y Onboarding (Asegúrate de usar el controlador aquí para pasar la variable $perfil)
     Route::get('/test', [OnboardingController::class, 'index'])->name('test');

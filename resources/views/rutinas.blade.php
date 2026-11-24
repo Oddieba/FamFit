@@ -22,7 +22,7 @@
                     <h1 class="text-3xl font-extrabold capitalize">Rutinas: {{ $entorno }}</h1>
                     <p class="text-brand-text-secondary text-sm mt-1">Explora las rutinas disponibles o crea la tuya.</p>
                 </div>
-                <a href="#" class="px-5 py-2.5 bg-brand-primary text-white font-bold rounded-xl shadow-md hover:bg-brand-primary/90 transition-all flex items-center justify-center">
+                <a href="{{ route('entrenamientos.crear') }}" class="px-5 py-2.5 bg-brand-primary text-white font-bold rounded-xl shadow-md hover:bg-brand-primary/90 transition-all flex items-center justify-center">
                     <i class="fa-solid fa-plus mr-2"></i> Crear mi rutina
                 </a>
             </div>
@@ -55,18 +55,20 @@
             <!-- COLUMNA DERECHA: Tabla -->
             <div class="lg:col-span-3 space-y-6">
                 
-                <!-- Filtros (Botones) -->
+                <!-- Filtros (Botones) - Todos inician con el mismo diseño base -->
                 <div class="flex space-x-2 border-b border-brand-border pb-4 overflow-x-auto" id="filterButtons">
-                    <button data-filter="all" class="filter-btn px-4 py-2 bg-brand-primary text-white font-bold text-sm rounded-lg whitespace-nowrap transition-colors">
+                    <!-- Botón Todas (Inicia Activo) -->
+                    <button data-filter="all" class="filter-btn px-4 py-2 bg-brand-primary text-white shadow-sm font-bold text-sm rounded-lg whitespace-nowrap transition-all duration-200">
                         Todas ({{ $todasLasRutinas->count() }})
                     </button>
-                    <button data-filter="recommended" class="filter-btn px-4 py-2 text-brand-text-secondary font-bold text-sm rounded-lg hover:bg-brand-surface-muted whitespace-nowrap transition-colors">
+                    <!-- Botones Inactivos -->
+                    <button data-filter="recommended" class="filter-btn px-4 py-2 text-brand-text-secondary hover:bg-brand-surface-muted hover:text-brand-text-primary font-bold text-sm rounded-lg whitespace-nowrap transition-all duration-200">
                         Recomendadas
                     </button>
-                    <button data-filter="community" class="filter-btn px-4 py-2 text-brand-text-secondary font-bold text-sm rounded-lg hover:bg-brand-surface-muted whitespace-nowrap transition-colors">
+                    <button data-filter="community" class="filter-btn px-4 py-2 text-brand-text-secondary hover:bg-brand-surface-muted hover:text-brand-text-primary font-bold text-sm rounded-lg whitespace-nowrap transition-all duration-200">
                         Comunidad (Famosas)
                     </button>
-                    <button data-filter="mine" class="filter-btn px-4 py-2 text-brand-text-secondary font-bold text-sm rounded-lg hover:bg-brand-surface-muted whitespace-nowrap transition-colors">
+                    <button data-filter="mine" class="filter-btn px-4 py-2 text-brand-text-secondary hover:bg-brand-surface-muted hover:text-brand-text-primary font-bold text-sm rounded-lg whitespace-nowrap transition-all duration-200">
                         Mis rutinas
                     </button>
                 </div>
@@ -85,12 +87,9 @@
                         <tbody class="divide-y divide-brand-border" id="routineTableBody">
                             @forelse($todasLasRutinas as $rutina)
                                 @php
-                                    // Verificamos si la rutina está en las recomendadas
                                     $isRecommended = $rutinasRecomendadas->contains('id', $rutina->id);
-                                    // Determinamos el tipo: si es 'user' es del usuario, si no, es de la comunidad
                                     $type = $rutina->source === 'user' ? 'mine' : 'community';
                                 @endphp
-                                <!-- Agregamos los data-attributes para que JS pueda filtrar -->
                                 <tr class="routine-row hover:bg-brand-surface-muted/50 transition-colors group" 
                                     data-type="{{ $type }}" 
                                     data-recommended="{{ $isRecommended ? 'true' : 'false' }}">
@@ -136,7 +135,6 @@
                                 </tr>
                             @endforelse
                             
-                            <!-- Mensaje en caso de que el filtro no encuentre resultados -->
                             <tr id="emptyFilterMessage" class="hidden">
                                 <td colspan="4" class="p-8 text-center text-brand-text-secondary">
                                     <p class="text-sm">No se encontraron rutinas en esta categoría.</p>
@@ -150,7 +148,7 @@
         </div>
     </main>
 
-    <!-- MODAL (Igual que antes) -->
+    <!-- MODAL -->
     <div id="routineDetailModal" class="fixed inset-0 bg-brand-text-primary/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-brand-surface rounded-2xl border border-brand-border shadow-2xl max-w-2xl w-full overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
             <div class="bg-brand-surface-muted px-6 py-4 border-b border-brand-border flex items-center justify-between shrink-0">
@@ -189,43 +187,39 @@
         .custom-scroll::-webkit-scrollbar-track { background: #EEF2F8; border-radius: 8px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #64748B; border-radius: 8px; }
         .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
-        
-        /* Clases para el botón activo */
-        .filter-btn.active { background-color: #2864F0; color: white; }
-        .filter-btn:not(.active) { color: #64748B; }
-        .filter-btn:not(.active):hover { background-color: #EEF2F8; }
     </style>
 
     <script>
-        // --- LÓGICA DE FILTRADO ---
+        // --- LÓGICA DE FILTRADO REFORZADA ---
         const filterButtons = document.querySelectorAll('.filter-btn');
         const routineRows = document.querySelectorAll('.routine-row');
         const emptyMessage = document.getElementById('emptyFilterMessage');
 
         filterButtons.forEach(button => {
             button.addEventListener('click', () => {
-                // 1. Manejar clases visuales de los botones
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
+                
+                // 1. Resetear TODOS los botones a su estado inactivo (Gris claro, texto oscuro)
+                filterButtons.forEach(btn => {
+                    btn.classList.remove('bg-brand-primary', 'text-white', 'shadow-sm');
+                    btn.classList.add('text-brand-text-secondary', 'hover:bg-brand-surface-muted', 'hover:text-brand-text-primary');
+                });
 
-                // 2. Filtrar las filas
+                // 2. Poner el botón clickeado en estado ACTIVO (Azul sólido, texto blanco)
+                button.classList.remove('text-brand-text-secondary', 'hover:bg-brand-surface-muted', 'hover:text-brand-text-primary');
+                button.classList.add('bg-brand-primary', 'text-white', 'shadow-sm');
+
+                // 3. Lógica para mostrar/ocultar las filas de la tabla
                 const filterType = button.dataset.filter;
                 let visibleCount = 0;
 
                 routineRows.forEach(row => {
                     let showRow = false;
 
-                    if (filterType === 'all') {
-                        showRow = true;
-                    } else if (filterType === 'recommended') {
-                        showRow = row.dataset.recommended === 'true';
-                    } else if (filterType === 'community') {
-                        showRow = row.dataset.type === 'community';
-                    } else if (filterType === 'mine') {
-                        showRow = row.dataset.type === 'mine';
-                    }
+                    if (filterType === 'all') showRow = true;
+                    else if (filterType === 'recommended') showRow = row.dataset.recommended === 'true';
+                    else if (filterType === 'community') showRow = row.dataset.type === 'community';
+                    else if (filterType === 'mine') showRow = row.dataset.type === 'mine';
 
-                    // Mostrar u ocultar
                     if (showRow) {
                         row.style.display = '';
                         visibleCount++;
@@ -234,7 +228,7 @@
                     }
                 });
 
-                // 3. Mostrar mensaje si no hay resultados
+                // 4. Mostrar mensaje si el filtro está vacío
                 if (visibleCount === 0 && routineRows.length > 0) {
                     emptyMessage.classList.remove('hidden');
                 } else {
