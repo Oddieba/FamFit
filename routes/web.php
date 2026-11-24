@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\Auth\PasswordResetController;
+use App\Models\Routine;
 /*
 |--------------------------------------------------------------------------
 | Rutas Públicas (No requieren iniciar sesión)
@@ -126,11 +127,43 @@ Route::get('/entrenamientos', function () {
     return view('entrenamientos');
 })->name('entrenamientos');
 
-// Ruta dinámica que recibe el entorno (casa, gym o aire)
-    Route::get('/entrenamientos/{entorno}', function ($entorno) {
-        // Aquí luego podrás buscar en la base de datos las rutinas para este entorno
-        return view('rutinas', compact('entorno'));
-    })->name('entrenamientos.rutinas');
+
+
+Route::get('/entrenamientos/{entorno}', function ($entorno) {
+    /** @var \App\Models\User $user */
+    $user = Auth::user();
+    $perfil = $user->profile;
+    
+    // 1. Traducir el objetivo del test (en español) al de la base de datos (en inglés)
+    $objetivoDb = 'general_fitness'; // Por defecto
+    if ($perfil && $perfil->goals) {
+        $objetivoDb = match($perfil->goals) {
+            'ganar_musculo' => 'strength',
+            'perder_grasa' => 'endurance',
+            'resistencia_cardio' => 'cardio',
+            'flexibilidad_movilidad' => 'mobility',
+            default => 'general_fitness',
+        };
+    }
+
+    // 2. Traducir el entorno por si acaso (gym, casa, aire)
+    $entornoDb = match($entorno) {
+        'gym' => 'gym',
+        'casa' => 'home',
+        'aire' => 'outdoor',
+        default => 'home'
+    };
+
+    // 3. Buscar las rutinas de ese entorno
+    $todasLasRutinas = Routine::where('environment', $entornoDb)->get();
+
+    // 4. Filtrar las rutinas recomendadas (según el objetivo del test)
+    $rutinasRecomendadas = Routine::where('environment', $entornoDb)
+                                  ->where('objective', $objetivoDb)
+                                  ->get();
+
+    return view('rutinas', compact('entorno', 'perfil', 'todasLasRutinas', 'rutinasRecomendadas', 'objetivoDb'));
+})->name('entrenamientos.rutinas');
 
 /*
 |--------------------------------------------------------------------------
