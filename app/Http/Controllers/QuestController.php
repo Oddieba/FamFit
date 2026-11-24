@@ -217,11 +217,6 @@ class QuestController extends Controller
         ]);
     }
 
-    public function social(): View
-    {
-        return view('social');
-    }
-
     public function profile(Request $request): View
     {
         $user = $request->user();
