@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\FamFitCalendarController;
-use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\QuestController;
 use App\Http\Controllers\OnboardingController;
 use App\Models\User;
@@ -150,9 +149,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/entreno/rutinas', [QuestController::class, 'storeRoutine'])->name('entreno.rutinas.store');
     Route::post('/entreno/ejercicios/{exercise}/completar', [QuestController::class, 'completeExercise'])->name('entreno.ejercicios.complete');
     Route::get('/calendario', [FamFitCalendarController::class, 'index'])->name('calendario');
-    Route::get('/social', [CommunityController::class, 'index'])->name('social');
-    Route::get('/social/personas', [CommunityController::class, 'people'])->name('social.people');
-    Route::post('/social/amistades', [CommunityController::class, 'update'])->name('social.friendship');
+    Route::get('/social', [QuestController::class, 'social'])->name('social');
 
     // Calendario compartido FamFit
     Route::get('/famfit/calendario', [FamFitCalendarController::class, 'index'])->name('famfit.calendar');

@@ -22,7 +22,7 @@
                 <input type="hidden" name="profile_visible" value="0">
                 <label class="fq-setting-row" for="settingPublic"><span><strong>Perfil visible</strong><small>Controla si tu perfil puede mostrarse públicamente en funciones compatibles.</small></span><span class="fq-switch"><input id="settingPublic" type="checkbox" name="profile_visible" value="1" @checked(old('profile_visible', $user->profile_visible))><span aria-hidden="true"></span></span></label>
             </div>
-            <p class="fq-settings-note">Al activar «Perfil visible», otras personas pueden encontrarte en Comunidad por tu alias y ver tu nombre público y avatar. Tu horario y tus datos de salud siguen siendo privados.</p>
+            <p class="fq-settings-note">La visibilidad no comparte datos de salud o actividad automáticamente. El espacio social aún no publica contenido.</p>
             <button class="fq-button fq-button-primary" type="submit">Guardar preferencias</button>
         </form>
     </section>
