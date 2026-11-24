@@ -106,7 +106,6 @@ class FamFitCalendarController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $this->validatedData($request);
-        $this->ensureActivityWithinAvailability($data, $request);
         $this->ensureNoScheduleConflict($data, $request);
         $duration = $this->durationInMinutes($data['start_time'], $data['end_time']);
 
@@ -122,16 +121,15 @@ class FamFitCalendarController extends Controller
 
     public function update(Request $request, FamFitActivity $activity): RedirectResponse
     {
-        abort_unless($activity->user_id === $request->user()->id, 403);
+        abort_unless((int) $activity->getAttribute('user_id') === (int) $request->user()->getKey(), 403);
 
         $data = $this->validatedData($request);
-        $scheduleChanged = $activity->activity_date->toDateString() !== $data['activity_date']
-            || substr((string) $activity->start_time, 0, 5) !== $data['start_time']
-            || substr((string) $activity->end_time, 0, 5) !== $data['end_time'];
+        $scheduleChanged = Carbon::parse((string) $activity->getRawOriginal('activity_date'))->toDateString() !== $data['activity_date']
+            || substr((string) $activity->getRawOriginal('start_time'), 0, 5) !== $data['start_time']
+            || substr((string) $activity->getRawOriginal('end_time'), 0, 5) !== $data['end_time'];
 
         if ($scheduleChanged) {
-            $this->ensureActivityWithinAvailability($data, $request);
-            $this->ensureNoScheduleConflict($data, $request, $activity->id);
+            $this->ensureNoScheduleConflict($data, $request, (int) $activity->getKey());
         }
 
         $duration = $this->durationInMinutes($data['start_time'], $data['end_time']);
@@ -147,7 +145,7 @@ class FamFitCalendarController extends Controller
 
     public function destroy(Request $request, FamFitActivity $activity): RedirectResponse
     {
-        abort_unless($activity->user_id === $request->user()->id, 403);
+        abort_unless((int) $activity->getAttribute('user_id') === (int) $request->user()->getKey(), 403);
 
         $activity->delete();
 
@@ -171,13 +169,6 @@ class FamFitCalendarController extends Controller
     {
         return (int) Carbon::createFromFormat('H:i', $start)
             ->diffInMinutes(Carbon::createFromFormat('H:i', $end));
-    }
-
-    private function ensureActivityWithinAvailability(array $data, Request $request): void
-    {
-        // Se permite programar actividades en cualquier horario.
-        // La disponibilidad semanal se conserva como preferencia visible,
-        // pero no bloquea la creación de actividades.
     }
 
     private function ensureNoScheduleConflict(array $data, Request $request, ?int $exceptActivityId = null): void

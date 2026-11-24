@@ -77,7 +77,6 @@
                         <label class="ff-field ff-field-full">Estado<select name="status" id="activityStatus"><option value="planned">Programada</option><option value="completed">Completada</option></select></label>
                         <label class="ff-field ff-field-full">Notas (opcional)<textarea name="notes" id="activityNotes" rows="3" maxlength="1000" placeholder="Agrega detalles de tu actividad..."></textarea></label>
                     </div>
-                    <p class="ff-points-hint">★ Las actividades completadas generan 10 puntos por cada 30 minutos.</p>
                     <div class="ff-modal-actions"><button type="button" class="ff-btn ff-btn-ghost" data-action="close">Cancelar</button><button type="submit" class="ff-btn ff-btn-primary" id="saveActivityBtn">Guardar actividad</button></div>
                 </form>
                 <div class="ff-delete-form" id="deleteArea" hidden><button type="button" class="ff-delete-link" data-action="delete">Eliminar actividad</button></div>

@@ -85,7 +85,6 @@
                     </div>
                 </div>
             </div>
-
             <details class="ff-availability-editor">
                 <summary>Disponibilidad semanal <span>Elige días y franjas horarias</span></summary>
                 <form method="POST" action="{{ route('famfit.availability.update') }}" class="ff-availability-form">
@@ -111,7 +110,6 @@
                     </div>
                 </form>
             </details>
-
             <div class="ff-planner-controls">
                 <div class="ff-day-picker-panel">
                     <div class="ff-mini-heading">
@@ -271,7 +269,6 @@
                     </label>
                 </div>
                 <p class="ff-availability-feedback" id="availabilityFeedback" aria-live="polite"></p>
-                <p class="ff-points-hint">★ Las actividades completadas generan 10 puntos por cada 30 minutos.</p>
                 <div class="ff-modal-actions">
                     <button type="button" class="ff-btn ff-btn-ghost" data-close-modal>Cancelar</button>
                     <button type="submit" class="ff-btn ff-btn-primary" id="saveActivityBtn">Guardar actividad</button>
