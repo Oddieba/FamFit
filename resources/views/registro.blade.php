@@ -595,8 +595,8 @@
           <!-- Privacidad: el perfil es privado por defecto -->
           <div class="opcion">
             <label class="opcion__texto" for="visible">
-              <span class="opcion__titulo">Mostrar mi perfil en la comunidad</span>
-              <span class="opcion__detalle">Es opcional. Tu perfil empieza como <strong id="estado-visible">privado</strong> y puedes cambiarlo cuando quieras.</span>
+              <span class="opcion__titulo">Compartir mi nombre público y mi avatar</span>
+              <span class="opcion__detalle">También puedes dejar esta opción desactivada. En Comunidad podrán encontrarte por tu alias.</span>
             </label>
             <input class="interruptor" type="checkbox" role="switch" id="visible" name="visible" value="1" @checked(old('visible'))>
           </div>
@@ -669,7 +669,6 @@
     var campoClave = document.getElementById("clave");
     var campoClave2 = document.getElementById("clave2");
     var campoTerminos = document.getElementById("terminos");
-    var campoVisible = document.getElementById("visible");
 
     // ==========================================================
     // 2. VALIDACIONES
@@ -835,14 +834,6 @@
     for (var i = 0; i < botonesVer.length; i++) {
       botonesVer[i].addEventListener("click", alternarClave);
     }
-
-    // ==========================================================
-    // 6. INTERRUPTOR DE VISIBILIDAD DEL PERFIL
-    // ==========================================================
-    campoVisible.addEventListener("change", function () {
-      var estado = document.getElementById("estado-visible");
-      estado.textContent = campoVisible.checked ? "visible para la comunidad" : "privado";
-    });
 
     // ==========================================================
     // 7. ESTADOS: CARGANDO Y ÉXITO

@@ -106,12 +106,11 @@ body:has(.community) { background: #f6f8f5; }
     .cm-hero-copy { max-width: 76%; }
     .community .cm-hero h1 { font-size: 2.65rem; }
     .community .cm-hero p { font-size: .9rem; max-width: 210px; }
-    .cm-tabs { justify-content: space-between; gap: 2px; margin-bottom: 19px; }
+    .cm-tabs { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 2px; margin-bottom: 19px; }
     .cm-tabs button { gap: 4px; font-size: .83rem; }
     .cm-tabs svg { width: 1rem; }
     .cm-results { grid-template-columns: minmax(0,1fr); }
-    .cm-person { padding: 12px; gap: 9px; grid-template-columns: auto minmax(0,1fr) auto; }
-    .cm-actions { grid-column: auto; max-width: 100px; }
+    .cm-person { padding: 12px; gap: 9px; }
     .cm-actions button { font-size: .82rem; padding: 5px 8px; }
     .cm-aside { grid-template-columns: 1fr; }
     .cm-search button { padding: 0 12px; }

@@ -35,7 +35,7 @@ class CommunityController extends Controller
     public function people(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'list' => ['sometimes', Rule::in(['discover', 'friends', 'incoming', 'outgoing'])],
+            'list' => ['sometimes', Rule::in(['discover', 'friends', 'incoming', 'outgoing', 'blocked'])],
             'q' => ['nullable', 'string', 'max:60'],
             'page' => ['sometimes', 'integer', 'min:1', 'max:100000'],
         ]);
@@ -50,7 +50,9 @@ class CommunityController extends Controller
             'friends' => clone $friends,
             'incoming' => clone $incoming,
             'outgoing' => clone $outgoing,
-            default => (clone $base)->where('u.profile_visible', true)->where(function (Builder $q) {
+            'blocked' => DB::table('blocks as b')->join('users as u', 'u.id', '=', 'b.blocked_id')
+                ->where('b.blocker_id', $account->id)->whereNull('u.deleted_at')->orderByDesc('b.created_at'),
+            default => (clone $base)->where(function (Builder $q) {
                 $q->whereNull('link.status')->orWhere('link.status', 'rejected');
             }),
         };
@@ -63,20 +65,23 @@ class CommunityController extends Controller
         if (in_array($list, ['incoming', 'outgoing'], true)) {
             $query->orderByDesc('link.created_at');
         }
-        $query->leftJoin('profiles as p', 'p.user_id', '=', 'u.id')
-            ->select('u.id', 'u.username', 'u.profile_visible', 'p.display_name')
-            ->orderBy('u.username')->orderBy('u.id');
-        if (Schema::hasColumn('users', 'avatar_settings')) {
-            $query->addSelect('u.avatar_settings');
+        $query->select('u.id', 'u.username')->orderBy('u.username')->orderBy('u.id');
+        if ($list !== 'blocked') {
+            $query->leftJoin('profiles as p', 'p.user_id', '=', 'u.id')
+                ->addSelect('u.profile_visible', 'p.display_name');
+            if (Schema::hasColumn('users', 'avatar_settings')) {
+                $query->addSelect('u.avatar_settings');
+            }
         }
         $page = $query->paginate(8);
         $people = $page->getCollection()->map(function ($user) {
+            $visible = $user->profile_visible ?? false;
             $avatar = json_decode($user->avatar_settings ?? '{}', true);
             return [
                 'id' => $user->id,
                 'username' => $user->username,
-                'display' => $user->profile_visible ? ($user->display_name ?: $user->username) : $user->username,
-                'avatar' => $user->profile_visible ? ($avatar['animal'] ?? null) : null,
+                'display' => $visible ? ($user->display_name ?: $user->username) : $user->username,
+                'avatar' => $visible ? ($avatar['animal'] ?? null) : null,
             ];
         });
         return response()->json([
@@ -89,25 +94,36 @@ class CommunityController extends Controller
     {
         $input = $request->validate([
             'person' => ['required', 'integer', 'min:1'],
-            'action' => ['required', Rule::in(['send', 'accept', 'reject', 'cancel', 'remove'])],
+            'action' => ['required', Rule::in(['send', 'accept', 'reject', 'cancel', 'remove', 'block', 'unblock'])],
         ]);
         $me = (int) $request->user()->getKey();
         $peer = (int) $input['person'];
         abort_if($me === $peer, 422);
         DB::transaction(function () use ($me, $peer, $input) {
             // Lock the same two rows in the same order for requests in either direction.
-            $users = User::query()->whereIn('id', [$me, $peer])->where('status', 'active')
+            $users = User::query()->whereIn('id', [$me, $peer])
                 ->whereNull('deleted_at')->orderBy('id')->lockForUpdate()->get()->keyBy('id');
-            abort_unless($users->count() === 2, 404);
+            abort_unless($users->get($me)?->status === 'active', 404);
+            $action = $input['action'];
+            $pair = DB::table('friendships')->where('user_low_id', min($me, $peer))
+                ->where('user_high_id', max($me, $peer));
+            if ($action === 'unblock') {
+                if (DB::table('blocks')->where('blocker_id', $me)->where('blocked_id', $peer)->delete()) {
+                    // Older blocks may still have a friendship or invitation attached.
+                    $pair->delete();
+                }
+                return;
+            }
+            abort_unless($users->get($peer)?->status === 'active', 404);
+            if ($action === 'block') {
+                $this->block($me, $peer, $pair);
+                return;
+            }
             $blocked = DB::table('blocks')->whereIn('blocker_id', [$me, $peer])
                 ->whereIn('blocked_id', [$me, $peer])->whereColumn('blocker_id', '<>', 'blocked_id')->exists();
             abort_if($blocked, 404);
-            $pair = DB::table('friendships')->where('user_low_id', min($me, $peer))
-                ->where('user_high_id', max($me, $peer));
             $link = $pair->first();
-            $action = $input['action'];
             if ($action === 'send') {
-                abort_unless($users[$peer]->profile_visible, 404);
                 abort_if($link && $link->status !== 'rejected', 409);
                 $values = ['requester_id' => $me, 'addressee_id' => $peer, 'status' => 'pending',
                     'created_at' => now(), 'responded_at' => null];
@@ -130,5 +146,15 @@ class CommunityController extends Controller
             $pair->delete();
         }, 3);
         return response()->json(['ok' => true]);
+    }
+
+    private function block(int $me, int $peer, Builder $pair): void
+    {
+        $keys = ['blocker_id' => $me, 'blocked_id' => $peer];
+        if (! DB::table('blocks')->where($keys)->exists()) {
+            abort_if(DB::table('blocks')->where('blocker_id', $peer)->where('blocked_id', $me)->exists(), 404);
+            DB::table('blocks')->insert($keys);
+        }
+        $pair->delete();
     }
 }

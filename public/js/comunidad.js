@@ -1,24 +1,33 @@
 const sectionTitles = {
     discover: 'Descubrir personas', friends: 'Mis amistades',
     incoming: 'Solicitudes de amistad', outgoing: 'Solicitudes de amistad',
+    blocked: 'Personas que bloqueaste',
 };
 const actions = {
-    discover: [['send', 'Agregar']],
-    friends: [['remove', 'Eliminar amistad']],
-    incoming: [['accept', 'Aceptar'], ['reject', 'Rechazar']],
-    outgoing: [['cancel', 'Cancelar solicitud']],
+    discover: [['send', 'Agregar'], ['block', 'Bloquear']],
+    friends: [['remove', 'Eliminar amistad'], ['block', 'Bloquear']],
+    incoming: [['accept', 'Aceptar'], ['reject', 'Rechazar'], ['block', 'Bloquear']],
+    outgoing: [['cancel', 'Cancelar solicitud'], ['block', 'Bloquear']],
+    blocked: [['unblock', 'Desbloquear']],
 };
 const confirmations = {
     send: 'Solicitud enviada.', accept: 'Ya son amigos.', reject: 'Solicitud rechazada.',
     cancel: 'Solicitud cancelada.', remove: 'Amistad eliminada.',
+    block: 'Cuenta bloqueada. Puedes gestionarla en Bloqueados.', unblock: 'Cuenta desbloqueada.',
+};
+const confirmDetails = {
+    remove: 'Esta persona dejará de aparecer en tus amistades.',
+    block: 'Se eliminará cualquier amistad o solicitud pendiente entre ustedes. Mientras dure el bloqueo, no podrán encontrarse en Descubrir ni enviarse solicitudes.',
+    unblock: 'Si no queda otro bloqueo, podrán encontrarse de nuevo por su alias. Para volver a ser amigos tendrán que enviar una nueva solicitud.',
 };
 const empty = {
-    discover: ['Por ahora no hay personas nuevas', 'Aquí aparecerán las personas que hagan visible su perfil.'],
+    discover: ['Por ahora no hay personas nuevas', 'Puedes consultar tus contactos en Amistades y tus invitaciones en Solicitudes.'],
     friends: ['Tu círculo empieza aquí', 'Busca a alguien en Descubrir y envíale una solicitud.'],
     incoming: ['Estás al día', 'Aquí podrás aceptar o rechazar las solicitudes que recibas.'],
     outgoing: ['Sin solicitudes enviadas', 'Las invitaciones pendientes de respuesta aparecerán aquí.'],
+    blocked: ['No has bloqueado a nadie', 'Cuando bloquees una cuenta, podrás desbloquearla aquí.'],
 };
-const fragments = {discover: 'descubrir', friends: 'amistades', incoming: 'recibidas', outgoing: 'enviadas'};
+const fragments = {discover: 'descubrir', friends: 'amistades', incoming: 'recibidas', outgoing: 'enviadas', blocked: 'bloqueados'};
 
 function element(tag, className, text) {
     const node = document.createElement(tag);
@@ -64,7 +73,7 @@ export function mountCommunity(root, api = backend(root)) {
     const paging = root.querySelector('.cm-paging');
     const dialog = root.querySelector('dialog');
     let list = 'discover', q = '', page = 1, lastRead = 0, saving = false;
-    let removal = null;
+    let pendingAction = null;
 
     function showEmpty(title, detail, buttonText, onClick) {
         const card = element('div', 'cm-empty');
@@ -96,9 +105,11 @@ export function mountCommunity(root, api = backend(root)) {
             button.disabled = saving;
             button.setAttribute('aria-label', label + ' · @' + person.username);
             button.addEventListener('click', () => {
-                if (action === 'remove') {
-                    removal = person;
-                    dialog.querySelector('p').textContent = 'Dejarás de tener a @' + person.username + ' en tu círculo.';
+                if (confirmDetails[action]) {
+                    pendingAction = {person, action};
+                    dialog.querySelector('h2').textContent = '¿' + label + (action === 'remove' ? ' con @' : ' a @') + person.username + '?';
+                    dialog.querySelector('p').textContent = confirmDetails[action];
+                    dialog.querySelector('[value="confirm"]').textContent = label;
                     dialog.showModal();
                 } else update(person, action);
             });
@@ -152,7 +163,7 @@ export function mountCommunity(root, api = backend(root)) {
             notice.textContent = confirmations[action];
         } catch (error) {
             notice.textContent = [404, 409].includes(error.status)
-                ? 'La solicitud o la visibilidad del perfil cambió. Actualizamos la lista.'
+                ? 'Esta acción ya no está disponible. Actualizamos la lista.'
                 : (error.message || 'Revisa tu conexión y vuelve a intentarlo.');
         } finally {
             saving = false;
@@ -192,8 +203,8 @@ export function mountCommunity(root, api = backend(root)) {
         page += Number(button.dataset.page); refresh();
     }));
     dialog.addEventListener('close', () => {
-        if (dialog.returnValue === 'remove' && removal) update(removal, 'remove');
-        removal = null; dialog.returnValue = '';
+        if (dialog.returnValue === 'confirm' && pendingAction) update(pendingAction.person, pendingAction.action);
+        pendingAction = null; dialog.returnValue = '';
     });
     select(fromLocation());
 }
