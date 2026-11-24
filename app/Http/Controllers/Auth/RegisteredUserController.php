@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rules\Password;
 
@@ -49,16 +50,19 @@ class RegisteredUserController extends Controller
             }
         }
 
-        // 2. Creamos al usuario
-        $usuario = User::create($atributos);
-
-        // 3. Creamos su perfil inmediatamente (aquí guardamos la privacidad)
-        $visibilidad = $request->boolean('visible') ? 'community' : 'private';
-        
-        $usuario->profile()->create([
-            'profile_visibility' => $visibilidad,
-            'schedule_visibility' => 'private', // Por defecto, el horario siempre es privado
-        ]);
+        $visible = $request->boolean('visible');
+        $usuario = DB::transaction(function () use ($atributos, $visible) {
+            $usuario = new User($atributos);
+            if (Schema::hasColumn('users', 'profile_visible')) {
+                $usuario->profile_visible = $visible;
+            }
+            $usuario->save();
+            $usuario->profile()->create([
+                'profile_visibility' => $visible ? 'community' : 'private',
+                'schedule_visibility' => 'private',
+            ]);
+            return $usuario;
+        });
 
         // 4. Iniciamos sesión
         Auth::login($usuario);

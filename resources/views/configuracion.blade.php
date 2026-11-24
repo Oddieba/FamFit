@@ -20,9 +20,9 @@
                 <div class="fq-setting-row"><label for="waterGoal"><strong>Meta diaria de agua (ml)</strong><small>Preferencia personal de hidratación.</small></label><input class="fq-input fq-time-input" id="waterGoal" type="number" name="water_goal_ml" min="1" max="10000" value="{{ old('water_goal_ml', $preferences['water_goal_ml']) }}" required></div>
                 <div class="fq-setting-row"><label for="sleepGoal"><strong>Meta de sueño (horas)</strong><small>Preferencia personal de descanso.</small></label><input class="fq-input fq-time-input" id="sleepGoal" type="number" name="sleep_goal_hours" min="1" max="24" value="{{ old('sleep_goal_hours', $preferences['sleep_goal_hours']) }}" required></div>
                 <input type="hidden" name="profile_visible" value="0">
-                <label class="fq-setting-row" for="settingPublic"><span><strong>Perfil visible</strong><small>Controla si tu perfil puede mostrarse públicamente en funciones compatibles.</small></span><span class="fq-switch"><input id="settingPublic" type="checkbox" name="profile_visible" value="1" @checked(old('profile_visible', $user->profile_visible))><span aria-hidden="true"></span></span></label>
+                <label class="fq-setting-row" for="settingPublic"><span><strong>Perfil visible</strong><small>Comparte tu nombre público y tu avatar en Comunidad.</small></span><span class="fq-switch"><input id="settingPublic" type="checkbox" name="profile_visible" value="1" @checked(old('profile_visible', $user->profile_visible))><span aria-hidden="true"></span></span></label>
             </div>
-            <p class="fq-settings-note">Al activar «Perfil visible», otras personas pueden encontrarte en Comunidad por tu alias y ver tu nombre público y avatar. Tu horario y tus datos de salud siguen siendo privados.</p>
+            <p class="fq-settings-note">Con la opción desactivada, las personas con las que no haya un bloqueo pueden encontrarte por tu alias. Tu horario y tus datos de salud siguen siendo privados.</p>
             <button class="fq-button fq-button-primary" type="submit">Guardar preferencias</button>
         </form>
     </section>

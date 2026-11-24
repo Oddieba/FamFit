@@ -30,6 +30,7 @@
         <button type="button" data-list="discover" aria-current="page"><svg aria-hidden="true"><use href="#cm-compass"/></svg>Descubrir</button>
         <button type="button" data-list="friends"><svg aria-hidden="true"><use href="#cm-team"/></svg>Amistades</button>
         <button type="button" data-list="incoming"><svg aria-hidden="true"><use href="#cm-mail"/></svg>Solicitudes <span class="cm-count" data-count="incoming" hidden></span></button>
+        <button type="button" data-list="blocked"><svg aria-hidden="true"><use href="#cm-shield"/></svg>Bloqueados</button>
     </nav>
     <noscript>Activa JavaScript para buscar personas y gestionar tus solicitudes de amistad.</noscript>
     <div class="cm-layout">
@@ -64,13 +65,19 @@
             <section class="cm-privacy">
                 <svg aria-hidden="true"><use href="#cm-shield"/></svg>
                 <div><h3>Tu visibilidad</h3>
-                    <p>{{ $account->profile_visible ? 'Tu perfil aparece en Descubrir.' : 'Tu perfil está oculto en Descubrir.' }} Al enviar una solicitud, compartes tu alias con esa persona.</p>
+                    <p>{{ $account->profile_visible ? 'En Comunidad compartes tu alias, tu nombre público y tu avatar.' : 'En Comunidad pueden encontrarte por tu alias. Tu nombre público y tu avatar están ocultos.' }}</p>
                     <a href="{{ route('configuracion') }}#settingPublic">Ajustar privacidad</a>
                 </div>
             </section>
         </aside>
     </div>
-    <dialog class="cm-confirm"><form method="dialog"><h2>¿Eliminar esta amistad?</h2><p></p><div><button value="cancel">Conservar amistad</button><button value="remove">Eliminar</button></div></form></dialog>
+    <dialog class="cm-confirm" aria-labelledby="cm-confirm-title" aria-describedby="cm-confirm-detail">
+        <form method="dialog">
+            <h2 id="cm-confirm-title"></h2>
+            <p id="cm-confirm-detail"></p>
+            <div><button value="cancel" autofocus>Volver</button><button value="confirm"></button></div>
+        </form>
+    </dialog>
 </section>
 @endsection
 
