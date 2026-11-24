@@ -30,7 +30,7 @@
 
         <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8">
             
-            <!-- COLUMNA IZQUIERDA: Recomendación (1/4 del ancho) -->
+            <!-- COLUMNA IZQUIERDA: Recomendación -->
             <div class="lg:col-span-1 space-y-6">
                 <div class="bg-gradient-to-br from-brand-primary to-blue-700 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden sticky top-8">
                     <div class="absolute top-0 right-0 p-4 opacity-10">
@@ -46,20 +46,29 @@
                     
                     <div class="mt-6 border-t border-white/20 pt-4">
                         <p class="text-sm text-blue-100 leading-relaxed">
-                            Hemos encontrado <strong class="text-white">{{ $rutinasRecomendadas->count() }} rutinas</strong> que se adaptan perfectamente a tu objetivo.
+                            Tenemos <strong class="text-white">{{ $rutinasRecomendadas->count() }} rutinas</strong> que FamFit ha acomodado especialmente para tu objetivo.
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- COLUMNA DERECHA: Tabla (3/4 del ancho) -->
+            <!-- COLUMNA DERECHA: Tabla -->
             <div class="lg:col-span-3 space-y-6">
                 
-                <!-- Filtros visuales -->
-                <div class="flex space-x-2 border-b border-brand-border pb-4 overflow-x-auto">
-                    <button class="px-4 py-2 bg-brand-primary text-white font-bold text-sm rounded-lg whitespace-nowrap">Todas ({{ $todasLasRutinas->count() }})</button>
-                    <button class="px-4 py-2 text-brand-text-secondary font-bold text-sm rounded-lg hover:bg-brand-surface-muted whitespace-nowrap">Recomendadas</button>
-                    <button class="px-4 py-2 text-brand-text-secondary font-bold text-sm rounded-lg hover:bg-brand-surface-muted whitespace-nowrap">Mis rutinas</button>
+                <!-- Filtros (Botones) -->
+                <div class="flex space-x-2 border-b border-brand-border pb-4 overflow-x-auto" id="filterButtons">
+                    <button data-filter="all" class="filter-btn px-4 py-2 bg-brand-primary text-white font-bold text-sm rounded-lg whitespace-nowrap transition-colors">
+                        Todas ({{ $todasLasRutinas->count() }})
+                    </button>
+                    <button data-filter="recommended" class="filter-btn px-4 py-2 text-brand-text-secondary font-bold text-sm rounded-lg hover:bg-brand-surface-muted whitespace-nowrap transition-colors">
+                        Recomendadas
+                    </button>
+                    <button data-filter="community" class="filter-btn px-4 py-2 text-brand-text-secondary font-bold text-sm rounded-lg hover:bg-brand-surface-muted whitespace-nowrap transition-colors">
+                        Comunidad (Famosas)
+                    </button>
+                    <button data-filter="mine" class="filter-btn px-4 py-2 text-brand-text-secondary font-bold text-sm rounded-lg hover:bg-brand-surface-muted whitespace-nowrap transition-colors">
+                        Mis rutinas
+                    </button>
                 </div>
 
                 <!-- Tabla -->
@@ -73,9 +82,18 @@
                                 <th class="p-4 font-bold text-center">Acción</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-brand-border">
+                        <tbody class="divide-y divide-brand-border" id="routineTableBody">
                             @forelse($todasLasRutinas as $rutina)
-                                <tr class="hover:bg-brand-surface-muted/50 transition-colors group">
+                                @php
+                                    // Verificamos si la rutina está en las recomendadas
+                                    $isRecommended = $rutinasRecomendadas->contains('id', $rutina->id);
+                                    // Determinamos el tipo: si es 'user' es del usuario, si no, es de la comunidad
+                                    $type = $rutina->source === 'user' ? 'mine' : 'community';
+                                @endphp
+                                <!-- Agregamos los data-attributes para que JS pueda filtrar -->
+                                <tr class="routine-row hover:bg-brand-surface-muted/50 transition-colors group" 
+                                    data-type="{{ $type }}" 
+                                    data-recommended="{{ $isRecommended ? 'true' : 'false' }}">
                                     <td class="p-4">
                                         <span class="font-bold text-base block text-brand-text-primary group-hover:text-brand-primary transition-colors">{{ $rutina->name }}</span>
                                         <span class="text-xs text-brand-text-secondary block mt-1 line-clamp-1">{{ $rutina->description }}</span>
@@ -101,7 +119,6 @@
                                         <i class="fa-regular fa-clock text-brand-text-secondary mr-1"></i> {{ $rutina->estimated_minutes }} min
                                     </td>
                                     <td class="p-4 text-center">
-                                        <!-- Botón que abre el modal pasándole el JSON de la rutina -->
                                         <button onclick='openRoutineModal(@json($rutina))' class="px-4 py-2 bg-brand-surface border border-brand-border text-brand-primary font-bold text-sm rounded-lg hover:bg-brand-primary hover:text-white transition-all shadow-sm">
                                             Ver Detalles
                                         </button>
@@ -118,6 +135,13 @@
                                     </td>
                                 </tr>
                             @endforelse
+                            
+                            <!-- Mensaje en caso de que el filtro no encuentre resultados -->
+                            <tr id="emptyFilterMessage" class="hidden">
+                                <td colspan="4" class="p-8 text-center text-brand-text-secondary">
+                                    <p class="text-sm">No se encontraron rutinas en esta categoría.</p>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -126,11 +150,9 @@
         </div>
     </main>
 
-    <!-- MODAL PARA VER LOS EJERCICIOS DE LA RUTINA -->
+    <!-- MODAL (Igual que antes) -->
     <div id="routineDetailModal" class="fixed inset-0 bg-brand-text-primary/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-brand-surface rounded-2xl border border-brand-border shadow-2xl max-w-2xl w-full overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
-            
-            <!-- Header del Modal -->
             <div class="bg-brand-surface-muted px-6 py-4 border-b border-brand-border flex items-center justify-between shrink-0">
                 <div>
                     <h3 id="modalRoutineName" class="text-xl font-extrabold text-brand-text-primary">Nombre de la Rutina</h3>
@@ -140,8 +162,6 @@
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
-
-            <!-- Cuerpo del Modal (Tabla de ejercicios) -->
             <div class="p-6 overflow-y-auto custom-scroll bg-brand-surface">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -152,13 +172,9 @@
                             <th class="pb-3 font-bold text-center">Descanso</th>
                         </tr>
                     </thead>
-                    <tbody id="modalExerciseList" class="divide-y divide-brand-border/50">
-                        <!-- Se llena con JS -->
-                    </tbody>
+                    <tbody id="modalExerciseList" class="divide-y divide-brand-border/50"></tbody>
                 </table>
             </div>
-
-            <!-- Footer del Modal -->
             <div class="bg-brand-surface-muted px-6 py-4 border-t border-brand-border flex items-center justify-between shrink-0">
                 <span class="text-sm font-bold text-brand-text-secondary">Entorno: <span id="modalRoutineEnv" class="uppercase text-brand-primary"></span></span>
                 <button class="px-6 py-2.5 bg-brand-primary text-white font-bold text-sm rounded-xl shadow-md hover:bg-brand-primary/90 transition-all">
@@ -173,30 +189,77 @@
         .custom-scroll::-webkit-scrollbar-track { background: #EEF2F8; border-radius: 8px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #64748B; border-radius: 8px; }
         .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        /* Clases para el botón activo */
+        .filter-btn.active { background-color: #2864F0; color: white; }
+        .filter-btn:not(.active) { color: #64748B; }
+        .filter-btn:not(.active):hover { background-color: #EEF2F8; }
     </style>
 
     <script>
+        // --- LÓGICA DE FILTRADO ---
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const routineRows = document.querySelectorAll('.routine-row');
+        const emptyMessage = document.getElementById('emptyFilterMessage');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // 1. Manejar clases visuales de los botones
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                // 2. Filtrar las filas
+                const filterType = button.dataset.filter;
+                let visibleCount = 0;
+
+                routineRows.forEach(row => {
+                    let showRow = false;
+
+                    if (filterType === 'all') {
+                        showRow = true;
+                    } else if (filterType === 'recommended') {
+                        showRow = row.dataset.recommended === 'true';
+                    } else if (filterType === 'community') {
+                        showRow = row.dataset.type === 'community';
+                    } else if (filterType === 'mine') {
+                        showRow = row.dataset.type === 'mine';
+                    }
+
+                    // Mostrar u ocultar
+                    if (showRow) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // 3. Mostrar mensaje si no hay resultados
+                if (visibleCount === 0 && routineRows.length > 0) {
+                    emptyMessage.classList.remove('hidden');
+                } else {
+                    emptyMessage.classList.add('hidden');
+                }
+            });
+        });
+
+        // --- LÓGICA DEL MODAL ---
         function openRoutineModal(routine) {
-            // 1. Llenar los datos del encabezado
             document.getElementById('modalRoutineName').innerText = routine.name;
             document.getElementById('modalRoutineDesc').innerText = routine.description;
             
             const envMap = { 'home': 'Casa', 'gym': 'Gimnasio', 'outdoor': 'Aire Libre' };
             document.getElementById('modalRoutineEnv').innerText = envMap[routine.environment] || routine.environment;
 
-            // 2. Llenar la tabla de ejercicios
             const tbody = document.getElementById('modalExerciseList');
-            tbody.innerHTML = ''; // Limpiar tabla anterior
+            tbody.innerHTML = ''; 
 
             if (routine.exercises && routine.exercises.length > 0) {
                 routine.exercises.forEach((ex, index) => {
-                    // Formatear el tiempo o las reps
                     let repsOrTime = ex.pivot.reps ? `${ex.pivot.reps} reps` : '';
                     if (ex.pivot.duration_seconds) {
                         repsOrTime = `${ex.pivot.duration_seconds} seg`;
                     }
-
-                    // Formatear el descanso
                     let rest = ex.pivot.rest_seconds ? `${ex.pivot.rest_seconds} seg` : '-';
 
                     const row = `
@@ -216,7 +279,6 @@
                 tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-brand-text-secondary">Esta rutina no tiene ejercicios asignados.</td></tr>`;
             }
 
-            // 3. Mostrar el modal
             const modal = document.getElementById('routineDetailModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
