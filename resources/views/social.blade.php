@@ -78,6 +78,36 @@
             <div><button value="cancel" autofocus>Volver</button><button value="confirm"></button></div>
         </form>
     </dialog>
+    <dialog class="cm-confirm cm-report" id="cm-report" aria-labelledby="cm-report-title">
+    <form method="post" action="{{ route('social.report') }}">
+        @csrf
+        <input type="hidden" name="person">
+
+        <h2 id="cm-report-title">Reportar a <span></span></h2>
+
+        <label>
+            Motivo
+            <select name="reason" required autofocus>
+                <option value="">Elige un motivo</option>
+                @foreach ($reportReasons as $value => $label)
+                    <option value="{{ $value }}">{{ $label }}</option>
+                @endforeach
+            </select>
+        </label>
+
+        <label>
+            ¿Qué ocurrió? (opcional, hasta 500 caracteres)
+            <textarea name="description" rows="3" maxlength="500"></textarea>
+        </label>
+
+        <p role="alert"></p>
+
+        <div>
+            <button type="button">Cancelar</button>
+            <button type="submit">Enviar reporte</button>
+        </div>
+    </form>
+</dialog>
 </section>
 @endsection
 

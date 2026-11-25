@@ -191,6 +191,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/social', [CommunityController::class, 'index'])->name('social');
     Route::get('/social/personas', [CommunityController::class, 'people'])->name('social.people');
     Route::post('/social/amistades', [CommunityController::class, 'update'])->name('social.friendship');
+    Route::post('/social/reportes', [CommunityController::class, 'report'])
+    ->name('social.report');
+    Route::get('/social/personas/{id}', [CommunityController::class, 'profile'])
+    ->whereNumber('id')->name('social.profile');
 
     // Calendario compartido FamFit
     Route::get('/famfit/calendario', [FamFitCalendarController::class, 'index'])->name('famfit.calendar');

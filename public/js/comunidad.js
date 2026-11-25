@@ -52,11 +52,16 @@ function backend(root) {
         return response.json();
     }
     return {
-        list({list, q, page}) {
+        list({list, q, page}) { 
             const url = new URL(root.dataset.people, location.href);
             url.search = new URLSearchParams({list, q, page});
             return request(url);
-        },
+        }, report(form) {
+    return request(form.action, {
+        method: 'POST',
+        body: new FormData(form),   
+    });
+    },
         update(person, action) {
             return request(root.dataset.friendship, {
                 method: 'POST', headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': root.dataset.token},
@@ -74,6 +79,51 @@ export function mountCommunity(root, api = backend(root)) {
     const dialog = root.querySelector('dialog');
     let list = 'discover', q = '', page = 1, lastRead = 0, saving = false;
     let pendingAction = null;
+    const reportDialog = root.querySelector('#cm-report');
+const reportForm = reportDialog.querySelector('form');
+const reportError = reportForm.querySelector('[role="alert"]');
+const sendReport = reportForm.querySelector('[type="submit"]');
+const cancelReport = reportForm.querySelector('[type="button"]');
+
+function openReport(person) {
+    reportForm.reset();
+    reportForm.elements.person.value = person.id;
+    reportForm.querySelector('h2 span').textContent = '@' + person.username;
+    reportError.textContent = '';
+    reportDialog.showModal();
+}
+
+cancelReport.addEventListener('click', () => reportDialog.close());
+
+reportDialog.addEventListener('cancel', event => {
+    if (sendReport.disabled) event.preventDefault();
+});
+
+reportForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (sendReport.disabled) return;
+
+    sendReport.disabled = true;
+    cancelReport.disabled = true;
+    reportError.textContent = '';
+
+    try {
+        const result = await api.report(reportForm);
+        reportDialog.close();
+        notice.textContent = result.message;
+    } catch (error) {
+        if (error.status === 422) {
+            reportError.textContent = 'Revisa el motivo y el límite de 500 caracteres.';
+        } else if (error.status === 404) {
+            reportError.textContent = 'La cuenta ya no está disponible.';
+        } else {
+            reportError.textContent = 'No pudimos enviar el reporte. Revisa tu conexión y tu sesión.';
+        }
+    } finally {
+        sendReport.disabled = false;
+        cancelReport.disabled = false;
+    }
+});
 
     function showEmpty(title, detail, buttonText, onClick) {
         const card = element('div', 'cm-empty');
@@ -115,7 +165,29 @@ export function mountCommunity(root, api = backend(root)) {
             });
             buttons.append(button);
         });
-        card.append(avatar, identity, buttons);
+        const reportButton = element('button', 'cm-report-link');
+reportButton.type = 'button';
+reportButton.title = 'Reportar a @' + person.username;
+reportButton.setAttribute('aria-label', reportButton.title);
+
+reportButton.innerHTML = `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 21V4m0 1c5-3 8 3 14 0v9c-6 3-9-3-14 0"/>
+    </svg>
+    <span>Reportar</span>
+`;
+
+reportButton.addEventListener('click', () => openReport(person));
+card.append(avatar, identity, reportButton, buttons);
+if (list !== 'blocked') {
+    const link = element('a', 'cm-profile-link');
+
+    link.href = root.dataset.people + '/' + person.id;
+    link.setAttribute('aria-label', 'Ver perfil de @' + person.username);
+
+    card.prepend(link);
+    link.append(avatar, identity);
+}
         return card;
     }
 

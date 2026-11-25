@@ -10,13 +10,89 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Illuminate\Http\Response;
 
 class CommunityController extends Controller
 {
+    private const REPORT_REASONS = [
+    'harassment' => 'Acoso',
+    'harmful_content' => 'Contenido dañino',
+    'dangerous_routine' => 'Rutina peligrosa',
+    'misinformation' => 'Información engañosa',
+    'other' => 'Otro motivo',
+];
     public function index(Request $request): View
-    {
-        return view('social', ['account' => $request->user()]);
-    }
+{
+    return view('social', [
+        'account' => $request->user(),
+        'reportReasons' => self::REPORT_REASONS,
+    ]);
+}
+    public function report(Request $request): JsonResponse
+{
+    $data = $request->validate([
+        'person' => ['required', 'integer', 'min:1'],
+        'reason' => ['required', Rule::in(array_keys(self::REPORT_REASONS))],
+        'description' => ['nullable', 'string', 'max:500'],
+    ], [
+        'reason.required' => 'Elige un motivo.',
+        'reason.in' => 'Elige un motivo de la lista.',
+        'description.max' => 'Usa un máximo de 500 caracteres.',
+    ]);
+
+    $me = (int) $request->user()->getKey();
+    $peer = (int) $data['person'];
+
+    abort_if($me === $peer, 422, 'Elige una cuenta distinta de la tuya.');
+
+    $created = DB::transaction(function () use ($me, $peer, $data) {
+        $users = User::query()
+            ->whereIn('id', [$me, $peer])
+            ->whereNull('deleted_at')
+            ->orderBy('id')
+            ->lockForUpdate()
+            ->pluck('status', 'id');
+
+        abort_unless($users->get($me) === 'active', 403);
+        abort_unless($users->has($peer), 404);
+
+        if ($users->get($peer) !== 'active') {
+            $ownBlock = DB::table('blocks')
+                ->where('blocker_id', $me)
+                ->where('blocked_id', $peer)
+                ->exists();
+
+            abort_unless($ownBlock, 404);
+        }
+
+        $report = [
+            'reporter_id' => $me,
+            'target_type' => 'user',
+            'target_user_id' => $peer,
+            'reason' => $data['reason'],
+            'description' => $data['description'] ?? null,
+        ];
+
+        $alreadyPending = DB::table('reports')
+            ->where($report)
+            ->whereIn('status', ['open', 'in_review'])
+            ->exists();
+
+        if ($alreadyPending) {
+            return false;
+        }
+
+        DB::table('reports')->insert($report + ['status' => 'open']);
+
+        return true;
+    }, 3);
+
+    return response()->json([
+        'message' => $created
+            ? 'Reporte enviado para revisión.'
+            : 'Este reporte ya está pendiente de revisión.',
+    ], $created ? 201 : 200);
+}
 
     private function members(int $id): Builder
     {
@@ -31,7 +107,56 @@ class CommunityController extends Controller
             ->whereNotIn('u.id', DB::table('blocks')->select('blocked_id')->where('blocker_id', $id))
             ->whereNotIn('u.id', DB::table('blocks')->select('blocker_id')->where('blocked_id', $id));
     }
+    private function selectIdentity(Builder $query, bool $details = true): Builder
+{
+    $query->select('u.id', 'u.username');
 
+    if ($details) {
+        $query->leftJoin('profiles as p', 'p.user_id', '=', 'u.id')
+            ->addSelect('u.profile_visible', 'p.display_name');
+
+        if (Schema::hasColumn('users', 'avatar_settings')) {
+            $query->addSelect('u.avatar_settings');
+        }
+    }
+
+    return $query;
+}
+
+private function publicIdentity(object $user): array
+{
+    $visible = (bool) ($user->profile_visible ?? false);
+    $avatar = $visible ? json_decode($user->avatar_settings ?? '{}', true) : null;
+
+    return [
+        'id' => $user->id,
+        'username' => $user->username,
+        'display' => $visible ? ($user->display_name ?: $user->username) : $user->username,
+        'avatar' => $avatar['animal'] ?? null,
+    ];
+}
+
+public function profile(Request $request, string $id): Response
+{
+    $viewer = $request->user();
+    abort_unless($viewer->status === 'active' && ! $viewer->deleted_at, 403);
+
+    $query = $this->members($viewer->id)->where('u.id', $id);
+    $member = $this->selectIdentity($query)
+        ->addSelect('link.status', 'link.direction')
+        ->firstOrFail();
+
+    $section = match ($member->status) {
+        'accepted' => 'amistades',
+        'pending' => $member->direction === 'incoming' ? 'recibidas' : 'enviadas',
+        default => 'descubrir',
+    };
+
+    return response()->view('social.perfil', [
+        'person' => $this->publicIdentity($member),
+        'section' => $section,
+    ])->header('Cache-Control', 'private, no-store');
+}
     public function people(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -65,25 +190,14 @@ class CommunityController extends Controller
         if (in_array($list, ['incoming', 'outgoing'], true)) {
             $query->orderByDesc('link.created_at');
         }
-        $query->select('u.id', 'u.username')->orderBy('u.username')->orderBy('u.id');
-        if ($list !== 'blocked') {
-            $query->leftJoin('profiles as p', 'p.user_id', '=', 'u.id')
-                ->addSelect('u.profile_visible', 'p.display_name');
-            if (Schema::hasColumn('users', 'avatar_settings')) {
-                $query->addSelect('u.avatar_settings');
-            }
-        }
-        $page = $query->paginate(8);
-        $people = $page->getCollection()->map(function ($user) {
-            $visible = $user->profile_visible ?? false;
-            $avatar = json_decode($user->avatar_settings ?? '{}', true);
-            return [
-                'id' => $user->id,
-                'username' => $user->username,
-                'display' => $visible ? ($user->display_name ?: $user->username) : $user->username,
-                'avatar' => $visible ? ($avatar['animal'] ?? null) : null,
-            ];
-        });
+        $page = $this->selectIdentity($query, $list !== 'blocked')
+    ->orderBy('u.username')
+    ->orderBy('u.id')
+    ->paginate(8);
+
+$people = $page->getCollection()->map(
+    fn ($user) => $this->publicIdentity($user)
+);
         return response()->json([
             'people' => $people, 'total' => $page->total(), 'pages' => $page->lastPage(),
             'counts' => ['friends' => $friends->count(), 'incoming' => $incoming->count(), 'outgoing' => $outgoing->count()],
