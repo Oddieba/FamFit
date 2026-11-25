@@ -11,7 +11,7 @@
 @section('content')
 <div class="nut-page"
      id="nutricion"
-     data-api="{{ url('/nutricion') }}"
+     data-api="/nutricion"
      data-csrf="{{ csrf_token() }}">
 
     {{-- ENCABEZADO --}}

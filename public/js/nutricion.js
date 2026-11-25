@@ -1,7 +1,7 @@
 /* ==========================================================
    FamFit · Nutrición
-   Registro manual y por foto, historial, edición, borrado,
-   restricciones (alergias), agua y avisos.
+   Registro manual y por foto, historial, edición, borrado
+   y restricciones (alergias) con advertencias.
    ========================================================== */
 (function () {
     'use strict';
@@ -12,11 +12,11 @@
     /* ---------- Configuración ---------- */
     const API = root.dataset.api || '/nutricion';
     const CSRF = root.dataset.csrf || '';
-    const META_AGUA = parseInt(root.dataset.metaAgua, 10) || 2000;
     const MAX_FOTO_MB = 5;
     const TIPOS = { desayuno: 'Desayuno', almuerzo: 'Almuerzo', cena: 'Cena', snack: 'Snack' };
+    const ETIQUETA_RESTRICCION = { alergia: 'Alergia', intolerancia: 'Intolerancia', evita: 'Evito' };
 
-    /* ---------- Fecha en hora LOCAL (YYYY-MM-DD) ---------- */
+    /* ---------- Fecha de hoy en hora LOCAL (YYYY-MM-DD) ---------- */
     const hoyISO = () => {
         const ahora = new Date();
         const anio = ahora.getFullYear();
@@ -25,7 +25,7 @@
         return `${anio}-${mes}-${dia}`;
     };
 
-    /* ---------- Estado ---------- */
+    /* ---------- Estado de la página ---------- */
     const estado = {
         fecha: hoyISO(),
         filtro: 'todas',
@@ -33,11 +33,10 @@
         restricciones: [],
         editandoId: null,
         fotoArchivo: null,
-        itemsFoto: [],
         itemsManual: [],
+        itemsFoto: [],
         pendienteBorrarId: null,
-        aguaHoy: 0,
-        ultimaPeticionDia: 0,   // evita mostrar respuestas viejas
+        ultimaPeticionDia: 0,   // evita mostrar respuestas viejas al cambiar de fecha
         guardando: false,       // evita doble envío
     };
 
@@ -48,9 +47,6 @@
         statComidas: document.getElementById('nut-stat-comidas'),
         statFotos: document.getElementById('nut-stat-fotos'),
         racha: document.getElementById('nut-racha'),
-        agua: document.getElementById('nut-agua'),
-        aguaMeta: document.getElementById('nut-agua-meta'),
-        aguaBarra: document.getElementById('nut-agua-barra'),
         historial: document.getElementById('nut-historial'),
         restricciones: document.getElementById('nut-restricciones'),
         formManual: document.getElementById('nut-form-manual'),
@@ -82,29 +78,34 @@
     };
 
     /* ---------- Utilidades ---------- */
+
+    // Escapa texto para insertarlo en HTML de forma segura
     const escapar = (texto) => String(texto ?? '').replace(/[&<>"']/g, (c) => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
     }[c]));
 
-    // Minúsculas, sin tildes, sin espacios sobrantes
-    const normalizar = (t) => String(t || '')
+    // Minúsculas, sin tildes y sin espacios sobrantes (para comparar)
+    const normalizar = (texto) => String(texto || '')
         .toLowerCase()
         .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
         .replace(/\s+/g, ' ')
         .trim();
 
+    // "2026-11-25" -> "Miércoles, 25 de noviembre"
     const formatoFecha = (iso) => {
-        const [y, m, d] = iso.split('-').map(Number);
-        const texto = new Date(y, m - 1, d).toLocaleDateString('es-CO', {
+        const [anio, mes, dia] = iso.split('-').map(Number);
+        const texto = new Date(anio, mes - 1, dia).toLocaleDateString('es-CO', {
             weekday: 'long', day: 'numeric', month: 'long',
         });
         return texto.charAt(0).toUpperCase() + texto.slice(1);
     };
 
-    const quitarHora = (hora) => (hora ? String(hora).slice(0, 5) : '');
+    // "12:30:00" -> "12:30"
+    const quitarSegundos = (hora) => (hora ? String(hora).slice(0, 5) : '');
 
     /* ---------- Mensajes flotantes ---------- */
     let toastTimer = null;
+
     function mostrarToast(mensaje, esError = false) {
         el.toast.textContent = mensaje;
         el.toast.classList.toggle('is-error', esError);
@@ -113,7 +114,7 @@
         toastTimer = setTimeout(() => { el.toast.hidden = true; }, 3200);
     }
 
-    /* Pone un botón en estado "cargando" y devuelve una función para restaurarlo */
+    // Pone un botón en estado "cargando" y devuelve la función que lo restaura
     function ponerCargando(boton, texto) {
         const original = boton.textContent;
         boton.disabled = true;
@@ -124,7 +125,7 @@
         };
     }
 
-    /* ---------- API ---------- */
+    /* ---------- Comunicación con el servidor ---------- */
     async function api(ruta, { metodo = 'GET', cuerpo = null, esFormData = false } = {}) {
         const cabeceras = {
             'Accept': 'application/json',
@@ -147,16 +148,23 @@
             }
         }
 
-        const respuesta = await fetch(`${API}${ruta}`, opciones);
+        let respuesta;
+        try {
+            respuesta = await fetch(`${API}${ruta}`, opciones);
+        } catch (_) {
+            // Falla de red: el servidor no respondió
+            throw new Error('No se pudo conectar con el servidor. Revisa que esté encendido.');
+        }
 
         let datos = null;
         try { datos = await respuesta.json(); } catch (_) { /* respuesta sin JSON */ }
 
         if (!respuesta.ok) {
-            // Laravel devuelve errores de validación en datos.errors
+            // Laravel devuelve los errores de validación en datos.errors
             const primerError = datos?.errors ? Object.values(datos.errors)[0]?.[0] : null;
             throw new Error(primerError || datos?.message || 'Ocurrió un error. Inténtalo de nuevo.');
         }
+
         return datos ?? {};
     }
 
@@ -167,10 +175,9 @@
 
         try {
             const datos = await api(`/comidas?fecha=${encodeURIComponent(estado.fecha)}`);
-            if (peticion !== estado.ultimaPeticionDia) return; // respuesta vieja, la ignoramos
+            if (peticion !== estado.ultimaPeticionDia) return; // respuesta vieja, se ignora
 
             estado.comidas = datos.comidas ?? [];
-            estado.aguaHoy = datos.agua_ml ?? 0;
             el.racha.innerHTML = `${Number(datos.racha ?? 0)} <small>días</small>`;
         } catch (err) {
             if (peticion !== estado.ultimaPeticionDia) return;
@@ -196,14 +203,9 @@
 
     /* ---------- Render: estadísticas ---------- */
     function renderEstadisticas() {
-        const fotos = estado.comidas.filter((c) => c.foto_url).length;
+        const conFoto = estado.comidas.filter((c) => c.foto_url).length;
         el.statComidas.textContent = estado.comidas.length;
-        el.statFotos.textContent = fotos;
-
-        el.agua.textContent = estado.aguaHoy;
-        el.aguaMeta.textContent = META_AGUA;
-        const porcentaje = Math.min(100, Math.round((estado.aguaHoy / META_AGUA) * 100));
-        el.aguaBarra.style.width = `${porcentaje}%`;
+        el.statFotos.textContent = conFoto;
     }
 
     /* ---------- Render: historial ---------- */
@@ -226,7 +228,7 @@
     }
 
     function plantillaComida(comida) {
-        const hora = quitarHora(comida.hora);
+        const hora = quitarSegundos(comida.hora);
 
         const items = (comida.alimentos ?? []).map((a) =>
             `<li>${escapar(a.nombre)}${a.porcion ? ` (${escapar(a.porcion)})` : ''}</li>`
@@ -263,8 +265,6 @@
     }
 
     /* ---------- Render: restricciones ---------- */
-    const etiquetaRestriccion = { alergia: 'Alergia', intolerancia: 'Intolerancia', evita: 'Evito' };
-
     function renderRestricciones() {
         if (estado.restricciones.length === 0) {
             el.restricciones.innerHTML = `<li class="nut-muted" style="margin:0">Aún no has añadido restricciones.</li>`;
@@ -273,21 +273,21 @@
 
         el.restricciones.innerHTML = estado.restricciones.map((r) => `
             <li class="nut-restriction">
-                ${escapar(r.texto)} <small>${escapar(etiquetaRestriccion[r.tipo] || r.tipo)}</small>
+                ${escapar(r.texto)} <small>${escapar(ETIQUETA_RESTRICCION[r.tipo] || r.tipo)}</small>
                 <button type="button" data-action="quitar-restriccion" data-id="${escapar(r.id)}" aria-label="Quitar ${escapar(r.texto)}">×</button>
             </li>`).join('');
     }
 
     /* ---------- Alergias: detección de advertencias ---------- */
-    // Compara palabras completas (mínimo 3 letras) para evitar falsos positivos:
-    // así "maní" no coincide con "a", ni "leche" con "lechuga".
+
+    // Compara palabras completas de al menos 3 letras para evitar falsos positivos.
+    // Ejemplo: "maní" coincide con "Maní" o "maní tostado", pero "a" no coincide con nada.
     function coincide(alimento, restriccion) {
-        const palabrasAlimento = normalizar(alimento).split(' ').filter((p) => p.length >= 3);
         const restr = normalizar(restriccion);
         if (restr.length < 3) return false;
 
-        return palabrasAlimento.some((p) => p === restr || p.startsWith(restr) || restr.startsWith(p) && p.length >= 4)
-            || normalizar(alimento) === restr;
+        const palabras = normalizar(alimento).split(' ').filter((p) => p.length >= 3);
+        return normalizar(alimento) === restr || palabras.some((p) => p === restr);
     }
 
     function alertasParaAlimentos(nombres) {
@@ -299,10 +299,7 @@
             estado.restricciones.forEach((r) => {
                 if (!coincide(nombre, r.texto)) return;
 
-                const etiqueta = r.tipo === 'alergia'
-                    ? 'Alergia'
-                    : r.tipo === 'intolerancia' ? 'Intolerancia' : 'Evitas';
-
+                const etiqueta = ETIQUETA_RESTRICCION[r.tipo] || 'Restricción';
                 avisos.add(`⚠️ ${etiqueta}: "${nombre}" coincide con "${r.texto}". Revisa la composición antes de comer.`);
             });
         });
@@ -350,7 +347,7 @@
         revisarAlertas();
     }
 
-    // Lee solo las filas con nombre escrito
+    // Lee solo las filas que tengan nombre escrito
     function leerItems(contenedor) {
         return [...contenedor.querySelectorAll('.nut-item')]
             .map((fila) => ({
@@ -376,10 +373,10 @@
         evento.preventDefault();
         if (estado.guardando) return;
 
-        const items = leerItems(el.itemsManual);
+        const alimentos = leerItems(el.itemsManual);
         const descripcion = el.descripcion.value.trim();
 
-        if (items.length === 0 && !descripcion) {
+        if (alimentos.length === 0 && !descripcion) {
             mostrarToast('Escribe una descripción o al menos un alimento.', true);
             return;
         }
@@ -390,7 +387,7 @@
             hora: el.hora.value || null,
             descripcion: descripcion || null,
             notas: el.notas.value.trim() || null,
-            alimentos: items,
+            alimentos,
             origen: 'manual',
         };
 
@@ -430,7 +427,7 @@
         estado.editandoId = comida.id;
         el.comidaId.value = comida.id;
         el.tipo.value = comida.tipo;
-        el.hora.value = quitarHora(comida.hora);
+        el.hora.value = quitarSegundos(comida.hora);
         el.descripcion.value = comida.descripcion || '';
         el.notas.value = comida.notas || '';
         estado.itemsManual = (comida.alimentos ?? []).map((a) => ({
@@ -451,10 +448,10 @@
         return null;
     }
 
+    // Libera la memoria de la vista previa anterior
     function liberarVistaPrevia() {
-        if (el.fotoPreview.src && el.fotoPreview.src.startsWith('blob:')) {
-            URL.revokeObjectURL(el.fotoPreview.src);
-        }
+        const src = el.fotoPreview.getAttribute('src') || '';
+        if (src.startsWith('blob:')) URL.revokeObjectURL(src);
     }
 
     function seleccionarFoto(archivo) {
@@ -531,8 +528,8 @@
             return;
         }
 
-        const items = leerItems(el.itemsFoto);
-        if (items.length === 0) {
+        const alimentos = leerItems(el.itemsFoto);
+        if (alimentos.length === 0) {
             mostrarToast('Confirma al menos un alimento antes de guardar.', true);
             return;
         }
@@ -542,7 +539,7 @@
         formData.append('fecha', estado.fecha);
         formData.append('tipo', el.tipoFoto.value);
         formData.append('origen', 'foto');
-        formData.append('alimentos', JSON.stringify(items));
+        formData.append('alimentos', JSON.stringify(alimentos));
 
         const boton = root.querySelector('[data-action="guardar-foto"]');
         const restaurar = ponerCargando(boton, 'Guardando…');
@@ -588,7 +585,7 @@
         try {
             await api(`/comidas/${id}`, { metodo: 'DELETE' });
 
-            // Si estabas editando esa misma comida, limpia el formulario
+            // Si se estaba editando esa misma comida, limpia el formulario
             if (String(estado.editandoId) === String(id)) limpiarFormularioManual();
 
             mostrarToast('Comida eliminada');
@@ -601,7 +598,7 @@
         }
     }
 
-    /* ---------- Restricciones ---------- */
+    /* ---------- Restricciones (alergias) ---------- */
     async function guardarRestriccion(evento) {
         evento.preventDefault();
 
@@ -645,25 +642,6 @@
         }
     }
 
-    /* ---------- Agua ---------- */
-    async function sumarAgua(ml) {
-        const anterior = estado.aguaHoy;
-        estado.aguaHoy = anterior + ml; // respuesta inmediata en pantalla
-        renderEstadisticas();
-
-        try {
-            const datos = await api('/agua', { metodo: 'POST', cuerpo: { fecha: estado.fecha, ml } });
-            if (typeof datos.agua_ml === 'number') {
-                estado.aguaHoy = datos.agua_ml; // valor real del servidor
-                renderEstadisticas();
-            }
-        } catch (err) {
-            estado.aguaHoy = anterior; // revierte si no se guardó
-            renderEstadisticas();
-            mostrarToast(err.message, true);
-        }
-    }
-
     /* ---------- Arrastrar y soltar foto ---------- */
     function enlazarDropzone() {
         if (!el.dropzone) return;
@@ -702,9 +680,9 @@
             cargarDia();
         });
 
-        // Delegación de clics: un solo listener para todos los botones
+        // Un solo listener para todos los botones (delegación de eventos)
         root.addEventListener('click', (e) => {
-            const boton = e.target.closest('[data-action], [data-tab], [data-filtro], [data-agua]');
+            const boton = e.target.closest('[data-action], [data-tab], [data-filtro]');
             if (!boton || !root.contains(boton)) return;
 
             if (boton.dataset.tab) return cambiarPestana(boton.dataset.tab);
@@ -718,8 +696,6 @@
                 });
                 return renderHistorial();
             }
-
-            if (boton.dataset.agua) return sumarAgua(parseInt(boton.dataset.agua, 10));
 
             switch (boton.dataset.action) {
                 case 'hoy':
@@ -737,9 +713,8 @@
 
                 case 'quitar-item': {
                     const fila = boton.closest('.nut-item');
-                    const origen = fila.dataset.origen;
                     const idx = parseInt(fila.dataset.index, 10);
-                    if (origen === 'manual') {
+                    if (fila.dataset.origen === 'manual') {
                         estado.itemsManual.splice(idx, 1);
                         renderItemsManual();
                     } else {
@@ -801,12 +776,12 @@
 
         el.btnAnalizar.addEventListener('click', analizarFoto);
 
-        // Cerrar el modal con Escape
+        // Cerrar el modal con la tecla Escape
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && !el.modal.hidden) cerrarModal();
         });
 
-        // Al cerrar la página con una vista previa abierta, libera la memoria
+        // Libera la vista previa al salir de la página
         window.addEventListener('beforeunload', liberarVistaPrevia);
     }
 
