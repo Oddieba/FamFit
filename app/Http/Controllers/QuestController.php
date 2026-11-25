@@ -6,6 +6,8 @@ use App\Models\QuestExercise;
 use App\Models\QuestExerciseCompletion;
 use App\Models\QuestRoutine;
 use App\Models\User;
+use App\Support\AppearanceThemes;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -222,15 +224,57 @@ class QuestController extends Controller
         $user = $request->user();
         $routineStorageAvailable = Schema::hasTable('quest_routines');
         $completionStorageAvailable = Schema::hasTable('quest_exercise_completions');
+        $missionStorageAvailable = Schema::hasTable('mission_logs');
+        $friendshipStorageAvailable = Schema::hasTable('friendships');
+        $achievementStorageAvailable = Schema::hasTable('user_achievements');
+        $statsStorageAvailable = Schema::hasTable('user_stats');
         $xp = Schema::hasColumn('users', 'xp') ? (int) $user->xp : 0;
+        $weekStart = now()->startOfWeek()->toDateString();
+        $weekEnd = now()->endOfWeek()->toDateString();
+        $monthStart = now()->startOfMonth();
+        $monthEnd = now()->endOfMonth();
+        $missionDates = $missionStorageAvailable
+            ? DB::table('mission_logs')->where('user_id', $user->id)
+                ->whereBetween('completed_at', [$monthStart->copy()->startOfDay(), $monthEnd->copy()->endOfDay()])
+                ->pluck('completed_at')->map(fn ($date) => Carbon::parse($date)->toDateString())->unique()->values()
+            : collect();
+        $calendarDays = collect(range(1, $monthEnd->day))->map(fn (int $day) => [
+            'day' => $day,
+            'completed' => $missionDates->contains($monthStart->copy()->day($day)->toDateString()),
+        ]);
 
         return view('perfil', [
             'user' => $user,
+            'profile' => $user->profile,
+            'assessment' => $user->currentAssessment,
             'avatar' => $this->avatarSettings(Schema::hasColumn('users', 'avatar_settings') ? $user->avatar_settings : null),
             'level' => intdiv($xp, 100) + 1,
             'xpProgress' => $xp % 100,
             'completedCount' => $completionStorageAvailable ? $user->questCompletions()->count() : 0,
             'routine' => $routineStorageAvailable ? $user->questRoutine()->first() : null,
+            'bioAvailable' => Schema::hasTable('profiles') && Schema::hasColumn('profiles', 'bio'),
+            'missionsCount' => $missionStorageAvailable
+                ? DB::table('mission_logs')->where('user_id', $user->id)->count()
+                : null,
+            'friendsCount' => $friendshipStorageAvailable
+                ? DB::table('friendships')->where('status', 'accepted')
+                    ->where(function ($query) use ($user) {
+                        $query->where('requester_id', $user->id)->orWhere('addressee_id', $user->id);
+                    })->count()
+                : null,
+            'weeklyWorkouts' => $completionStorageAvailable
+                ? $user->questCompletions()->whereBetween('completed_on', [$weekStart, $weekEnd])
+                    ->distinct()->count('completed_on')
+                : null,
+            'currentStreak' => $statsStorageAvailable
+                ? DB::table('user_stats')->where('id', $user->id)->value('current_streak')
+                : null,
+            'achievementsCount' => $achievementStorageAvailable
+                ? DB::table('user_achievements')->where('user_id', $user->id)->count()
+                : null,
+            'calendarDays' => $calendarDays,
+            'monthLabel' => $monthStart->locale('es')->translatedFormat('F Y'),
+            'monthOffset' => $monthStart->dayOfWeekIso - 1,
         ]);
     }
 
@@ -242,7 +286,17 @@ class QuestController extends Controller
             'username' => ['required', 'string', 'min:3', 'max:20', 'regex:/^[a-zA-Z0-9_]+$/', Rule::unique('users')->ignore($user->id)],
             'email' => ['required', 'email', 'max:190', Rule::unique('users')->ignore($user->id)],
         ]);
+        if (Schema::hasTable('profiles') && Schema::hasColumn('profiles', 'bio')) {
+            $bioData = $request->validate(['bio' => ['sometimes', 'nullable', 'string', 'max:300']]);
+            $data['bio'] = array_key_exists('bio', $bioData) ? $bioData['bio'] : $user->profile?->bio;
+        }
+
+        $bio = $data['bio'] ?? null;
+        unset($data['bio']);
         $user->update($data);
+        if (Schema::hasTable('profiles') && Schema::hasColumn('profiles', 'bio')) {
+            $user->profile()->firstOrNew()->fill(['bio' => $bio])->save();
+        }
 
         return back()->with('status', 'Tu perfil se actualizó correctamente.');
     }
@@ -268,6 +322,8 @@ class QuestController extends Controller
     {
         $settingsAvailable = Schema::hasColumn('users', 'preferences')
             && Schema::hasColumn('users', 'profile_visible');
+        $themeAvailable = Schema::hasColumn('users', 'theme');
+        $user = $request->user();
 
         return view('configuracion', [
             'settingsAvailable' => $settingsAvailable,
@@ -279,7 +335,11 @@ class QuestController extends Controller
                 'water_goal_ml' => 2000,
                 'sleep_goal_hours' => 8,
             ], $settingsAvailable ? ($request->user()->preferences ?? []) : []),
-            'user' => $request->user(),
+            'user' => $user,
+            'themes' => AppearanceThemes::THEMES,
+            'themeCategories' => AppearanceThemes::CATEGORIES,
+            'theme' => AppearanceThemes::resolve($themeAvailable ? $user->theme : null),
+            'themeAvailable' => $themeAvailable,
         ]);
     }
 
@@ -314,22 +374,22 @@ class QuestController extends Controller
         return back()->with('status', 'Tus preferencias quedaron guardadas.');
     }
 
-    public function updateTheme(Request $request): RedirectResponse
+    public function updateTheme(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'dark_mode' => ['required', 'boolean'],
+            'theme' => ['required', 'string', Rule::in(AppearanceThemes::keys())],
         ]);
 
-        if (! Schema::hasColumn('users', 'preferences')) {
-            return back()->with('status', 'El modo oscuro se guardó en este navegador. Para guardarlo en tu cuenta, instala las migraciones pendientes.');
+        if (! Schema::hasColumn('users', 'theme')) {
+            return response()->json([
+                'message' => 'La selección de temas no está disponible hasta instalar las migraciones pendientes.',
+            ], 503);
         }
 
         $user = $request->user();
-        $preferences = $user->preferences ?? [];
-        $preferences['dark_mode'] = $request->boolean('dark_mode');
-        $user->forceFill(['preferences' => $preferences])->save();
+        $user->forceFill(['theme' => $data['theme']])->save();
 
-        return back()->with('status', 'Tu preferencia de modo oscuro quedó guardada en tu cuenta.');
+        return response()->json(['theme' => $user->theme]);
     }
 
     public function updatePassword(Request $request): RedirectResponse

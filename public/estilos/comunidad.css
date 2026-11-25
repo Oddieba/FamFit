@@ -5,10 +5,10 @@
     color: var(--cm-ink); font-size: 1rem;
 }
 body:has(.community) { background: #f6f8f5; }
-.theme-dark body:has(.community) { background: #111827; }
+.theme-dark body:has(.community) { background: var(--fq-bg); }
 .theme-dark .community {
-    --cm-ink: #eef4f2; --cm-muted: #b0bebb; --cm-line: #384740; --cm-surface: #1c2830;
-    --cm-soft: #263830; --cm-deep: #10362d; --cm-link: #a5c5ff; color-scheme: dark;
+    --cm-ink: var(--fq-text); --cm-muted: var(--fq-muted); --cm-line: var(--fq-border); --cm-surface: var(--fq-surface);
+    --cm-soft: var(--fq-surface-muted); --cm-deep: var(--fq-menu); --cm-lime: var(--fq-progress); --cm-link: var(--fq-primary); color-scheme: dark;
 }
 .community .cm-symbols { display: none; }
 .community svg { width: 1.2em; height: 1.2em; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
