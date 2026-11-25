@@ -220,7 +220,7 @@ body.fq-app {
 .fq-profile-avatar { width: 105px; height: 105px; flex: 0 0 105px; border-width: 7px; }
 .fq-profile-avatar .fq-avatar-character { font-size: 3.8rem; }
 .fq-profile-avatar .fq-avatar-accessory { top: 1px; right: 0; width: 32px; height: 32px; font-size: 1rem; }
-.fq-profile-card .fq-eyebrow { margin-bottom: 4px; }
+.fq-profile-card .fq-eyebrow { margin-bottom: 4px; padding: auto;}
 .fq-profile-card h2 { margin-bottom: 0; }
 .fq-profile-card .fq-muted { margin: 3px 0 0; }
 .fq-profile-card .fq-text-link { margin-top: 7px; font-size: .86rem; }
@@ -256,14 +256,14 @@ body.fq-app {
 .fq-dialog-actions { display: flex; justify-content: flex-end; gap: 9px; }
 .fq-field-error { color: #B33D3D; font-size: .85rem; }
 
-.theme-dark body.fq-app { --fq-bg: #111827; --fq-surface: #1C2637; --fq-text: #E8EDF7; --fq-muted: #A7B2C4; --fq-border: #344156; --fq-shadow: 0 12px 36px rgba(0, 0, 0, .18); color-scheme: dark; }
-.theme-dark .fq-nav-link:hover, .theme-dark .fq-logout:hover, .theme-dark .fq-menu-toggle:hover { background: #28354A; }
-.theme-dark .fq-nav-link.is-active { background: #243963; }
-.theme-dark .fq-button-light, .theme-dark .fq-input, .theme-dark .fq-avatar-choice span { background: #202C40; color: var(--fq-text); }
-.theme-dark .fq-exercise-editor { background: #172234; }
-.theme-dark .fq-exercise-card.is-complete, .theme-dark .fq-alert-success { background: #1B2A23; }
-.theme-dark .fq-progress-track { background: #344156; }
-.theme-dark .fq-calendar-dot.is-done { background: #26371F; }
+.theme-dark body.fq-app { color-scheme: dark; }
+.theme-dark .fq-nav-link:hover, .theme-dark .fq-logout:hover, .theme-dark .fq-menu-toggle:hover { background: var(--fq-hover); }
+.theme-dark .fq-nav-link.is-active { background: var(--fq-active); }
+.theme-dark .fq-button-light, .theme-dark .fq-input, .theme-dark .fq-avatar-choice span { background: var(--fq-surface-muted); color: var(--fq-text); }
+.theme-dark .fq-exercise-editor { background: var(--fq-surface-muted); }
+.theme-dark .fq-exercise-card.is-complete, .theme-dark .fq-alert-success { background: var(--fq-success-bg); }
+.theme-dark .fq-progress-track { background: var(--fq-surface-muted); }
+.theme-dark .fq-calendar-dot.is-done { background: var(--fq-success-bg); }
 
 @media (min-width: 761px) {
     .fq-sidebar:hover ~ .fq-main, .fq-sidebar:focus-within ~ .fq-main, .fq-sidebar.is-expanded ~ .fq-main { margin-left: 252px; }

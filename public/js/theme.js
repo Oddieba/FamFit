@@ -1,102 +1,188 @@
 (function () {
-    const settingsStorageKey = 'famfit-settings';
+    const themes = {
+        'classic-white': '#FFFFFF',
+        'light-gray': '#F0F0F0',
+        'pearl-gray': '#E8EAED',
+        'sky-blue': '#EAF4FF',
+        'ice-blue': '#E8F1F8',
+        'mint-green': '#E8F5EC',
+        lavender: '#F0ECFA',
+        cream: '#F7F1E7',
+        'soft-gray': '#343434',
+        'deep-gray': '#242424',
+        'classic-black': '#121212',
+        amoled: '#000000',
+        'night-blue': '#17212B',
+        'deep-blue': '#101B2D',
+        'dark-purple': '#1C1825',
+        'forest-green': '#17231D',
+        'dark-red': '#251B1B',
+        'dark-coffee': '#24201A',
+        graphite: '#20252A',
+        slate: '#171B20',
+        'famfit-original': '#F5F7FB',
+    };
+    const darkThemes = new Set([
+        'soft-gray', 'deep-gray', 'classic-black', 'amoled', 'night-blue', 'deep-blue',
+        'dark-purple', 'forest-green', 'dark-red', 'dark-coffee', 'graphite', 'slate',
+    ]);
     const root = document.documentElement;
+    let currentTheme = resolveTheme(root.dataset.fqTheme);
 
-    function setDarkMode(enabled) {
-        root.classList.toggle('theme-dark', enabled);
-        root.classList.toggle('dark', enabled);
+    function resolveTheme(theme) {
+        return Object.prototype.hasOwnProperty.call(themes, theme) ? theme : 'famfit-original';
+    }
 
-        if (document.body) {
-            document.body.classList.toggle('dark', enabled);
-        }
+    function applyTheme(theme) {
+        const selectedTheme = resolveTheme(theme);
+        root.dataset.fqTheme = selectedTheme;
+        root.classList.toggle('theme-dark', darkThemes.has(selectedTheme));
+        currentTheme = selectedTheme;
 
         const themeColor = document.querySelector('meta[name="theme-color"]');
         if (themeColor) {
-            themeColor.setAttribute('content', enabled ? '#0f172a' : '#F5F7FB');
+            themeColor.setAttribute('content', themes[selectedTheme]);
+        }
+
+        return selectedTheme;
+    }
+
+    function updateThemeOptions(theme) {
+        const selector = document.getElementById('fqThemeSelector');
+        if (!selector) return;
+
+        selector.dataset.themeCurrent = theme;
+        const livePreview = document.getElementById('fqThemeLivePreview');
+        const selectedOption = Array.from(selector.querySelectorAll('[data-theme-option]'))
+            .find(function (option) { return option.dataset.themeOption === theme; });
+        if (selectedOption && livePreview) {
+            livePreview.style.setProperty('--preview-bg', selectedOption.dataset.previewBg);
+            livePreview.style.setProperty('--preview-surface', selectedOption.dataset.previewSurface);
+            livePreview.style.setProperty('--preview-accent', selectedOption.dataset.previewAccent);
+            livePreview.style.setProperty('--preview-text', selectedOption.dataset.previewText);
+            livePreview.style.setProperty('--preview-muted', selectedOption.dataset.previewMuted);
+            livePreview.style.setProperty('--preview-border', selectedOption.dataset.previewBorder);
+            livePreview.style.setProperty('--preview-button-text', selectedOption.dataset.previewButtonText);
+            livePreview.setAttribute('aria-label', 'Vista previa del tema: ' + selectedOption.querySelector('strong').textContent);
+        }
+
+        selector.querySelectorAll('[data-theme-option]').forEach(function (option) {
+            const isSelected = option.dataset.themeOption === theme;
+            option.classList.toggle('is-selected', isSelected);
+            const button = option.querySelector('[data-theme-apply]');
+            if (button) {
+                button.setAttribute('aria-pressed', String(isSelected));
+                button.textContent = isSelected ? 'Actual' : 'Aplicar';
+            }
+        });
+    }
+
+    function showStatus(message, isError) {
+        const status = document.getElementById('fqThemeStatus');
+        if (!status) return;
+
+        status.hidden = !message;
+        status.textContent = message;
+        status.classList.toggle('is-error', Boolean(isError));
+    }
+
+    async function saveTheme(theme) {
+        if (!Object.prototype.hasOwnProperty.call(themes, theme)) {
+            return false;
+        }
+
+        const selector = document.getElementById('fqThemeSelector');
+        if (!selector || selector.dataset.themeAvailable !== 'true') {
+            showStatus('No se puede guardar el tema hasta instalar la migración correspondiente.', true);
+            return false;
+        }
+
+        const previousTheme = currentTheme;
+        applyTheme(theme);
+        updateThemeOptions(theme);
+        showStatus('Guardando tema…', false);
+
+        const buttons = Array.from(selector.querySelectorAll('[data-theme-apply]'));
+        buttons.forEach(function (button) {
+            button.disabled = true;
+        });
+
+        try {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+            if (!csrfToken) {
+                throw new Error('No se encontró el token de seguridad de la sesión.');
+            }
+
+            const response = await fetch(selector.dataset.themeUrl, {
+                method: 'PUT',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: JSON.stringify({ theme: theme }),
+            });
+            let result = {};
+            try {
+                result = await response.json();
+            } catch (error) {
+                result = {};
+            }
+            if (!response.ok) {
+                throw new Error(result.message || 'No se pudo guardar el tema. Inténtalo de nuevo.');
+            }
+
+            applyTheme(result.theme);
+            updateThemeOptions(result.theme);
+            showStatus('Tema guardado en tu cuenta.', false);
+            return true;
+        } catch (error) {
+            applyTheme(previousTheme);
+            updateThemeOptions(previousTheme);
+            showStatus(error.message || 'No se pudo guardar el tema. Inténtalo de nuevo.', true);
+            console.error('No se pudo guardar la preferencia de tema.', error);
+            return false;
+        } finally {
+            buttons.forEach(function (button) {
+                button.disabled = false;
+            });
         }
     }
 
-    function readDarkMode(value) {
-        if (value === null) {
-            setDarkMode(root.classList.contains('theme-dark'));
+    window.setFamfitTheme = function (theme) {
+        if (!Object.prototype.hasOwnProperty.call(themes, theme)) return false;
+        applyTheme(theme);
+        updateThemeOptions(theme);
+        return true;
+    };
+    window.saveFamfitTheme = saveTheme;
+    window.setFamfitDarkMode = function (enabled) {
+        applyTheme(enabled ? 'classic-black' : 'famfit-original');
+        updateThemeOptions(currentTheme);
+    };
+    window.saveFamfitDarkMode = function (enabled) {
+        return saveTheme(enabled ? 'classic-black' : 'famfit-original');
+    };
+
+    applyTheme(currentTheme);
+    document.addEventListener('DOMContentLoaded', function () {
+        const selector = document.getElementById('fqThemeSelector');
+        if (!selector) return;
+
+        updateThemeOptions(currentTheme);
+        if (selector.dataset.themeAvailable !== 'true') {
+            selector.querySelectorAll('[data-theme-apply]').forEach(function (button) {
+                button.disabled = true;
+            });
             return;
         }
 
-        try {
-            const settings = JSON.parse(value);
-            setDarkMode(Boolean(settings && settings.darkMode === true));
-        } catch (error) {
-            console.warn('No se pudo leer la preferencia de tema guardada.');
-        }
-    }
-
-    window.setFamfitDarkMode = setDarkMode;
-    window.saveFamfitDarkMode = function (enabled) {
-        try {
-            const saved = localStorage.getItem(settingsStorageKey);
-            const settings = saved ? JSON.parse(saved) : {};
-
-            if (!settings || typeof settings !== 'object' || Array.isArray(settings)) {
-                throw new Error('Las preferencias guardadas no tienen un formato válido.');
+        selector.addEventListener('click', function (event) {
+            const button = event.target.closest('[data-theme-apply]');
+            if (button && selector.contains(button)) {
+                saveTheme(button.dataset.themeApply);
             }
-
-            settings.darkMode = Boolean(enabled);
-            localStorage.setItem(settingsStorageKey, JSON.stringify(settings));
-            setDarkMode(Boolean(enabled));
-            return true;
-        } catch (error) {
-            console.error('No se pudo guardar la preferencia de modo oscuro.', error);
-            return false;
-        }
-    };
-
-    try {
-        const serverPreference = root.dataset.fqDarkMode;
-        if (serverPreference === 'true' || serverPreference === 'false') {
-            window.saveFamfitDarkMode(serverPreference === 'true');
-        } else {
-            readDarkMode(localStorage.getItem(settingsStorageKey));
-        }
-    } catch (error) {
-        console.warn('No se pudo acceder a la preferencia de tema guardada.');
-    }
-
-    window.addEventListener('storage', function (event) {
-        if (event.key === settingsStorageKey) {
-            readDarkMode(event.newValue);
-        }
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const toggle = document.querySelector('.fq-theme-toggle');
-        const form = document.getElementById('fqThemeForm');
-
-        if (!toggle) return;
-
-        try {
-            const saved = localStorage.getItem(settingsStorageKey);
-            if (saved) {
-                const settings = JSON.parse(saved);
-                if (settings && typeof settings.darkMode === 'boolean') {
-                    toggle.checked = settings.darkMode;
-                } else {
-                    toggle.checked = root.classList.contains('theme-dark');
-                }
-            } else {
-                toggle.checked = root.classList.contains('theme-dark');
-            }
-        } catch (error) {
-            console.error('No se pudo cargar la preferencia de modo oscuro.', error);
-            toggle.checked = root.classList.contains('theme-dark');
-        }
-
-        toggle.addEventListener('change', function () {
-            if (!window.saveFamfitDarkMode(toggle.checked)) {
-                toggle.checked = !toggle.checked;
-                return;
-            }
-
-            if (form) form.requestSubmit();
         });
     });
 })();

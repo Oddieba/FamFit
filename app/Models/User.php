@@ -11,11 +11,16 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\Profile;
 use App\Models\InitialAssessment;
 use App\Models\Role;
+use App\Support\AppearanceThemes;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
+    protected $attributes = [
+        'theme' => AppearanceThemes::DEFAULT,
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -28,6 +33,7 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'theme',
         'terms_accepted_at',
         'privacy_accepted_at',
     ];

@@ -2,138 +2,250 @@
 
 @section('title', 'Perfil | FamFit Quest')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('estilos/perfil.css') }}">
+@endpush
+
 @section('content')
+    @php
+        $answers = $assessment?->answers ?? [];
+        $testAge = $profile?->age ?? ($answers['edad'] ?? '');
+        $testWeight = $profile?->weight ?? ($answers['peso'] ?? '');
+        $testHeight = $profile?->height ?? ($answers['altura'] ?? '');
+        $testGender = $profile?->gender ?? ($answers['genero'] ?? '');
+        $testGoal = $profile?->goals ?? ($answers['objetivo'] ?? '');
+        $testExperience = $profile?->experience ?? ($answers['experiencia_ejercicio'] ?? '');
+        $testAvailability = $profile?->availability ?? ($answers['disponibilidad'] ?? []);
+        $testInjury = $answers['tiene_lesion'] ?? ($profile?->has_injury ? 'si' : 'no');
+        $testInjuryDescription = $profile?->injury_description ?? ($answers['descripcion_lesion'] ?? '');
+        $dayLabels = [
+            'lunes' => 'Lunes',
+            'martes' => 'Martes',
+            'miercoles' => 'Miércoles',
+            'jueves' => 'Jueves',
+            'viernes' => 'Viernes',
+            'sabado' => 'Sábado',
+            'domingo' => 'Domingo',
+        ];
+        $slotLabels = ['manana' => 'Mañana', 'mañana' => 'Mañana', 'tarde' => 'Tarde', 'noche' => 'Noche'];
+        $slotClasses = ['manana' => 'morning', 'mañana' => 'morning', 'tarde' => 'afternoon', 'noche' => 'night'];
+        $goalLabels = [
+            'perder_grasa' => 'Perder grasa / Bajar de peso',
+            'ganar_musculo' => 'Ganar masa muscular / Fuerza',
+            'resistencia_cardio' => 'Mejorar resistencia / Cardio',
+            'activo_saludable' => 'Mantenerme activo y saludable',
+            'flexibilidad_movilidad' => 'Flexibilidad y movilidad',
+        ];
+        $experienceLabels = ['principiante' => 'Principiante', 'intermedio' => 'Intermedio', 'avanzado' => 'Avanzado'];
+        $genderLabels = ['masculino' => 'Masculino', 'femenino' => 'Femenino', 'otro' => 'Otro'];
+        $injuryLabels = ['si' => 'Sí', 'no' => 'No', '1' => 'Sí', '0' => 'No'];
+        $weekDays = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+    @endphp
 
+    <h1 class="fq-profile-sr-only">Perfil</h1>
+    <section class="fq-profile-hero" aria-label="Perfil de {{ $user->name }}">
+        <div class="fq-profile-banner">
+            <div class="fq-profile-banner-copy">
+                <span class="fq-profile-banner-mark" aria-hidden="true">🏋️</span>
+                <div>
+                    <p>Tu espacio de aventura</p>
+                    <h2>FamFit Quest</h2>
+                </div>
+            </div>
+            <div class="fq-profile-sports-art" aria-hidden="true">
+                <span>🏀</span><span>⚽</span><span>🏃</span>
+            </div>
+        </div>
 
-    <header class="fq-page-heading"><div><p class="fq-eyebrow">TU CUENTA</p><h1>Perfil</h1><p class="fq-muted">Administra tus datos y consulta tu progreso.</p></div></header>
-    <section class="fq-profile-overview">
-        <article class="fq-card fq-profile-card">
-            <div class="fq-avatar-art fq-profile-avatar" style="--fq-outfit: {{ $avatar['outfit'] }}"><span class="fq-avatar-character">{{ $avatar['animal'] }}</span>@if($avatar['accessory_symbol'])<span class="fq-avatar-accessory">{{ $avatar['accessory_symbol'] }}</span>@endif</div>
-            <div><p class="fq-eyebrow">NIVEL {{ $level }}</p><h2>{{ $user->name }}</h2><p class="fq-muted">{{ $user->username ? '@'.$user->username : $user->email }}</p><a class="fq-text-link" href="{{ route('menu') }}">Personalizar avatar →</a></div>
-        </article>
-        <article class="fq-card fq-stat-card"><span class="fq-card-icon fq-icon-green" aria-hidden="true">✦</span><strong>{{ $user->xp ?? 0 }}</strong><span class="fq-muted">XP acumulados</span><div class="fq-progress-track" role="progressbar" aria-label="Progreso de nivel" aria-valuenow="{{ $xpProgress }}" aria-valuemin="0" aria-valuemax="100"><span style="width: {{ $xpProgress }}%"></span></div><small class="fq-muted">{{ $xpProgress }} / 100 XP al siguiente nivel</small></article>
-        <article class="fq-card fq-stat-card"><span class="fq-card-icon" aria-hidden="true">✓</span><strong>{{ $completedCount }}</strong><span class="fq-muted">Ejercicios completados</span><small class="fq-muted">{{ $routine ? 'Rutina: '.$routine->name : 'Aún no tienes una rutina' }}</small></article>
+        <div class="fq-profile-main">
+            <div class="fq-profile-identity">
+                <div class="fq-avatar-art fq-profile-avatar" style="--fq-outfit: {{ $avatar['outfit'] }}">
+                    <span class="fq-avatar-character">{{ $avatar['animal'] }}</span>
+                    @if($avatar['accessory_symbol'])
+                        <span class="fq-avatar-accessory">{{ $avatar['accessory_symbol'] }}</span>
+                    @endif
+                </div>
+                <div class="fq-profile-name">
+                    <span class="fq-profile-level">Nivel {{ $level }}</span>
+                    <h2>{{ $user->name }}</h2>
+                    <p>{{ $user->username ? '@'.$user->username : $user->email }}</p>
+                    <a class="fq-profile-customize-link" href="{{ route('menu') }}">Personalizar avatar <span aria-hidden="true">→</span></a>
+                </div>
+            </div>
+
+            <div class="fq-profile-social-stats" aria-label="Estadísticas sociales">
+                <div class="fq-profile-social-stat">
+                    <strong>{{ $missionsCount ?? '—' }}</strong>
+                    <span>Misiones</span>
+                </div>
+                <div class="fq-profile-social-stat">
+                    <strong aria-label="No disponible">—</strong>
+                    <span>Seguidores</span>
+                    <small>No disponible</small>
+                </div>
+                <div class="fq-profile-social-stat">
+                    <strong>{{ $friendsCount ?? '—' }}</strong>
+                    <span>Amigos</span>
+                </div>
+            </div>
+
+            <button class="fq-button fq-button-primary fq-profile-edit-button" type="button" id="profileEditToggle" aria-controls="profileEditPanel" aria-expanded="false">
+                <i class="fa-solid fa-pen" aria-hidden="true"></i> Editar perfil
+            </button>
+        </div>
+
+        <div class="fq-profile-bio">
+            <div class="fq-profile-section-heading">
+                <span class="fq-profile-section-icon" aria-hidden="true"><i class="fa-regular fa-user"></i></span>
+                <h3>Biografía</h3>
+            </div>
+            <p>{{ $profile?->bio ?: 'Todavía no has añadido una biografía. Cuéntales a tus amigos qué te motiva a entrenar.' }}</p>
+        </div>
     </section>
-    <section class="fq-card fq-profile-form-card">
-        <div class="fq-card-heading"><div><p class="fq-eyebrow">INFORMACIÓN PERSONAL</p><h2>Datos de la cuenta</h2></div><span class="fq-card-icon" aria-hidden="true">👤</span></div>
+
+    <section class="fq-profile-dashboard" aria-label="Resumen de actividad">
+        <article class="fq-card fq-profile-panel">
+            <div class="fq-profile-panel-heading">
+                <span class="fq-profile-panel-icon fq-profile-icon-blue" aria-hidden="true"><i class="fa-solid fa-chart-line"></i></span>
+                <div><p class="fq-eyebrow">TU ACTIVIDAD</p><h2>Métricas de la semana</h2></div>
+            </div>
+            <div class="fq-profile-metric-list">
+                <div class="fq-profile-metric">
+                    <span class="fq-profile-metric-icon" aria-hidden="true"><i class="fa-solid fa-shoe-prints"></i></span>
+                    <div><span>Pasos</span><small>Sin registro disponible</small></div>
+                    <strong aria-label="Sin datos">—</strong>
+                </div>
+                <div class="fq-profile-metric">
+                    <span class="fq-profile-metric-icon fq-profile-icon-orange" aria-hidden="true"><i class="fa-solid fa-fire"></i></span>
+                    <div><span>Calorías</span><small>Sin registro disponible</small></div>
+                    <strong aria-label="Sin datos">—</strong>
+                </div>
+                <div class="fq-profile-metric">
+                    <span class="fq-profile-metric-icon fq-profile-icon-green" aria-hidden="true"><i class="fa-solid fa-dumbbell"></i></span>
+                    <div><span>Entrenamientos</span><small>Días con ejercicios registrados</small></div>
+                    <strong>{{ $weeklyWorkouts ?? '—' }}</strong>
+                </div>
+            </div>
+            <p class="fq-profile-routine">{{ $routine ? 'Rutina: '.$routine->name : 'Aún no tienes una rutina' }}</p>
+        </article>
+
+        <article class="fq-card fq-profile-panel">
+            <div class="fq-profile-panel-heading">
+                <span class="fq-profile-panel-icon fq-profile-icon-purple" aria-hidden="true"><i class="fa-solid fa-medal"></i></span>
+                <div><p class="fq-eyebrow">SIGUE AVANZANDO</p><h2>Estadísticas de aventurero</h2></div>
+            </div>
+            <div class="fq-profile-adventurer">
+                <div class="fq-profile-level-row"><span>Nivel {{ $level }}</span><strong>{{ $user->xp ?? 0 }} XP</strong></div>
+                <div class="fq-progress-track" role="progressbar" aria-label="Progreso de nivel" aria-valuenow="{{ $xpProgress }}" aria-valuemin="0" aria-valuemax="100">
+                    <span style="width: {{ $xpProgress }}%"></span>
+                </div>
+                <small class="fq-profile-muted">{{ $xpProgress }} / 100 XP para el siguiente nivel</small>
+                <div class="fq-profile-adventurer-stats">
+                    <div><span class="fq-profile-small-icon" aria-hidden="true">🔥</span><span>Racha de entrenamientos</span><strong>{{ $currentStreak ?? '—' }}{{ $currentStreak !== null ? ' días' : '' }}</strong></div>
+                    <div><span class="fq-profile-small-icon" aria-hidden="true">🏅</span><span>Logros desbloqueados</span><strong>{{ $achievementsCount ?? '—' }}</strong></div>
+                    <div><span class="fq-profile-small-icon" aria-hidden="true">✓</span><span>Ejercicios completados</span><strong>{{ $completedCount }}</strong></div>
+                </div>
+            </div>
+        </article>
+
+        <article class="fq-card fq-profile-panel fq-profile-calendar-panel">
+            <div class="fq-profile-panel-heading">
+                <span class="fq-profile-panel-icon fq-profile-icon-teal" aria-hidden="true"><i class="fa-regular fa-calendar-check"></i></span>
+                <div><p class="fq-eyebrow">TU HISTORIAL</p><h2>Calendario de misiones</h2></div>
+            </div>
+            <p class="fq-profile-month">{{ ucfirst($monthLabel) }}</p>
+            <div class="fq-profile-calendar" role="grid" aria-label="Misiones completadas en {{ $monthLabel }}">
+                @foreach($weekDays as $weekDay)
+                    <span class="fq-profile-calendar-weekday" role="columnheader">{{ $weekDay }}</span>
+                @endforeach
+                @for($emptyDay = 0; $emptyDay < $monthOffset; $emptyDay++)
+                    <span class="fq-profile-calendar-empty" aria-hidden="true"></span>
+                @endfor
+                @foreach($calendarDays as $calendarDay)
+                    <span class="fq-profile-calendar-day {{ $calendarDay['completed'] ? 'is-completed' : '' }}" role="gridcell" aria-label="{{ $calendarDay['day'] }}{{ $calendarDay['completed'] ? ', misión completada' : '' }}">
+                        {{ $calendarDay['day'] }}
+                        @if($calendarDay['completed'])<i aria-hidden="true"></i>@endif
+                    </span>
+                @endforeach
+            </div>
+            <p class="fq-profile-calendar-legend"><span aria-hidden="true"></span> Día con misión completada</p>
+        </article>
+    </section>
+
+    <section class="fq-card fq-profile-form-card" id="profileEditPanel" hidden>
+        <div class="fq-card-heading">
+            <div><p class="fq-eyebrow">INFORMACIÓN PERSONAL</p><h2>Datos de la cuenta</h2></div>
+            <span class="fq-card-icon" aria-hidden="true">👤</span>
+        </div>
         <form action="{{ route('perfil.update') }}" method="POST">
             @csrf
             @method('PUT')
             <div class="fq-form-grid">
                 <div><label class="fq-field-label" for="profileName">Nombre</label><input class="fq-input" id="profileName" name="name" value="{{ old('name', $user->name) }}" maxlength="255" autocomplete="name" required></div>
                 <div><label class="fq-field-label" for="profileUsername">Nombre de usuario</label><input class="fq-input" id="profileUsername" name="username" value="{{ old('username', $user->username) }}" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]+" autocomplete="username" required></div>
-                <div class="fq-form-wide"><label class="fq-field-label" for="profileEmail">Correo electrónico</label><input class="fq-input" id="profileEmail" type="email" name="email" value="{{ old('email', $user->email) }}" maxlength="190" autocomplete="email" required></div>
+                <div class="{{ $bioAvailable ? '' : 'fq-form-wide' }}"><label class="fq-field-label" for="profileEmail">Correo electrónico</label><input class="fq-input" id="profileEmail" type="email" name="email" value="{{ old('email', $user->email) }}" maxlength="190" autocomplete="email" required></div>
+                @if($bioAvailable)
+                    <div class="fq-form-wide"><label class="fq-field-label" for="profileBio">Biografía</label><textarea class="fq-input fq-profile-bio-input" id="profileBio" name="bio" maxlength="300" rows="3">{{ old('bio', $profile?->bio) }}</textarea></div>
+                @endif
             </div>
-                                <!-- Contenedor flex para separar los botones -->
-                              <!-- Estilos específicos para este botón -->
-                <style>
-                    .btn-repetir-test {
-                        transition: all 0.2s ease-in-out;
-                    }
-                    .btn-repetir-test:hover {
-                        background-color: #cd7b1e !important; /* Amarillo más oscuro */
-                        transform: translateY(-2px); /* Se mueve 3px hacia arriba */
-                        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Sombra para dar efecto de elevación */
-                    }
-
-                    .custom-modal-overlay {
-                    position: fixed;
-                    top: 0; left: 0; width: 100%; height: 100%;
-                    background: rgba(43, 54, 116, 0.4);
-                    backdrop-filter: blur(4px);
-                    display: flex; justify-content: center; align-items: center;
-                    z-index: 9999; opacity: 0; visibility: hidden;
-                    transition: all 0.3s ease;
-                }
-                .custom-modal-overlay.open { opacity: 1; visibility: visible; }
-                .custom-modal-box {
-                    background: white; border-radius: 20px; width: 90%; max-width: 400px;
-                    padding: 28px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-                    transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                }
-                .custom-modal-overlay.open .custom-modal-box { transform: scale(1); }
-                .modal-icon-container {
-                    width: 60px; height: 60px; background: #FFF4E5; color: #FF9800;
-                    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-                    font-size: 1.6rem; margin: 0 auto 16px auto;
-                }
-                .btn-modal-action {
-                    background: var(--primary-blue, #2864F0); color: white; border: none; width: 100%;
-                    padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: background 0.2s;
-                }
-                .btn-modal-action:hover { background: #1B52D8; }
-                .btn-modal-cancel {
-                    background: #E5E7EB; color: #374151; border: none; width: 100%;
-                    padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: background 0.2s;
-                }
-                .btn-modal-cancel:hover { background: #D1D5DB; }
-                </style>
-
-                <!-- Contenedor flex para separar los botones -->
-                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 1.5rem;">
-                    
-                    <!-- Botón Guardar (Izquierda) -->
-                    <button class="fq-button fq-button-primary" type="submit">
-                        Guardar perfil
-                    </button>
-
-                                  <!-- Botón Test (Derecha) -->
-                <a href="#" onclick="openRetakeModal(event)" 
-                   class="btn-repetir-test"
-                   style="display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; background-color: #FACC15; color: #1F2937; font-weight: 600; border-radius: 8px; text-decoration: none;">
-                    
-                    <svg style="width: 20px; height: 20px; margin-right: 8px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                    </svg>
-                    
-                    Repetir Test
-                </a>
-                    
-                </div>
+            <div class="fq-profile-form-actions">
+                <button class="fq-button fq-button-primary" type="submit">Guardar perfil</button>
+                <button class="fq-button fq-button-light" type="button" id="retakeTestToggle">Repetir test</button>
+            </div>
         </form>
-    </section>
-    <!-- MODAL DE CONFIRMACIÓN PARA REPETIR TEST -->
-    <div class="custom-modal-overlay" id="retakeModal">
-        <div class="custom-modal-box">
-            
-            <!-- Ícono -->
-            <div class="modal-icon-container">
-                <i class="fa-solid fa-clipboard-question" style="font-size: 1.6rem;"></i>
+
+        <div class="fq-profile-additional">
+            <div class="fq-card-heading"><div><p class="fq-eyebrow">INFORMACIÓN ADICIONAL</p></div></div>
+            <div class="fq-form-grid">
+                <div><label class="fq-field-label" for="testAge">Edad (años)</label><output class="fq-input fq-test-value" id="testAge" aria-readonly="true">{{ $testAge ?: '—' }}</output></div>
+                <div><label class="fq-field-label" for="testWeight">Peso (kg)</label><output class="fq-input fq-test-value" id="testWeight" aria-readonly="true">{{ $testWeight ?: '—' }}</output></div>
+                <div><label class="fq-field-label" for="testHeight">Altura (cm)</label><output class="fq-input fq-test-value" id="testHeight" aria-readonly="true">{{ $testHeight ?: '—' }}</output></div>
+                <div><label class="fq-field-label" for="testGender">Género</label><output class="fq-input fq-test-value" id="testGender" aria-readonly="true">{{ $genderLabels[$testGender] ?? ($testGender ?: '—') }}</output></div>
+                <div><label class="fq-field-label" for="testGoal">Objetivo principal</label><output class="fq-input fq-test-value" id="testGoal" aria-readonly="true">{{ $goalLabels[$testGoal] ?? ($testGoal ?: '—') }}</output></div>
+                <div><label class="fq-field-label" for="testExperience">Experiencia</label><output class="fq-input fq-test-value" id="testExperience" aria-readonly="true">{{ $experienceLabels[$testExperience] ?? ($testExperience ?: '—') }}</output></div>
+                <div class="fq-form-wide">
+                    <span class="fq-field-label" id="testAvailabilityLabel">Disponibilidad semanal</span>
+                    <div class="fq-week-chart" role="list" aria-labelledby="testAvailabilityLabel">
+                        @foreach($dayLabels as $day => $dayLabel)
+                            @php
+                                $selectedSlots = $testAvailability[$day] ?? [];
+                                $selectedSlots = is_array($selectedSlots) ? $selectedSlots : ($selectedSlots ? [$selectedSlots] : []);
+                                $selectedSlots = array_values(array_intersect($selectedSlots, array_keys($slotLabels)));
+                            @endphp
+                            <div class="fq-week-day {{ $selectedSlots ? '' : 'is-inactive' }}" role="listitem" aria-label="{{ $dayLabel }}: {{ $selectedSlots ? implode(', ', array_map(fn ($slot) => $slotLabels[$slot], $selectedSlots)) : 'sin disponibilidad' }}">
+                                <strong class="fq-week-day-name">{{ $dayLabel }}</strong>
+                                @if($selectedSlots)
+                                    <div class="fq-week-slots">
+                                        @foreach($selectedSlots as $slot)
+                                            <span class="fq-week-slot fq-slot-{{ $slotClasses[$slot] }}">{{ $slotLabels[$slot] }}</span>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <span class="fq-week-inactive">Sin disponibilidad</span>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div><label class="fq-field-label" for="testInjury">Lesión o condición médica</label><output class="fq-input fq-test-value" id="testInjury" aria-readonly="true">{{ $injuryLabels[(string) $testInjury] ?? ($testInjury ?: '—') }}</output></div>
+                <div><label class="fq-field-label" for="testInjuryDescription">Detalle de la lesión o condición</label><output class="fq-input fq-test-value" id="testInjuryDescription" aria-readonly="true">{{ $testInjuryDescription ?: '—' }}</output></div>
             </div>
-            
-            <h3 class="modal-title" style="font-size: 1.2rem; font-weight: 700; color: #2B3674; margin-bottom: 8px;">
-                ¿Volver a tomar el test?
-            </h3>
-            
-            <p class="modal-message" style="font-size: 0.9rem; color: #A3AED0; margin-bottom: 24px; line-height: 1.4;">
-                ¿Seguro que quieres volver a tomar tus datos del test inicial? Esto actualizará tu perfil actual y tu historial.
-            </p>
-            
-            <div style="display: flex; gap: 10px; width: 100%;">
-                <!-- Botón Cancelar (Forzando colores) -->
-                <button type="button" 
-                        onclick="closeRetakeModal()" 
-                        style="flex: 1; background-color: #E5E7EB !important; color: #374151 !important; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 1rem; transition: background 0.2s;">
-                    Cancelar
-                </button>
-                
-                <!-- Botón Continuar (Forzando colores) -->
-                <a href="{{ route('onboarding', ['retake' => 1]) }}" 
-                   style="flex: 1; background-color: #2864F0 !important; color: white !important; text-decoration: none; display: flex; justify-content: center; align-items: center; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 1rem; transition: background 0.2s;">
-                    Sí, continuar
-                </a>
+        </div>
+    </section>
+
+    <div class="fq-profile-modal" id="retakeModal" aria-hidden="true">
+        <div class="fq-profile-modal-box" role="dialog" aria-modal="true" aria-labelledby="retakeModalTitle">
+            <span class="fq-profile-modal-icon" aria-hidden="true"><i class="fa-solid fa-clipboard-question"></i></span>
+            <h2 id="retakeModalTitle">¿Volver a tomar el test?</h2>
+            <p>¿Seguro que quieres volver a tomar tus datos del test inicial? Esto actualizará tu perfil actual y tu historial.</p>
+            <div class="fq-profile-modal-actions">
+                <button class="fq-button fq-button-light" type="button" id="retakeModalCancel">Cancelar</button>
+                <a class="fq-button fq-button-primary" href="{{ route('onboarding', ['retake' => 1]) }}">Sí, continuar</a>
             </div>
         </div>
     </div>
 
-    <script>
-        function openRetakeModal(event) {
-            event.preventDefault(); // Evita que el enlace recargue la página
-            document.getElementById('retakeModal').classList.add('open');
-        }
-
-        function closeRetakeModal() {
-            document.getElementById('retakeModal').classList.remove('open');
-        }
-    </script>
+    @push('scripts')
+        <script src="{{ asset('js/perfil.js') }}" defer></script>
+    @endpush
 @endsection

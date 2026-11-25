@@ -142,7 +142,7 @@
 
                     </div>
 
-                    <button type="submit" class="boton-login boton boton-azul">
+                    <button href="{{ route('menu') }}"type="submit" class="boton-login boton boton-azul">
                         Iniciar sesión
                         <span>→</span>
                     </button>

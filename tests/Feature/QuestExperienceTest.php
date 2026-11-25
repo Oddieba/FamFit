@@ -283,6 +283,79 @@ class QuestExperienceTest extends TestCase
         $this->assertSame('campeona_1', $user->fresh()->username);
     }
 
+    public function test_profile_displays_initial_assessment_answers_as_read_only(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user)->post(route('onboarding.guardar'), [
+            'edad' => 24,
+            'peso' => 68.5,
+            'altura' => 175,
+            'genero' => 'masculino',
+            'objetivo' => 'perder_grasa',
+            'experiencia_ejercicio' => 'principiante',
+            'disponibilidad' => [
+                'lunes' => 'mañana',
+                'miercoles' => 'tarde',
+                'sabado' => 'noche',
+            ],
+            'tiene_lesion' => 'si',
+            'descripcion_lesion' => 'Molestia de rodilla',
+        ])->assertRedirect(route('menu'));
+
+        $this->get(route('perfil'))
+            ->assertOk()
+            ->assertSee('Respuestas guardadas')
+            ->assertSee('id="testAge" aria-readonly="true">24</output>', false)
+            ->assertSee('id="testGoal" aria-readonly="true">Perder grasa / Bajar de peso</output>', false)
+            ->assertSee('fq-week-chart', false)
+            ->assertSee('fq-slot-morning">Mañana</span>', false)
+            ->assertSee('fq-slot-afternoon">Tarde</span>', false)
+            ->assertSee('fq-slot-night">Noche</span>', false)
+            ->assertSee('Sin disponibilidad')
+            ->assertSee('id="testInjuryDescription" aria-readonly="true">Molestia de rodilla</output>', false)
+            ->assertSee('name="name"', false)
+            ->assertDontSee('name="name" value="'.$user->name.'" readonly', false);
+    }
+
+    public function test_repeating_assessment_keeps_old_results_until_new_answers_are_saved(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $firstAnswers = [
+            'edad' => 24,
+            'peso' => 68.5,
+            'altura' => 175,
+            'genero' => 'masculino',
+            'objetivo' => 'perder_grasa',
+            'experiencia_ejercicio' => 'principiante',
+            'disponibilidad' => ['lunes' => 'tarde'],
+            'tiene_lesion' => 'no',
+            'descripcion_lesion' => '',
+        ];
+        $this->post(route('onboarding.guardar'), $firstAnswers)->assertRedirect(route('menu'));
+        $firstAssessment = $user->initialAssessments()->firstOrFail();
+
+        $this->get(route('onboarding', ['retake' => 1]))
+            ->assertOk()
+            ->assertSee('Cancelar Test');
+        $this->assertSame(24, $user->profile()->firstOrFail()->age);
+        $this->assertTrue($firstAssessment->fresh()->is_current);
+
+        $this->post(route('onboarding.guardar'), array_merge($firstAnswers, [
+            'edad' => 25,
+            'peso' => 70,
+            'objetivo' => 'ganar_musculo',
+        ]))->assertRedirect(route('menu'));
+
+        $this->assertSame(25, $user->profile()->firstOrFail()->age);
+        $this->assertSame('ganar_musculo', $user->profile()->firstOrFail()->goals);
+        $this->assertFalse($firstAssessment->fresh()->is_current);
+        $this->assertSame(2, $user->initialAssessments()->count());
+        $this->assertTrue($user->currentAssessment->is_current);
+        $this->assertSame(25, $user->currentAssessment->answers['edad']);
+    }
+
     public function test_password_change_is_hashed_and_saved_to_the_user_record(): void
     {
         $user = User::factory()->create(['password' => 'password']);

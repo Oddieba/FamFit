@@ -1,4 +1,18 @@
-@extends('layouts.quest')
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FamFit Quest - Acondicionamiento Físico</title>
+    <script src="{{ asset('js/theme.js') }}"></script>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 @section('title', 'Acondicionamiento Físico | FamFit Quest')
 
@@ -6,11 +20,37 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            theme: { extend: { colors: { brand: { primary: '#2864F0', surface: '#FFFFFF', 'surface-muted': '#EEF2F8', 'text-primary': '#172033', 'text-secondary': '#64748B', border: '#DCE4EF', success: '#A7E66D', habit: '#19C6B0' } }, fontFamily: { sans: ['Inter', 'sans-serif'] } } }
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            primary: 'var(--fq-primary)',
+                            bg: 'var(--fq-bg)',
+                            surface: 'var(--fq-surface)',
+                            'surface-muted': 'var(--fq-surface-muted)',
+                            'text-primary': 'var(--fq-text)',
+                            'text-secondary': 'var(--fq-muted)',
+                            border: 'var(--fq-border)',
+                            success: 'var(--fq-progress)',
+                            habit: 'var(--fq-habit)',
+                            warning: '#F2B85B',
+                            danger: '#E45865'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
         }
     </script>
-
+    <link rel="stylesheet" href="{{ asset('estilos/tema-oscuro.css') }}">
     <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--fq-bg);
+            color: var(--fq-text);
+        }
         .card-transition {
     transition: transform 1.4s cubic-bezier(0.16, 1, 0.1, 1),
                 box-shadow 1.4s cubic-bezier(0.16, 1, 0.1, 1),

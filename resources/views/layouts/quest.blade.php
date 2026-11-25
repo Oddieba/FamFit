@@ -1,9 +1,14 @@
+@php
+    $currentAppearanceTheme = \App\Support\AppearanceThemes::resolve(auth()->user()->theme ?? null);
+    $appearanceThemeBackground = \App\Support\AppearanceThemes::THEMES[$currentAppearanceTheme]['background'];
+@endphp
 <!DOCTYPE html>
-<html lang="es" data-fq-dark-mode="{{ is_bool(auth()->user()->preferences['dark_mode'] ?? null) ? (auth()->user()->preferences['dark_mode'] ? 'true' : 'false') : '' }}" @class(['theme-dark' => (bool) (auth()->user()->preferences['dark_mode'] ?? false)])>
+<html lang="es" data-fq-theme="{{ $currentAppearanceTheme }}" @class(['theme-dark' => \App\Support\AppearanceThemes::isDark($currentAppearanceTheme)])>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#F5F7FB">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="theme-color" content="{{ $appearanceThemeBackground }}">
     <title>@yield('title', 'FamFit Quest')</title>
     <script src="{{ asset('js/theme.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('estilos/tema-oscuro.css') }}">
@@ -19,10 +24,7 @@
     <aside class="fq-sidebar" id="fqSidebar" aria-label="Menú principal">
         <div class="fq-sidebar-top">
            
-                <span class="fq-brand-mark" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M6 19V5h13v3H9v3h8v3H9v5z"></path></svg>
-                </span>
-                <span class="fq-brand-name">zdx</span>
+                <span class="fq-brand-name">Famfit Quest</span>
           
             <button class="fq-menu-toggle" id="fqMenuToggle" type="button" aria-label="Abrir menú" aria-controls="fqSidebar" aria-expanded="false">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>

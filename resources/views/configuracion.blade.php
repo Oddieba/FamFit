@@ -28,21 +28,51 @@
     </section>
     @endif
 
-    <section class="fq-card fq-settings-card">
-        <div class="fq-card-heading"><div><p class="fq-eyebrow">APARIENCIA</p><h2>Modo oscuro</h2></div><span class="fq-card-icon" aria-hidden="true">🌙</span></div>
-        <form action="{{ route('configuracion.theme') }}" method="POST" id="fqThemeForm">
-            @csrf
-            @method('PUT')
-            <input type="hidden" name="dark_mode" value="0">
-            <label class="fq-setting-row" for="settingDarkMode">
-                <span><strong>Activar modo oscuro</strong><small>Se aplica en todas las páginas de FamFit Quest.</small></span>
-                <span class="fq-switch"><input id="settingDarkMode" class="fq-theme-toggle" type="checkbox" name="dark_mode" value="1" @checked($settingsAvailable ? $preferences['dark_mode'] : false)><span aria-hidden="true"></span></span>
-            </label>
-            @unless($settingsAvailable)
-                <p class="fq-settings-note">El tema se conservará en este navegador. Para guardarlo en tu cuenta, instala primero las migraciones pendientes.</p>
+    <details class="fq-card fq-settings-card fq-theme-settings-card" id="fqThemeSelector" data-theme-url="{{ route('configuracion.theme') }}" data-theme-current="{{ $theme }}" data-theme-available="{{ $themeAvailable ? 'true' : 'false' }}">
+        <summary class="fq-card-heading fq-theme-settings-summary">
+            <div><p class="fq-eyebrow">TEMAS DISPONIBLES</p><h2>Apariencia</h2><small>Despliega para ver las 21 opciones y elegir una.</small></div>
+            <span class="fq-theme-settings-count">{{ count($themes) }} temas</span>
+            <span class="fq-card-icon" aria-hidden="true">🎨</span>
+            <i class="fa-solid fa-chevron-down fq-theme-settings-chevron" aria-hidden="true"></i>
+        </summary>
+        <div class="fq-theme-settings-content">
+            <p class="fq-theme-description">Elige una de las 21 apariencias. El cambio se aplica al instante y se guarda en tu cuenta.</p>
+            <div class="fq-theme-picker">
+                @foreach($themeCategories as $categoryKey => $category)
+                    <section class="fq-theme-category fq-theme-category-{{ $categoryKey }}">
+                        <div class="fq-theme-category-heading"><h3>{{ $category['name'] }}</h3><p>{{ $category['description'] }}</p></div>
+                        <div class="fq-theme-grid">
+                            @foreach($category['themes'] as $themeKey)
+                                @php
+                                    $themeOption = $themes[$themeKey];
+                                @endphp
+                                <article class="fq-theme-option {{ $theme === $themeKey ? 'is-selected' : '' }}" data-theme-option="{{ $themeKey }}" data-preview-bg="{{ $themeOption['background'] }}" data-preview-surface="{{ $themeOption['surface'] }}" data-preview-accent="{{ $themeOption['accent'] }}" data-preview-text="{{ $themeOption['text'] }}" data-preview-muted="{{ $themeOption['muted'] }}" data-preview-border="{{ $themeOption['border'] }}" data-preview-button-text="{{ \App\Support\AppearanceThemes::isDark($themeKey) ? '#10151D' : '#FFFFFF' }}">
+                                    <div class="fq-theme-preview" style="--preview-bg: {{ $themeOption['background'] }}; --preview-surface: {{ $themeOption['surface'] }}; --preview-accent: {{ $themeOption['accent'] }}" aria-hidden="true">
+                                        <span class="fq-theme-preview-sidebar"></span>
+                                        <span class="fq-theme-preview-content"><i></i><b></b><small></small></span>
+                                    </div>
+                                    <div class="fq-theme-option-footer">
+                                        <div><strong>{{ $themeOption['name'] }}</strong><small>{{ $themeOption['background'] }}</small></div>
+                                        <button class="fq-theme-apply" type="button" data-theme-apply="{{ $themeKey }}" aria-pressed="{{ $theme === $themeKey ? 'true' : 'false' }}" @disabled(! $themeAvailable)>
+                                            {{ $theme === $themeKey ? 'Actual' : 'Aplicar' }}
+                                        </button>
+                                    </div>
+                                </article>
+                            @endforeach
+                        </div>
+                    </section>
+                @endforeach
+            </div>
+            <div class="fq-theme-live-preview" id="fqThemeLivePreview" style="--preview-bg: {{ $themes[$theme]['background'] }}; --preview-surface: {{ $themes[$theme]['surface'] }}; --preview-accent: {{ $themes[$theme]['accent'] }}; --preview-text: {{ $themes[$theme]['text'] }}; --preview-muted: {{ $themes[$theme]['muted'] }}; --preview-border: {{ $themes[$theme]['border'] }}; --preview-button-text: {{ \App\Support\AppearanceThemes::isDark($theme) ? '#10151D' : '#FFFFFF' }}" role="img" aria-label="Vista previa del tema actual">
+                <span class="fq-theme-live-sidebar" aria-hidden="true"></span>
+                <div class="fq-theme-live-content"><small>FAMFIT QUEST</small><strong>Tu próxima aventura</strong><span>Progreso semanal</span><i aria-hidden="true"></i><button type="button" tabindex="-1" aria-hidden="true">Continuar</button></div>
+            </div>
+            @unless($themeAvailable)
+                <p class="fq-settings-note" role="status">Instala las migraciones pendientes para guardar una preferencia por cuenta.</p>
             @endunless
-        </form>
-    </section>
+            <p class="fq-settings-note" id="fqThemeStatus" role="status" aria-live="polite" hidden></p>
+        </div>
+    </details>
 
     <section class="fq-card fq-settings-card">
         <div class="fq-card-heading"><div><p class="fq-eyebrow">SEGURIDAD</p><h2>Cambiar contraseña</h2></div><span class="fq-card-icon" aria-hidden="true">🔒</span></div>

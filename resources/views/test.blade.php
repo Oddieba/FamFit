@@ -3,19 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#F5F7FB">
     <title>FamFit Quest - Test Inicial de Héroe</title>
+    <script src="{{ asset('js/theme.js') }}"></script>
     <!-- FontAwesome para Iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --primary-blue: #2864F0;
-            --soft-bg: #F5F7FB;
-            --accent-green: #A7E66D;
-            --accent-teal: #19C6B0;
-            --text-dark: #2B3674;
-            --text-gray: #A3AED0;
-            --white: #FFFFFF;
+            --primary-blue: var(--color-principal, #2864F0);
+            --soft-bg: var(--fondo-principal, #F5F7FB);
+            --accent-green: var(--fq-progress, #A7E66D);
+            --accent-teal: var(--fq-habit, #19C6B0);
+            --text-dark: var(--texto-principal, #2B3674);
+            --text-gray: var(--texto-secundario, #A3AED0);
+            --white: var(--fondo-tarjetas, #FFFFFF);
             --error-red: #FF4D4D;
         }
 
@@ -119,8 +121,9 @@
         .btn-modal-action { background: var(--primary-blue); color: var(--white); border: none; width: 100%; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
         .btn-modal-action:hover { background: #1B52D8; }
     </style>
+    <link rel="stylesheet" href="{{ asset('estilos/tema-oscuro.css') }}">
 </head>
-<body>
+<body class="fq-onboarding">
 
     <!-- MODAL BONITO PARA ALERTAS -->
     <div class="custom-modal-overlay" id="customModal">

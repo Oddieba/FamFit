@@ -491,6 +491,7 @@
     }
   </style>
   <link rel="stylesheet" href="{{ asset('estilos/tema-oscuro.css') }}">
+  <link rel="stylesheet" href="{{ asset('estilos/tema-oscuro.css') }}">
 </head>
 
 <body>
