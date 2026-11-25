@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\FamFitCalendarController;
+use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\QuestController;
 use App\Http\Controllers\OnboardingController;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\Auth\PasswordResetController;
+use App\Models\Routine;
 /*
 |--------------------------------------------------------------------------
 | Rutas Públicas (No requieren iniciar sesión)
@@ -87,6 +89,43 @@ Route::get('/entrenamientos', function () {
 })->name('entrenamientos');
 
 
+
+Route::get('/entrenamientos/{entorno}', function ($entorno) {
+    /** @var \App\Models\User $user */
+    $user = Auth::user();
+    $perfil = $user->profile;
+    
+    // 1. Traducir el objetivo del test (en español) al de la base de datos (en inglés)
+    $objetivoDb = 'general_fitness'; // Por defecto
+    if ($perfil && $perfil->goals) {
+        $objetivoDb = match($perfil->goals) {
+            'ganar_musculo' => 'strength',
+            'perder_grasa' => 'endurance',
+            'resistencia_cardio' => 'cardio',
+            'flexibilidad_movilidad' => 'mobility',
+            default => 'general_fitness',
+        };
+    }
+
+    // 2. Traducir el entorno por si acaso (gym, casa, aire)
+    $entornoDb = match($entorno) {
+        'gym' => 'gym',
+        'casa' => 'home',
+        'aire' => 'outdoor',
+        default => 'home'
+    };
+
+    // 3. Buscar las rutinas de ese entorno
+    $todasLasRutinas = Routine::where('environment', $entornoDb)->get();
+
+    // 4. Filtrar las rutinas recomendadas (según el objetivo del test)
+    $rutinasRecomendadas = Routine::where('environment', $entornoDb)
+                                  ->where('objective', $objetivoDb)
+                                  ->get();
+
+    return view('rutinas', compact('entorno', 'perfil', 'todasLasRutinas', 'rutinasRecomendadas', 'objetivoDb'));
+})->name('entrenamientos.rutinas');
+
 /*
 |--------------------------------------------------------------------------
 | Rutas Protegidas (Solo para usuarios logueados)
@@ -109,7 +148,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/entreno/rutinas', [QuestController::class, 'storeRoutine'])->name('entreno.rutinas.store');
     Route::post('/entreno/ejercicios/{exercise}/completar', [QuestController::class, 'completeExercise'])->name('entreno.ejercicios.complete');
     Route::get('/calendario', [FamFitCalendarController::class, 'index'])->name('calendario');
-    Route::get('/social', [QuestController::class, 'social'])->name('social');
+    Route::get('/social', [CommunityController::class, 'index'])->name('social');
+    Route::get('/social/personas', [CommunityController::class, 'people'])->name('social.people');
+    Route::post('/social/amistades', [CommunityController::class, 'update'])->name('social.friendship');
 
     // Calendario compartido FamFit
     Route::get('/famfit/calendario', [FamFitCalendarController::class, 'index'])->name('famfit.calendar');

@@ -128,7 +128,10 @@ return new class extends Migration
             $table->dateTime('bedtime');
             $table->dateTime('wake_time');
             // Columna generada en MySQL
-            $table->integer('duration_minutes')->storedAs('timestampdiff(MINUTE, bedtime, wake_time)');
+            $minutes = Schema::getConnection()->getDriverName() === 'sqlite'
+                ? 'cast((unixepoch(wake_time) - unixepoch(bedtime)) / 60 as integer)'
+                : 'timestampdiff(MINUTE, bedtime, wake_time)';
+            $table->integer('duration_minutes')->storedAs($minutes);
             $table->unsignedTinyInteger('quality_rating')->nullable();
             $table->enum('source', ['manual', 'device'])->default('manual');
             $table->string('notes', 300)->nullable();

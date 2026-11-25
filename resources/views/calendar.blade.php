@@ -83,6 +83,12 @@
                             aria-label="Agrandar calendario" title="Agrandar">＋</button>
                         <button class="ff-zoom-reset" type="button" data-calendar-zoom-reset>Restablecer</button>
                     </div>
+                    <div class="ff-reminder-controls">
+                        <div class="ff-reminder-status" id="reminderPermissionStatus" role="status" aria-live="polite">
+                            <span class="ff-reminder-status-dot" aria-hidden="true"></span>
+                            <span>Preparando notificaciones automáticas…</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             <details class="ff-availability-editor">
@@ -105,7 +111,8 @@
                         @endforeach
                     </div>
                     <div class="ff-availability-footer">
-                        <p>Guarda tus preferencias semanales. Las actividades pueden programarse en cualquier día y horario.</p>
+                        <p>Guarda tus preferencias semanales. Las actividades pueden programarse en cualquier día y horario.
+                        </p>
                         <button class="ff-btn ff-btn-primary" type="submit">Guardar disponibilidad</button>
                     </div>
                 </form>
@@ -185,13 +192,17 @@
                                                 <button type="button"
                                                     class="ff-event event-{{ strtolower($activity->activity_type) }} {{ $activity->status === 'completed' ? 'is-completed' : '' }}"
                                                     style="top: {{ ($top / 1440) * 100 }}%; height: {{ ($duration / 1440) * 100 }}%"
-                                                    title="{{ $activity->title }} · {{ substr($activity->start_time, 0, 5) }}–{{ substr($activity->end_time, 0, 5) }}"
+                                                    title="{{ $activity->title }} · {{ substr($activity->start_time, 0, 5) }}–{{ substr($activity->end_time, 0, 5) }}{{ $activity->status === 'planned' && $activity->reminder_minutes_before !== null ? ' · Recordatorio ' . ($activity->reminder_minutes_before === 0 ? 'al comenzar' : $activity->reminder_minutes_before . ' min antes') : '' }}"
                                                     data-activity='@json($activity)'
                                                     data-update-url="{{ route('famfit.activities.update', $activity) }}"
                                                     data-delete-url="{{ route('famfit.activities.destroy', $activity) }}">
                                                     <strong>{{ $activity->title }}</strong>
                                                     <span>{{ substr($activity->start_time, 0, 5) }} –
                                                         {{ substr($activity->end_time, 0, 5) }}</span>
+                                                    @if ($activity->status === 'planned' && $activity->reminder_minutes_before !== null)
+                                                        <span>🔔
+                                                            {{ $activity->reminder_minutes_before === 0 ? 'Al comenzar' : $activity->reminder_minutes_before . ' min antes' }}</span>
+                                                    @endif
                                                 </button>
                                             @endforeach
                                         </div>
@@ -230,9 +241,52 @@
             </div>
             <form id="activityForm" method="POST" action="{{ route('famfit.activities.store') }}"
                 data-store-url="{{ route('famfit.activities.store') }}" data-today="{{ now()->toDateString() }}"
-                data-availability='@json($availability)' data-availability-slots='@json($availabilitySlots)'>
+                data-availability='@json($availability)' data-availability-slots='@json($availabilitySlots)'
+                data-reminders='@json($reminderActivities)' data-default-goal="{{ $scheduleGoal }}"
+                data-default-experience="{{ $scheduleExperience }}" data-default-duration="{{ $scheduleDuration }}"
+                data-notification-preferences='@json($notificationPreferences)'>
                 @csrf
                 <input type="hidden" name="_method" id="formMethod" value="POST">
+                <section class="ff-smart-scheduler" aria-labelledby="smartSchedulerTitle">
+                    <div class="ff-smart-scheduler-head">
+                        <div>
+                            <span class="ff-eyebrow">PLAN PERSONALIZADO</span>
+                            <h3 id="smartSchedulerTitle">Proponer un horario</h3>
+                        </div>
+                        <span class="ff-profile-match" id="profileMatch">Según tu objetivo y experiencia</span>
+                    </div>
+                    <div class="ff-smart-fields">
+                        <label class="ff-field">Objetivo
+                            <select id="scheduleGoal">
+                                <option value="strength" @selected($scheduleGoal === 'strength')>Ganar músculo</option>
+                                <option value="endurance" @selected($scheduleGoal === 'endurance')>Perder grasa</option>
+                                <option value="cardio" @selected($scheduleGoal === 'cardio')>Resistencia cardiovascular</option>
+                                <option value="mobility" @selected($scheduleGoal === 'mobility')>Flexibilidad y movilidad</option>
+                                <option value="general_fitness" @selected($scheduleGoal === 'general_fitness')>Actividad general</option>
+                            </select>
+                        </label>
+                        <label class="ff-field">Duración
+                            <select id="scheduleDuration">
+                                @foreach ([15, 20, 30, 45, 60, 75, 90, 105, 120] as $minutes)
+                                    <option value="{{ $minutes }}" @selected((int) $scheduleDuration === $minutes)>
+                                        {{ $minutes }} minutos
+                                    </option>
+                                @endforeach
+                            </select>
+                        </label>
+                        <label class="ff-field">Experiencia
+                            <select id="scheduleExperience">
+                                <option value="beginner" @selected($scheduleExperience === 'beginner')>Principiante</option>
+                                <option value="intermediate" @selected($scheduleExperience === 'intermediate')>Intermedio</option>
+                                <option value="advanced" @selected($scheduleExperience === 'advanced')>Avanzado</option>
+                            </select>
+                        </label>
+                    </div>
+                    <button type="button" class="ff-btn ff-btn-primary ff-suggest-button" id="suggestScheduleBtn">
+                        Buscar horarios disponibles
+                    </button>
+                    <div class="ff-schedule-suggestions" id="scheduleSuggestions" aria-live="polite"></div>
+                </section>
                 <div class="ff-form-grid">
                     <label class="ff-field ff-field-full">Nombre de la actividad
                         <input name="title" id="activityTitle" maxlength="100" placeholder="Ej. Caminata matutina"
@@ -261,6 +315,20 @@
                         <select name="status" id="activityStatus">
                             <option value="planned">Programada</option>
                             <option value="completed">Completada</option>
+                        </select>
+                    </label>
+                    <label class="ff-field ff-field-full">Notificación
+                        <select name="reminder_minutes_before" id="activityReminder">
+                            <option value="">Sin notificación</option>
+                            <option value="0">Al momento del evento</option>
+                            <option value="5">5 minutos antes</option>
+                            <option value="10">10 minutos antes</option>
+                            <option value="15">15 minutos antes</option>
+                            <option value="30">30 minutos antes</option>
+                            <option value="60">1 hora antes</option>
+                            <option value="1440">1 día antes</option>
+                            <option value="2880">2 días antes</option>
+                            <option value="10080">1 semana antes</option>
                         </select>
                     </label>
                     <label class="ff-field ff-field-full">Notas (opcional)

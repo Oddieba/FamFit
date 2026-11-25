@@ -15,6 +15,7 @@ class FamFitActivity extends Model
         'activity_type',
         'activity_date',
         'start_time',
+        'reminder_minutes_before',
         'end_time',
         'duration_minutes',
         'notes',
@@ -25,6 +26,7 @@ class FamFitActivity extends Model
     protected $casts = [
         'activity_date' => 'date',
         'duration_minutes' => 'integer',
+        'reminder_minutes_before' => 'integer',
         'points' => 'integer',
     ];
 

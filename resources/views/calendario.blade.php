@@ -32,8 +32,8 @@
                     $hasCompletion = in_array($calendarDate, $completedDates, true);
                 @endphp
                 <a class="fq-calendar-day {{ $calendarDay->month !== $selectedDate->month ? 'is-outside' : '' }} {{ $calendarDate === $selectedDate->toDateString() ? 'is-selected' : '' }} {{ $calendarDate === today()->toDateString() ? 'is-today' : '' }}"
-                   href="{{ route('calendario', ['date' => $calendarDate]) }}"
-                   aria-label="{{ $calendarDay->locale('es')->translatedFormat('l j \d\e F') }}{{ $hasWorkout ? ', entrenamiento programado' : '' }}{{ $hasCompletion ? ', actividad completada' : '' }}">
+                href="{{ route('calendario', ['date' => $calendarDate]) }}"
+                aria-label="{{ $calendarDay->locale('es')->translatedFormat('l j \d\e F') }}{{ $hasWorkout ? ', entrenamiento programado' : '' }}{{ $hasCompletion ? ', actividad completada' : '' }}">
                     <span>{{ $calendarDay->day }}</span>
                     <span class="fq-calendar-markers" aria-hidden="true">@if($hasWorkout)<i class="is-workout"></i>@endif @if($hasCompletion)<i class="is-completed"></i>@endif</span>
                 </a>

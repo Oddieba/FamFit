@@ -85,6 +85,43 @@ class QuestExperienceTest extends TestCase
         $this->assertSame(1, FamFitActivity::where('user_id', $user->id)->count());
     }
 
+    public function test_calendar_activity_reminders_can_be_configured_and_invalid_values_are_rejected(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $this->post(route('famfit.activities.store'), [
+            'title' => 'Caminata con aviso',
+            'activity_type' => 'Caminata',
+            'activity_date' => today()->toDateString(),
+            'start_time' => '23:00',
+            'end_time' => '23:30',
+            'reminder_minutes_before' => '15',
+            'status' => 'planned',
+        ])->assertRedirect()->assertSessionHasNoErrors();
+
+        $activity = FamFitActivity::query()->firstOrFail();
+        $this->assertSame(15, $activity->reminder_minutes_before);
+
+        $this->get(route('famfit.calendar'))
+            ->assertOk()
+            ->assertSee('Preparando notificaciones automáticas')
+            ->assertSee('15 minutos antes')
+            ->assertSee('15 min antes');
+
+        $this->post(route('famfit.activities.store'), [
+            'title' => 'Aviso no válido',
+            'activity_type' => 'Caminata',
+            'activity_date' => today()->addDay()->toDateString(),
+            'start_time' => '09:00',
+            'end_time' => '10:00',
+            'reminder_minutes_before' => '20',
+            'status' => 'planned',
+        ])->assertSessionHasErrors('reminder_minutes_before');
+
+        $this->assertSame(1, FamFitActivity::query()->count());
+    }
+
     public function test_calendar_activities_are_isolated_by_user(): void
     {
         $owner = User::factory()->create();

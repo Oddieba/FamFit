@@ -68,7 +68,20 @@ class FamFitCalendarController extends Controller
         $weekActivities = FamFitActivity::query()
             ->where('user_id', $request->user()->id)
             ->whereBetween('activity_date', [$weekStart->toDateString(), $weekEnd->toDateString()]);
+        $reminderActivities = FamFitActivity::query()
+            ->where('user_id', $request->user()->id)
+            ->whereBetween('activity_date', [today()->toDateString(), today()->addDays(14)->toDateString()])
+            ->where('status', 'planned')
+            ->whereNotNull('reminder_minutes_before')
+            ->get(['id', 'title', 'activity_date', 'start_time', 'reminder_minutes_before']);
         $availability = $this->normalizeAvailability($request->user()->profile?->availability);
+        $profile = $request->user()->profile;
+        $assessment = $request->user()->currentAssessment;
+        $preferences = $request->user()->preferences ?? [];
+        $notificationPreferences = [
+            'habits_enabled' => (bool) ($preferences['notifications_habits'] ?? true),
+            'reminder_time' => $preferences['reminder_time'] ?? '19:00',
+        ];
 
         return view('calendar', [
             'currentMonth' => $currentMonth,
@@ -81,9 +94,17 @@ class FamFitCalendarController extends Controller
             'completedCount' => (clone $weekActivities)->where('status', 'completed')->count(),
             'weekMinutes' => (clone $weekActivities)->sum('duration_minutes'),
             'weekPoints' => (clone $weekActivities)->where('status', 'completed')->sum('points'),
+            'reminderActivities' => $reminderActivities,
             'availability' => $availability,
             'availabilityDays' => self::AVAILABILITY_DAYS,
             'availabilitySlots' => self::AVAILABILITY_SLOTS,
+            'scheduleGoal' => $this->normalizeGoal($profile?->goals ?? $assessment?->main_goal),
+            'scheduleExperience' => $this->normalizeExperience($profile?->experience ?? $assessment?->experience_level),
+            'scheduleDuration' => $this->suggestedDuration(
+                $profile?->experience ?? $assessment?->experience_level,
+                $assessment?->session_minutes
+            ),
+            'notificationPreferences' => $notificationPreferences,
             'previousMonth' => $currentMonth->copy()->subMonth()->format('Y-m'),
             'nextMonth' => $currentMonth->copy()->addMonth()->format('Y-m'),
         ]);
@@ -160,6 +181,7 @@ class FamFitCalendarController extends Controller
             'activity_date' => ['required', 'date'],
             'start_time' => ['required', 'date_format:H:i'],
             'end_time' => ['required', 'date_format:H:i', 'after:start_time'],
+            'reminder_minutes_before' => ['nullable', 'integer', Rule::in(['0', '5', '10', '15', '30', '60', '1440', '2880', '10080'])],
             'notes' => ['nullable', 'string', 'max:1000'],
             'status' => ['required', Rule::in(['planned', 'completed'])],
         ]);
@@ -169,6 +191,41 @@ class FamFitCalendarController extends Controller
     {
         return (int) Carbon::createFromFormat('H:i', $start)
             ->diffInMinutes(Carbon::createFromFormat('H:i', $end));
+    }
+
+    private function normalizeGoal(?string $goal): string
+    {
+        return match ($goal) {
+            'ganar_musculo', 'strength' => 'strength',
+            'perder_grasa', 'resistencia_cardio', 'resistencia', 'endurance' => 'endurance',
+            'flexibilidad_movilidad', 'flexibilidad', 'mobility' => 'mobility',
+            'activo_saludable', 'healthy_habits', 'general_fitness' => 'general_fitness',
+            'cardio' => 'cardio',
+            default => 'general_fitness',
+        };
+    }
+
+    private function normalizeExperience(?string $experience): string
+    {
+        return match ($experience) {
+            'principiante', 'beginner', 'Inicial', 'unsure' => 'beginner',
+            'intermedio', 'intermediate', 'Intermedio' => 'intermediate',
+            'avanzado', 'advanced' => 'advanced',
+            default => 'beginner',
+        };
+    }
+
+    private function suggestedDuration(?string $experience, ?int $sessionMinutes): int
+    {
+        if ($sessionMinutes !== null && $sessionMinutes >= 15) {
+            return min(120, max(15, (int) round($sessionMinutes / 15) * 15));
+        }
+
+        return match ($this->normalizeExperience($experience)) {
+            'advanced' => 60,
+            'intermediate' => 45,
+            default => 30,
+        };
     }
 
     private function ensureNoScheduleConflict(array $data, Request $request, ?int $exceptActivityId = null): void
