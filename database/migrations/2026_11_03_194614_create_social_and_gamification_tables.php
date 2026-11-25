@@ -94,8 +94,11 @@ return new class extends Migration
             $table->unsignedBigInteger('requester_id');
             $table->unsignedBigInteger('addressee_id');
             $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
-            $table->unsignedBigInteger('user_low_id')->virtualAs('least(requester_id, addressee_id)');
-            $table->unsignedBigInteger('user_high_id')->virtualAs('greatest(requester_id, addressee_id)');
+            $sqlite = Schema::getConnection()->getDriverName() === 'sqlite';
+            $lower = $sqlite ? 'min' : 'least';
+            $upper = $sqlite ? 'max' : 'greatest';
+            $table->unsignedBigInteger('user_low_id')->virtualAs("$lower(requester_id, addressee_id)");
+            $table->unsignedBigInteger('user_high_id')->virtualAs("$upper(requester_id, addressee_id)");
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('responded_at')->nullable();
 

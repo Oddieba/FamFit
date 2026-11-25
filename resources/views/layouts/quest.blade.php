@@ -33,8 +33,8 @@
             <a class="fq-nav-link {{ request()->routeIs('menu') ? 'is-active' : '' }}" href="{{ route('menu') }}" @if(request()->routeIs('menu')) aria-current="page" @endif>
                 <span class="fq-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></svg></span><span class="fq-nav-label">Inicio</span>
             </a>
-            <a class="fq-nav-link {{ request()->routeIs('entreno*') ? 'is-active' : '' }}" href="{{ route('entreno') }}" @if(request()->routeIs('entreno*')) aria-current="page" @endif>
-                <span class="fq-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 8v8m12-8v8M3 10v4m18-4v4M6 12h12"></path></svg></span><span class="fq-nav-label">Entreno</span>
+            <a class="fq-nav-link {{ request()->routeIs('entrenamientos') ? 'is-active' : '' }}" href="{{ route('entrenamientos') }}" @if(request()->routeIs('entrenamientos')) aria-current="page" @endif>
+                <span class="fq-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 8v8m12-8v8M3 10v4m18-4v4M6 12h12"></path></svg></span><span class="fq-nav-label">Entrenamientos</span>
             </a>
             <a class="fq-nav-link {{ request()->routeIs('calendario') || request()->routeIs('famfit.calendar') ? 'is-active' : '' }}" href="{{ route('calendario') }}" @if(request()->routeIs('calendario') || request()->routeIs('famfit.calendar')) aria-current="page" @endif>
                 <span class="fq-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></svg></span><span class="fq-nav-label">Calendario</span>
