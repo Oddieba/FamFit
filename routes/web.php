@@ -240,3 +240,25 @@ Route::post('/reset-password', [PasswordResetController::class, 'update'])
     ->middleware('guest')
     ->name('password.update');
 
+
+use App\Http\Controllers\NutricionController;
+
+Route::middleware('auth')->prefix('nutricion')->group(function () {
+
+    // Página principal: /nutricion
+    Route::get('/', fn () => view('nutricion'))->name('nutricion.index');
+
+    // Comidas
+    Route::get('/comidas', [NutricionController::class, 'listarComidas']);
+    Route::post('/comidas', [NutricionController::class, 'guardar']);
+    Route::put('/comidas/{id}', [NutricionController::class, 'actualizar']);
+    Route::delete('/comidas/{id}', [NutricionController::class, 'eliminar']);
+
+    // Foto
+    Route::post('/fotos/identificar', [NutricionController::class, 'identificarFoto']);
+
+    // Restricciones (alergias)
+    Route::get('/restricciones', [NutricionController::class, 'listarRestricciones']);
+    Route::post('/restricciones', [NutricionController::class, 'guardarRestriccion']);
+    Route::delete('/restricciones/{id}', [NutricionController::class, 'eliminarRestriccion']);
+});

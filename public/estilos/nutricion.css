@@ -1,0 +1,577 @@
+/* ==========================================================
+   FamFit · Nutrición
+   Paleta tomada del proyecto: azul #2864F0, fondo #F5F7FB,
+   éxito #A7E66D, hábito #19C6B0.
+   Todas las clases llevan prefijo .nut- para no chocar con otros módulos.
+   ========================================================== */
+
+:root {
+    --nut-primary: #2864F0;
+    --nut-primary-dark: #1F4FC4;
+    --nut-primary-soft: #EAF0FF;
+    --nut-bg: #F5F7FB;
+    --nut-surface: #FFFFFF;
+    --nut-border: #E4E9F2;
+    --nut-text: #0F172A;
+    --nut-muted: #6B7689;
+    --nut-success: #A7E66D;
+    --nut-habit: #19C6B0;
+    --nut-warning-bg: #FFF7E6;
+    --nut-warning-text: #8A5A00;
+    --nut-danger: #E5484D;
+    --nut-danger-soft: #FDECEC;
+    --nut-radius: 18px;
+    --nut-radius-sm: 12px;
+    --nut-shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 8px 24px rgba(15, 23, 42, .06);
+    --nut-transition: .2s ease;
+}
+
+.nut-page {
+    background: var(--nut-bg);
+    color: var(--nut-text);
+    min-height: 100vh;
+    padding: 2.5rem clamp(1rem, 3vw, 2.5rem) 4rem;
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    box-sizing: border-box;
+}
+
+.nut-page *,
+.nut-page *::before,
+.nut-page *::after { box-sizing: border-box; }
+
+[hidden] { display: none !important; }
+
+/* ---------- Encabezado ---------- */
+.nut-header { margin-bottom: 1.75rem; }
+.nut-eyebrow {
+    margin: 0 0 .5rem;
+    color: var(--nut-primary);
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+}
+.nut-title {
+    margin: 0;
+    font-size: clamp(1.9rem, 3.5vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -.02em;
+}
+.nut-subtitle {
+    margin: .5rem 0 0;
+    color: var(--nut-muted);
+    font-size: 1rem;
+    max-width: 60ch;
+}
+
+/* ---------- Tarjetas ---------- */
+.nut-card {
+    background: var(--nut-surface);
+    border: 1px solid var(--nut-border);
+    border-radius: var(--nut-radius);
+    box-shadow: var(--nut-shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+}
+.nut-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+.nut-card-title {
+    margin: .25rem 0 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+.nut-label {
+    margin: 0;
+    color: var(--nut-primary);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+}
+.nut-muted {
+    color: var(--nut-muted);
+    font-size: .9rem;
+    margin: .35rem 0 1rem;
+}
+
+/* ---------- Barra de fecha ---------- */
+.nut-day-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+}
+.nut-day {
+    margin: .25rem 0 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+.nut-day-controls { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+
+/* ---------- Estadísticas ---------- */
+.nut-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+.nut-stat {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: var(--nut-surface);
+    border: 1px solid var(--nut-border);
+    border-radius: var(--nut-radius);
+    box-shadow: var(--nut-shadow);
+    padding: 1.1rem 1.25rem;
+    transition: transform var(--nut-transition);
+}
+.nut-stat:hover { transform: translateY(-2px); }
+.nut-stat-icon {
+    flex: 0 0 auto;
+    width: 44px; height: 44px;
+    border-radius: var(--nut-radius-sm);
+    display: grid; place-items: center;
+    font-size: 1.2rem;
+}
+.nut-icon-blue  { background: var(--nut-primary-soft); }
+.nut-icon-teal  { background: #E3F9F6; }
+.nut-icon-green { background: #F0FAE3; }
+.nut-icon-amber { background: #FFF4E0; }
+.nut-stat-label { margin: 0; color: var(--nut-muted); font-size: .85rem; }
+.nut-stat-value { margin: .2rem 0 0; font-size: 1.6rem; font-weight: 800; }
+.nut-stat-value small { font-size: .85rem; font-weight: 600; color: var(--nut-muted); }
+.nut-water { width: 100%; }
+.nut-progress {
+    height: 6px;
+    background: #EEF2F8;
+    border-radius: 999px;
+    margin: .6rem 0;
+    overflow: hidden;
+}
+.nut-progress span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, var(--nut-habit), var(--nut-success));
+    border-radius: inherit;
+    transition: width .4s ease;
+}
+.nut-water-btns { display: flex; gap: .4rem; flex-wrap: wrap; }
+
+/* ---------- Layout ---------- */
+.nut-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr);
+    gap: 1.25rem;
+    align-items: start;
+}
+@media (max-width: 960px) {
+    .nut-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- Pestañas ---------- */
+.nut-tabs {
+    display: inline-flex;
+    background: #EEF2F8;
+    border-radius: 999px;
+    padding: 4px;
+    margin: 1rem 0;
+}
+.nut-tab {
+    border: 0;
+    background: transparent;
+    padding: .55rem 1.1rem;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: 600;
+    color: var(--nut-muted);
+    cursor: pointer;
+    transition: all var(--nut-transition);
+}
+.nut-tab.is-active {
+    background: var(--nut-surface);
+    color: var(--nut-primary);
+    box-shadow: 0 2px 6px rgba(15, 23, 42, .08);
+}
+
+/* ---------- Formularios ---------- */
+.nut-form { display: flex; flex-direction: column; gap: 1rem; }
+.nut-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+@media (max-width: 560px) { .nut-row { grid-template-columns: 1fr; } }
+.nut-field { display: flex; flex-direction: column; gap: .4rem; }
+.nut-field label,
+.nut-form label { font-size: .88rem; font-weight: 700; color: #1E293B; }
+.nut-field-head { display: flex; justify-content: space-between; align-items: center; }
+
+.nut-input {
+    width: 100%;
+    font: inherit;
+    font-size: .95rem;
+    padding: .7rem .9rem;
+    border: 1px solid var(--nut-border);
+    border-radius: var(--nut-radius-sm);
+    background: var(--nut-surface);
+    color: var(--nut-text);
+    transition: border-color var(--nut-transition), box-shadow var(--nut-transition);
+}
+.nut-input:focus {
+    outline: none;
+    border-color: var(--nut-primary);
+    box-shadow: 0 0 0 4px rgba(40, 100, 240, .12);
+}
+textarea.nut-input { resize: vertical; }
+
+/* ---------- Botones ---------- */
+.nut-btn {
+    font: inherit;
+    font-weight: 700;
+    font-size: .92rem;
+    padding: .7rem 1.25rem;
+    border-radius: var(--nut-radius-sm);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform var(--nut-transition), background var(--nut-transition), box-shadow var(--nut-transition);
+}
+.nut-btn:hover { transform: translateY(-1px); }
+.nut-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.nut-btn:focus-visible,
+.nut-tab:focus-visible,
+.nut-chip:focus-visible { outline: 3px solid rgba(40, 100, 240, .35); outline-offset: 2px; }
+
+.nut-btn-primary {
+    background: var(--nut-primary);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(40, 100, 240, .25);
+}
+.nut-btn-primary:hover { background: var(--nut-primary-dark); }
+
+.nut-btn-secondary {
+    background: var(--nut-surface);
+    color: var(--nut-text);
+    border-color: var(--nut-border);
+}
+.nut-btn-secondary:hover { background: #F8FAFD; }
+
+.nut-btn-ghost {
+    background: transparent;
+    color: var(--nut-primary);
+    border-color: var(--nut-primary-soft);
+}
+.nut-btn-ghost:hover { background: var(--nut-primary-soft); }
+
+.nut-btn-danger { background: var(--nut-danger); color: #fff; }
+.nut-btn-danger:hover { background: #C93A3F; }
+
+.nut-btn-sm { padding: .45rem .8rem; font-size: .82rem; }
+
+.nut-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: .6rem;
+    flex-wrap: wrap;
+}
+.nut-actions-left { justify-content: flex-start; }
+
+/* Chips */
+.nut-chip {
+    font: inherit;
+    font-size: .82rem;
+    font-weight: 600;
+    padding: .4rem .85rem;
+    border-radius: 999px;
+    border: 1px solid var(--nut-border);
+    background: var(--nut-surface);
+    color: var(--nut-muted);
+    cursor: pointer;
+    transition: all var(--nut-transition);
+}
+.nut-chip:hover { color: var(--nut-primary); border-color: var(--nut-primary-soft); }
+.nut-chip.is-active {
+    background: var(--nut-primary);
+    border-color: var(--nut-primary);
+    color: #fff;
+}
+.nut-filter { display: flex; gap: .4rem; flex-wrap: wrap; }
+
+/* ---------- Avisos ---------- */
+.nut-banner {
+    font-size: .88rem;
+    line-height: 1.5;
+    padding: .85rem 1rem;
+    border-radius: var(--nut-radius-sm);
+    margin-bottom: .5rem;
+}
+.nut-banner-warning {
+    background: var(--nut-warning-bg);
+    color: var(--nut-warning-text);
+    border: 1px solid #F9E2B3;
+}
+.nut-alerts { display: flex; flex-direction: column; gap: .5rem; }
+.nut-alert {
+    background: var(--nut-danger-soft);
+    color: #8C1F23;
+    border: 1px solid #F8C9CB;
+    padding: .65rem .9rem;
+    border-radius: var(--nut-radius-sm);
+    font-size: .88rem;
+    font-weight: 600;
+}
+
+/* ---------- Ítems de alimento (manual y foto) ---------- */
+.nut-items { display: flex; flex-direction: column; gap: .5rem; margin: .5rem 0; }
+.nut-item {
+    display: grid;
+    grid-template-columns: 1fr 140px 40px;
+    gap: .5rem;
+    align-items: center;
+}
+@media (max-width: 560px) {
+    .nut-item { grid-template-columns: 1fr 1fr 40px; }
+}
+.nut-item-remove {
+    width: 40px; height: 40px;
+    border: 1px solid var(--nut-border);
+    background: var(--nut-surface);
+    border-radius: var(--nut-radius-sm);
+    cursor: pointer;
+    color: var(--nut-muted);
+    font-size: 1rem;
+}
+.nut-item-remove:hover { color: var(--nut-danger); border-color: #F8C9CB; }
+.nut-conf {
+    display: inline-block;
+    margin-left: .35rem;
+    font-size: .72rem;
+    font-weight: 700;
+    color: #0E7C6B;
+    background: #E3F9F6;
+    padding: .15rem .45rem;
+    border-radius: 999px;
+}
+
+/* ---------- Dropzone foto ---------- */
+.nut-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    min-height: 200px;
+    border: 2px dashed #C9D6F2;
+    border-radius: var(--nut-radius);
+    background: #FAFBFF;
+    text-align: center;
+    padding: 1.5rem;
+    cursor: pointer;
+    color: var(--nut-muted);
+    transition: all var(--nut-transition);
+}
+.nut-dropzone:hover,
+.nut-dropzone.is-dragover {
+    border-color: var(--nut-primary);
+    background: var(--nut-primary-soft);
+}
+.nut-dropzone strong { color: var(--nut-text); }
+.nut-preview {
+    max-height: 260px;
+    max-width: 100%;
+    border-radius: var(--nut-radius-sm);
+    object-fit: cover;
+}
+
+/* ---------- Historial ---------- */
+.nut-historial { display: flex; flex-direction: column; gap: .9rem; }
+.nut-meal {
+    display: grid;
+    grid-template-columns: 96px 1fr auto;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--nut-border);
+    border-radius: var(--nut-radius-sm);
+    background: #FCFDFF;
+}
+@media (max-width: 560px) {
+    .nut-meal { grid-template-columns: 1fr; }
+}
+.nut-meal-thumb {
+    width: 96px; height: 96px;
+    object-fit: cover;
+    border-radius: var(--nut-radius-sm);
+    background: #EEF2F8;
+}
+.nut-meal-thumb-empty {
+    display: grid; place-items: center;
+    font-size: 1.6rem;
+    color: #A3B0C6;
+}
+.nut-meal-head { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.nut-badge {
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    padding: .2rem .55rem;
+    border-radius: 999px;
+    background: var(--nut-primary-soft);
+    color: var(--nut-primary);
+}
+.nut-badge-photo { background: #E3F9F6; color: #0E7C6B; }
+.nut-meal-title { margin: .35rem 0 0; font-weight: 700; }
+.nut-meal-items {
+    margin: .4rem 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: .88rem;
+    color: var(--nut-muted);
+}
+.nut-meal-items li + li::before { content: " · "; }
+.nut-meal-note { font-size: .82rem; color: var(--nut-muted); margin: .4rem 0 0; }
+.nut-nutri-nd {
+    display: inline-block;
+    margin-top: .5rem;
+    font-size: .78rem;
+    color: #8A5A00;
+    background: var(--nut-warning-bg);
+    padding: .2rem .5rem;
+    border-radius: 6px;
+}
+.nut-meal-actions { display: flex; flex-direction: column; gap: .4rem; }
+.nut-meal-actions .nut-btn { white-space: nowrap; }
+
+.nut-empty {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--nut-muted);
+    border: 1px dashed #D5DEEE;
+    border-radius: var(--nut-radius-sm);
+    background: #FBFCFE;
+}
+.nut-empty-icon { font-size: 2rem; margin-bottom: .5rem; }
+
+/* ---------- Restricciones ---------- */
+.nut-inline-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: .5rem;
+}
+.nut-chips-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .45rem;
+}
+.nut-restriction {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .35rem .4rem .35rem .75rem;
+    border-radius: 999px;
+    background: #F1F5FD;
+    font-size: .85rem;
+    font-weight: 600;
+}
+.nut-restriction small {
+    font-weight: 600;
+    color: var(--nut-muted);
+    text-transform: capitalize;
+}
+.nut-restriction button {
+    border: 0;
+    background: #fff;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--nut-muted);
+    line-height: 1;
+}
+.nut-restriction button:hover { color: var(--nut-danger); }
+
+.nut-empty-mini {
+    margin-top: 1rem;
+    padding: 1rem;
+    font-size: .85rem;
+    color: var(--nut-muted);
+    background: #FBFCFE;
+    border: 1px dashed #D5DEEE;
+    border-radius: var(--nut-radius-sm);
+}
+
+/* ---------- Modal ---------- */
+.nut-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, .45);
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    z-index: 1000;
+}
+.nut-modal-box {
+    background: var(--nut-surface);
+    border-radius: var(--nut-radius);
+    padding: 1.5rem;
+    width: min(420px, 100%);
+    box-shadow: 0 20px 50px rgba(15, 23, 42, .25);
+}
+.nut-modal-box h3 { margin: 0; font-size: 1.15rem; }
+.nut-modal-box .nut-actions { margin-top: 1rem; }
+
+/* ---------- Toast ---------- */
+.nut-toast {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--nut-text);
+    color: #fff;
+    padding: .8rem 1.2rem;
+    border-radius: var(--nut-radius-sm);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, .3);
+    font-size: .9rem;
+    font-weight: 600;
+    z-index: 1100;
+    animation: nut-toast-in .25s ease;
+}
+.nut-toast.is-error { background: var(--nut-danger); }
+@keyframes nut-toast-in {
+    from { opacity: 0; transform: translate(-50%, 10px); }
+    to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ---------- Accesibilidad: menos movimiento si el usuario lo pide ---------- */
+@media (prefers-reduced-motion: reduce) {
+    .nut-page *, .nut-page *::before, .nut-page *::after {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* ---------- Ajustes para vista independiente (HTML puro) ---------- */
+body {
+    margin: 0;
+    background: var(--nut-bg);
+}
+
+/* Evita que las columnas se desborden en el grid */
+.nut-col-main,
+.nut-col-side {
+    min-width: 0;
+}
+
+/* Quita la sangría por defecto de la lista de restricciones */
+.nut-chips-list li { list-style: none; }
