@@ -27,7 +27,7 @@
                 </div>
 
                 <img
-                    src="{{ asset('imagenes/aas.png') }}"
+                    src="{{ asset('imagenes/logo.png') }}"
                     class="ilustracion-logo"
                     alt="Logo FamFit"
                 >
@@ -41,17 +41,17 @@
                 <div class="beneficios">
 
                     <div class="beneficio">
-                        <span>🏋🏿‍♀️</span>
+                        
                         <p>Entrena a tu propio ritmo</p>
                     </div>
 
                     <div class="beneficio">
-                        <span>📆</span>
+                        
                         <p>Organiza tus hábitos saludables</p>
                     </div>
 
                     <div class="beneficio">
-                        <span>🏆</span>
+                       
                         <p>Supera retos y comparte tus logros</p>
                     </div>
 
@@ -142,7 +142,7 @@
 
                     </div>
 
-                    <button type="submit" class="boton-login boton boton-azul">
+                    <button href="{{ route('menu') }}"type="submit" class="boton-login boton boton-azul">
                         Iniciar sesión
                         <span>→</span>
                     </button>
@@ -158,9 +158,7 @@
                     <a href="{{ route('registro') }}">Regístrate aquí</a>
                 </p>
 
-                <div class="mensaje-inferior">
-                    Construye hábitos, transforma tu vida
-                </div>
+              
 
             </div>
 

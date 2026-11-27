@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; // Soluciona el error del usuario
+use Illuminate\Support\Facades\DB;
 use App\Models\Profile;            // Soluciona el error de la clase Profile
 
 class OnboardingController extends Controller
@@ -31,51 +32,53 @@ class OnboardingController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-               if ($user) {
-            // 1. Guardar en el Perfil
-            $user->profile()->updateOrCreate(
-                ['user_id' => $user->id],
-                [
-                    'age'                => $request->edad,
-                    'weight'             => $request->peso,
-                    'height'             => $request->altura,
-                    'gender'             => $request->genero,
-                    'goals'              => $request->objetivo,
-                    'experience'         => $request->experiencia_ejercicio,
-                    'availability'       => $request->input('disponibilidad', []),
-                    'has_injury'         => $request->tiene_lesion,
-                    'injury_description' => $request->descripcion_lesion,
-                ]
-            );
+        if ($user) {
+            DB::transaction(function () use ($user, $request): void {
+                // 1. Guardar en el Perfil
+                $user->profile()->updateOrCreate(
+                    ['user_id' => $user->id],
+                    [
+                        'age'                => $request->edad,
+                        'weight'             => $request->peso,
+                        'height'             => $request->altura,
+                        'gender'             => $request->genero,
+                        'goals'              => $request->objetivo,
+                        'experience'         => $request->experiencia_ejercicio,
+                        'availability'       => $request->input('disponibilidad', []),
+                        'has_injury'         => $request->tiene_lesion,
+                        'injury_description' => $request->descripcion_lesion,
+                    ]
+                );
 
-            // 2. Traducir las respuestas para la tabla initial_assessments
-            $objetivoTraducido = match($request->objetivo) {
-                'ganar_musculo' => 'strength',
-                'perder_grasa' => 'endurance',
-                'resistencia' => 'endurance',
-                'flexibilidad' => 'mobility',
-                default => 'general_fitness',
-            };
+                // 2. Traducir las respuestas para la tabla initial_assessments
+                $objetivoTraducido = match($request->objetivo) {
+                    'ganar_musculo' => 'strength',
+                    'perder_grasa' => 'endurance',
+                    'resistencia' => 'endurance',
+                    'flexibilidad' => 'mobility',
+                    default => 'general_fitness',
+                };
 
-            $experienciaTraducida = match($request->experiencia_ejercicio) {
-                'principiante' => 'beginner',
-                'intermedio' => 'intermediate',
-                'avanzado' => 'advanced',
-                default => 'unsure',
-            };
+                $experienciaTraducida = match($request->experiencia_ejercicio) {
+                    'principiante' => 'beginner',
+                    'intermedio' => 'intermediate',
+                    'avanzado' => 'advanced',
+                    default => 'unsure',
+                };
 
-            // 3. PRIMERO: Desmarcar tests anteriores
-            $user->initialAssessments()->update(['is_current' => false]);
+                // 3. PRIMERO: Desmarcar tests anteriores
+                $user->initialAssessments()->update(['is_current' => false]);
 
-            // 4. SEGUNDO: Crear el nuevo test con los datos YA traducidos
-            $user->initialAssessments()->create([
-                'questionnaire_version' => '1.0',
-                'main_goal'             => $objetivoTraducido, 
-                'experience_level'      => $experienciaTraducida, 
-                'answers'               => $request->all(), 
-                'is_current'            => true,
-                'completed_at'          => now(),
-            ]);
+                // 4. SEGUNDO: Crear el nuevo test con los datos YA traducidos
+                $user->initialAssessments()->create([
+                    'questionnaire_version' => '1.0',
+                    'main_goal'             => $objetivoTraducido,
+                    'experience_level'      => $experienciaTraducida,
+                    'answers'               => $request->all(),
+                    'is_current'            => true,
+                    'completed_at'          => now(),
+                ]);
+            });
         }
        
         return redirect()->route('menu')->with('status', '¡Perfil configurado con éxito!');

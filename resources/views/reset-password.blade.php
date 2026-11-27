@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#F5F7FB">
     <title>Restablecer contraseña | FamFit Quest</title>
+    <script src="{{ asset('js/theme.js') }}"></script>
 
     <style>
         * {
@@ -120,6 +122,7 @@
             font-size: 14px;
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('estilos/tema-oscuro.css') }}">
 </head>
 
 <body>
