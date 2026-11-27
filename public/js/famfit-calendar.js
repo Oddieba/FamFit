@@ -40,7 +40,7 @@
         modal.classList.add('is-open');
         modal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
-        window.setTimeout(() => fields.title.focus(), 50);
+        window.setTimeout(() => modal.querySelector('[data-close-modal]').focus(), 50);
     };
     const closeModal = () => {
         modal.classList.remove('is-open');
