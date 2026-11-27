@@ -122,6 +122,86 @@ class QuestExperienceTest extends TestCase
         $this->assertSame(1, FamFitActivity::query()->count());
     }
 
+    public function test_calendar_rejects_overlapping_activities(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $this->post(route('famfit.activities.store'), [
+            'title' => 'Primera actividad',
+            'activity_type' => 'Ejercicio',
+            'activity_date' => today()->toDateString(),
+            'start_time' => '09:00',
+            'end_time' => '10:00',
+            'status' => 'planned',
+        ])->assertRedirect()->assertSessionHasNoErrors();
+
+        $this->post(route('famfit.activities.store'), [
+            'title' => 'Actividad superpuesta',
+            'activity_type' => 'Caminata',
+            'activity_date' => today()->toDateString(),
+            'start_time' => '09:30',
+            'end_time' => '10:30',
+            'status' => 'planned',
+        ])->assertRedirect()->assertSessionHasErrors('start_time');
+
+        $this->assertSame(1, FamFitActivity::where('user_id', $user->id)->count());
+    }
+
+    public function test_calendar_enforces_recovery_days_and_weekly_intense_session_limit(): void
+    {
+        $user = User::factory()->create();
+        $user->profile()->create(['experience' => 'principiante']);
+        $this->actingAs($user);
+
+        $monday = now()->startOfWeek(\Carbon\Carbon::MONDAY);
+        $schedule = function (string $type, int $dayOffset, string $start = '09:00') use ($monday) {
+            $startTime = \Carbon\Carbon::createFromFormat('H:i', $start);
+
+            return [
+                'title' => $type.' '.$dayOffset,
+                'activity_type' => $type,
+                'activity_date' => $monday->copy()->addDays($dayOffset)->toDateString(),
+                'start_time' => $start,
+                'end_time' => $startTime->addHour()->format('H:i'),
+                'status' => 'planned',
+            ];
+        };
+
+        $this->get(route('famfit.calendar'))
+            ->assertOk()
+            ->assertSee('máximo 3 por semana');
+
+        $this->post(route('famfit.activities.store'), [
+            ...$schedule('Ejercicio', 0),
+            'end_time' => '10:30',
+        ])->assertSessionHasErrors('end_time');
+
+        $this->post(route('famfit.activities.store'), $schedule('Ejercicio', 0))
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $this->post(route('famfit.activities.store'), $schedule('Deporte', 1))
+            ->assertSessionHasErrors('activity_date');
+
+        $this->post(route('famfit.activities.store'), $schedule('Yoga', 1))
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $this->post(route('famfit.activities.store'), $schedule('Ciclismo', 2))
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $this->post(route('famfit.activities.store'), $schedule('Ejercicio', 4))
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $this->post(route('famfit.activities.store'), $schedule('Deporte', 6))
+            ->assertSessionHasErrors('activity_date');
+
+        $this->assertSame(4, FamFitActivity::query()->count());
+    }
+
     public function test_calendar_activities_are_isolated_by_user(): void
     {
         $owner = User::factory()->create();

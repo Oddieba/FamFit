@@ -91,7 +91,17 @@
         });
     };
     const updateAvailabilityFeedback = () => {
+<<<<<<< Updated upstream
         const conflict = scheduleHasConflict();
+=======
+        const available = scheduleIsAvailable();
+        const conflict = scheduleHasConflict();
+
+        if (conflict) {
+            fields.availabilityFeedback.textContent = 'Ya tienes otra actividad en ese horario. Cambia la hora antes de guardar.';
+            return false;
+        }
+>>>>>>> Stashed changes
 
         if (conflict) {
             fields.availabilityFeedback.textContent = 'Ya tienes otra actividad en ese horario. Cambia la hora antes de guardar.';

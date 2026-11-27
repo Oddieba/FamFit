@@ -180,6 +180,7 @@ button.ff-mini-day { padding: 0; border: 0; background: transparent; cursor: poi
 .ff-field input, .ff-field select, .ff-field textarea { width: 100%; min-width: 0; padding: 11px 12px; border: 1px solid var(--ff-border); border-radius: 9px; outline: 0; background: #fff; color: var(--ff-text-primary); font-size: 14px; font-weight: 500; }
 .ff-field input:focus, .ff-field select:focus, .ff-field textarea:focus { border-color: var(--ff-primary); box-shadow: 0 0 0 3px #2864f018; }
 .ff-field textarea { resize: none; }
+<<<<<<< Updated upstream
 .ff-availability-feedback { margin: 12px 0 0; color: var(--ff-text-secondary); font-size: 12px; }
 .ff-smart-scheduler { margin-bottom: 18px; padding: 14px; border: 1px solid var(--ff-border); border-radius: 12px; background: linear-gradient(135deg, #f4f7ff, #fff); }
 .ff-smart-scheduler-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
@@ -193,6 +194,11 @@ button.ff-mini-day { padding: 0; border: 0; background: transparent; cursor: poi
 .ff-schedule-option span { color: var(--ff-text-secondary); font-size: 11px; }
 .ff-schedule-option:hover, .ff-schedule-option.is-selected { border-color: var(--ff-primary); background: #edf3ff; }
 .ff-no-suggestions { grid-column: 1 / -1; margin: 0; color: var(--ff-text-secondary); font-size: 12px; }
+=======
+.ff-availability-feedback { margin: 12px 0 0; color: var(--ff-text-secondary); font-size: 11px; }
+.ff-recovery-hint { margin: 8px 0 0; padding: 10px; border: 1px solid #19c6b033; border-radius: 8px; background: #19c6b010; color: #087f73; font-size: 11px; line-height: 1.5; }
+.ff-points-hint { margin: 15px 0 0; padding: 10px; border-radius: 8px; background: #f2b85b20; color: #80570f; font-size: 10px; }
+>>>>>>> Stashed changes
 .ff-modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
 .ff-delete-form { margin-top: 12px; text-align: right; }
 .ff-delete-link { border: 0; background: transparent; color: var(--ff-danger); font-size: 11px; font-weight: 700; cursor: pointer; }
