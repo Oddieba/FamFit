@@ -27,6 +27,7 @@
     const availability = JSON.parse(form.dataset.availability || '{}');
     const availabilitySlots = JSON.parse(form.dataset.availabilitySlots || '{}');
     const reminderActivities = JSON.parse(form.dataset.reminders || '[]');
+    const plannerActivities = JSON.parse(form.dataset.plannerActivities || '[]');
     const notificationPreferences = JSON.parse(form.dataset.notificationPreferences || '{}');
     const reminderPermissionStatus = document.getElementById('reminderPermissionStatus');
     const availabilityDayKeys = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
@@ -91,9 +92,6 @@
         });
     };
     const updateAvailabilityFeedback = () => {
-<<<<<<< Updated upstream
-        const conflict = scheduleHasConflict();
-=======
         const available = scheduleIsAvailable();
         const conflict = scheduleHasConflict();
 
@@ -101,15 +99,21 @@
             fields.availabilityFeedback.textContent = 'Ya tienes otra actividad en ese horario. Cambia la hora antes de guardar.';
             return false;
         }
->>>>>>> Stashed changes
 
-        if (conflict) {
-            fields.availabilityFeedback.textContent = 'Ya tienes otra actividad en ese horario. Cambia la hora antes de guardar.';
-            return false;
+        if (!hasConfiguredAvailability) {
+            fields.availabilityFeedback.textContent = 'No configuraste franjas disponibles; no hay restricciones de horario.';
+            return true;
         }
 
-        fields.availabilityFeedback.textContent = 'Puedes programar la actividad en cualquier día y horario.';
-        return true;
+        if (scheduleIsUnchanged() && !available) {
+            fields.availabilityFeedback.textContent = 'El horario actual se conserva. Si cambias la fecha u hora, debe estar dentro de tu disponibilidad.';
+            return true;
+        }
+
+        fields.availabilityFeedback.textContent = available
+            ? 'El horario elegido está dentro de tu disponibilidad.'
+            : 'Ese horario no está disponible. Cambia el día o la hora antes de guardar.';
+        return available;
     };
     const resetForm = (date = defaultDate) => {
         form.reset();
@@ -156,6 +160,7 @@
             fields.start.value = activity.start_time.substring(0, 5);
             fields.end.value = activity.end_time.substring(0, 5);
             originalSchedule = {
+                id: activity.id,
                 date: fields.date.value,
                 start: fields.start.value,
                 end: fields.end.value,
@@ -181,13 +186,27 @@
         mobility: { type: 'Yoga', title: 'Sesión de movilidad' },
         general_fitness: { type: 'Ejercicio', title: 'Actividad física general' },
     };
+    const intenseActivityTypes = ['Ejercicio', 'Ciclismo', 'Deporte'];
+    const experienceLimits = {
+        beginner: { weekly: 3, duration: 60 },
+        intermediate: { weekly: 4, duration: 90 },
+        advanced: { weekly: 5, duration: 120 },
+    };
+    const dateFor = value => new Date(`${value.substring(0, 10)}T12:00:00`);
+    const dayDistance = (first, second) => Math.abs(
+        Math.round((dateFor(first) - dateFor(second)) / 86400000)
+    );
+    const weekStartFor = value => {
+        const date = dateFor(value);
+        date.setDate(date.getDate() - ((date.getDay() + 6) % 7));
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    };
     const getExistingIntervals = date => [...document.querySelectorAll('[data-activity]')]
         .map(button => JSON.parse(button.dataset.activity))
+        .concat(plannerActivities)
         .filter(activity => activity.activity_date.substring(0, 10) === date)
         .filter(activity => !(originalSchedule
-            && activity.activity_date.substring(0, 10) === originalSchedule.date
-            && activity.start_time.substring(0, 5) === originalSchedule.start
-            && activity.end_time.substring(0, 5) === originalSchedule.end))
+            && String(activity.id) === String(originalSchedule.id)))
         .map(activity => ({
             start: Number(activity.start_time.substring(0, 2)) * 60 + Number(activity.start_time.substring(3, 5)),
             end: Number(activity.end_time.substring(0, 2)) * 60 + Number(activity.end_time.substring(3, 5)),
@@ -197,6 +216,8 @@
         const duration = Number(fields.scheduleDuration.value);
         const experience = fields.scheduleExperience.value;
         const config = goalConfig[fields.scheduleGoal.value] || goalConfig.general_fitness;
+        const limits = experienceLimits[experience] || experienceLimits.beginner;
+        const isIntense = intenseActivityTypes.includes(config.type);
         const today = new Date(`${defaultDate}T12:00:00`);
         const suggestions = [];
         const dayKeys = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
@@ -206,12 +227,18 @@
                 ? ['tarde', 'noche', 'mañana']
                 : ['mañana', 'tarde', 'noche'];
 
+        if (isIntense && duration > limits.duration) {
+            fields.scheduleSuggestions.innerHTML = `<p class="ff-no-suggestions">Para tu nivel, las sesiones intensas no deben superar ${limits.duration} minutos.</p>`;
+            return;
+        }
+
         for (let offset = 0; offset < 14 && suggestions.length < 4; offset++) {
             const date = new Date(today);
             date.setDate(today.getDate() + offset);
             const dateValue = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
             const dayKey = dayKeys[date.getDay()];
             const selectedSlots = availability[dayKey] || [];
+            if (hasConfiguredAvailability && selectedSlots.length === 0) continue;
             let windows = preferredStart
                 .filter(slot => selectedSlots.includes(slot))
                 .map(slot => availabilitySlots[slot])
@@ -224,6 +251,15 @@
             }
 
             const occupied = getExistingIntervals(dateValue);
+            const existingIntense = plannerActivities.filter(activity =>
+                intenseActivityTypes.includes(activity.activity_type)
+                && !(originalSchedule && String(activity.id) === String(originalSchedule.id)));
+            const weeklyIntenseCount = existingIntense.filter(activity =>
+                weekStartFor(activity.activity_date) === weekStartFor(dateValue)).length;
+            const hasNearbyIntense = existingIntense.some(activity =>
+                dayDistance(activity.activity_date, dateValue) <= 1);
+            if (isIntense && (weeklyIntenseCount >= limits.weekly || hasNearbyIntense)) continue;
+
             for (const window of windows) {
                 for (let start = Math.max(window.start, 360); start + duration <= window.end && suggestions.length < 4; start += 15) {
                     const end = start + duration;
@@ -283,6 +319,10 @@
             fields.end.reportValidity();
             event.preventDefault();
             return;
+        }
+
+        if (!scheduleIsUnchanged() && !updateAvailabilityFeedback()) {
+            event.preventDefault();
         }
     });
 

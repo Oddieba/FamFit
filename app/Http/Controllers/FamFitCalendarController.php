@@ -224,44 +224,41 @@ class FamFitCalendarController extends Controller
             ->diffInMinutes(Carbon::createFromFormat('H:i', $end));
     }
 
-    private function normalizeGoal(?string $goal): string
+    private function ensureActivityWithinAvailability(array $data, Request $request): void
     {
-<<<<<<< Updated upstream
-        return match ($goal) {
-            'ganar_musculo', 'strength' => 'strength',
-            'perder_grasa', 'resistencia_cardio', 'resistencia', 'endurance' => 'endurance',
-            'flexibilidad_movilidad', 'flexibilidad', 'mobility' => 'mobility',
-            'activo_saludable', 'healthy_habits', 'general_fitness' => 'general_fitness',
-            'cardio' => 'cardio',
-            default => 'general_fitness',
-        };
-    }
-=======
         $availability = $this->normalizeAvailability($request->user()->profile?->availability);
-        $hasConfiguredSlots = collect($availability)->contains(fn(array $slots) => $slots !== []);
->>>>>>> Stashed changes
+        $hasConfiguredSlots = collect($availability)->contains(fn (array $slots) => $slots !== []);
 
-    private function normalizeExperience(?string $experience): string
-    {
-        return match ($experience) {
-            'principiante', 'beginner', 'Inicial', 'unsure' => 'beginner',
-            'intermedio', 'intermediate', 'Intermedio' => 'intermediate',
-            'avanzado', 'advanced' => 'advanced',
-            default => 'beginner',
-        };
-    }
-
-    private function suggestedDuration(?string $experience, ?int $sessionMinutes): int
-    {
-        if ($sessionMinutes !== null && $sessionMinutes >= 15) {
-            return min(120, max(15, (int) round($sessionMinutes / 15) * 15));
+        if (! $hasConfiguredSlots) {
+            return;
         }
 
-        return match ($this->normalizeExperience($experience)) {
-            'advanced' => 60,
-            'intermediate' => 45,
-            default => 30,
-        };
+        $dayKey = array_keys(self::AVAILABILITY_DAYS)[Carbon::parse($data['activity_date'])->dayOfWeekIso - 1];
+        $activityStart = Carbon::createFromFormat('H:i', $data['start_time']);
+        $activityEnd = Carbon::createFromFormat('H:i', $data['end_time']);
+        $start = $activityStart->hour * 60 + $activityStart->minute;
+        $end = $activityEnd->hour * 60 + $activityEnd->minute;
+        $cursor = $start;
+
+        foreach (self::AVAILABILITY_SLOTS as $slotKey => $slot) {
+            if (! in_array($slotKey, $availability[$dayKey], true) || $slot['end'] <= $cursor) {
+                continue;
+            }
+
+            if ($slot['start'] > $cursor) {
+                break;
+            }
+
+            $cursor = max($cursor, $slot['end']);
+
+            if ($cursor >= $end) {
+                return;
+            }
+        }
+
+        throw ValidationException::withMessages([
+            'start_time' => 'La actividad debe estar dentro de los días y franjas que configuraste en tu disponibilidad semanal.',
+        ]);
     }
 
     private function ensureNoScheduleConflict(array $data, Request $request, ?int $exceptActivityId = null): void

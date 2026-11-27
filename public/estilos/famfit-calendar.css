@@ -162,7 +162,9 @@ button.ff-mini-day { padding: 0; border: 0; background: transparent; cursor: poi
 .legend-teal { background: var(--ff-habit); }
 .legend-blue { background: var(--ff-primary); }
 .legend-green { background: var(--ff-success); }
-.ff-footer { padding: 18px 4px 0; text-align: center; color: var(--ff-text-secondary); font-size: 12px; }
+.ff-current-time { position: absolute; z-index: 4; left: 0; right: 0; border-top: 2px solid #dc5361; pointer-events: none; }
+.ff-current-time::before { position: absolute; top: -5px; left: -4px; width: 7px; height: 7px; border-radius: 50%; background: #dc5361; content: ""; }
+.ff-footer { padding: 18px 4px 0; text-align: center; color: var(--ff-text-secondary); font-size: 10px; }
 .ff-alert { margin: 0 0 15px; padding: 12px 14px; border-radius: 10px; font-size: 12px; }
 .ff-alert-success { background: #a7e66d35; color: #355f13; }
 .ff-alert-danger { background: #e4586515; color: #a42f3b; }
