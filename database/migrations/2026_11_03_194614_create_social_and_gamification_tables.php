@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -90,12 +91,17 @@ return new class extends Migration
 
         // 6. Amistades (Friendships)
         Schema::create('friendships', function (Blueprint $table) {
+            [$lowestUserExpression, $highestUserExpression] = match (DB::connection()->getDriverName()) {
+                'mysql' => ['least(requester_id, addressee_id)', 'greatest(requester_id, addressee_id)'],
+                'sqlite' => ['min(requester_id, addressee_id)', 'max(requester_id, addressee_id)'],
+                default => throw new RuntimeException('Friendship generated columns are unsupported by this database driver.'),
+            };
             $table->id();
             $table->unsignedBigInteger('requester_id');
             $table->unsignedBigInteger('addressee_id');
             $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
-            $table->unsignedBigInteger('user_low_id')->virtualAs('least(requester_id, addressee_id)');
-            $table->unsignedBigInteger('user_high_id')->virtualAs('greatest(requester_id, addressee_id)');
+            $table->unsignedBigInteger('user_low_id')->virtualAs($lowestUserExpression);
+            $table->unsignedBigInteger('user_high_id')->virtualAs($highestUserExpression);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('responded_at')->nullable();
 

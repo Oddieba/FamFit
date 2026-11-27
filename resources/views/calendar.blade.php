@@ -192,51 +192,44 @@
                                                 <button type="button"
                                                     class="ff-event event-{{ strtolower($activity->activity_type) }} {{ $activity->status === 'completed' ? 'is-completed' : '' }}"
                                                     style="top: {{ ($top / 1440) * 100 }}%; height: {{ ($duration / 1440) * 100 }}%"
-<<<<<<< Updated upstream
                                                     title="{{ $activity->title }} · {{ substr($activity->start_time, 0, 5) }}–{{ substr($activity->end_time, 0, 5) }}{{ $activity->status === 'planned' && $activity->reminder_minutes_before !== null ? ' · Recordatorio ' . ($activity->reminder_minutes_before === 0 ? 'al comenzar' : $activity->reminder_minutes_before . ' min antes') : '' }}"
-=======
-                                                    title="{{ $activity->title }} · {{ substr($activity->start_time, 0, 5) }}–{{ substr($activity->end_time, 0, 5) }}"
->>>>>>> Stashed changes
                                                     data-activity='@json($activity)'
                                                     data-update-url="{{ route('famfit.activities.update', $activity) }}"
                                                     data-delete-url="{{ route('famfit.activities.destroy', $activity) }}">
                                                     <strong>{{ $activity->title }}</strong>
                                                     <span>{{ substr($activity->start_time, 0, 5) }} –
                                                         {{ substr($activity->end_time, 0, 5) }}</span>
-<<<<<<< Updated upstream
                                                     @if ($activity->status === 'planned' && $activity->reminder_minutes_before !== null)
                                                         <span>🔔
                                                             {{ $activity->reminder_minutes_before === 0 ? 'Al comenzar' : $activity->reminder_minutes_before . ' min antes' }}</span>
                                                     @endif
-=======
->>>>>>> Stashed changes
-                                                </button>
-                                            @endforeach
-                                        </div>
-                                    @endfor
+                                            </button>
+                                    @endforeach
                                 </div>
+                                @endfor
                             </div>
                         </div>
                     </div>
-                    <div class="ff-week-navigation">
-                        <a class="ff-btn ff-btn-ghost"
-                            href="{{ route('famfit.calendar', ['date' => $selectedDate->copy()->subWeek()->toDateString()]) }}">‹
-                            Semana anterior</a>
-                        <span>{{ $weekStart->locale('es')->translatedFormat('j M') }} –
-                            {{ $weekEnd->locale('es')->translatedFormat('j M') }}</span>
-                        <a class="ff-btn ff-btn-ghost"
-                            href="{{ route('famfit.calendar', ['date' => $selectedDate->copy()->addWeek()->toDateString()]) }}">Semana
-                            siguiente ›</a>
-                    </div>
+                </div>
+                <div class="ff-week-navigation">
+                    <a class="ff-btn ff-btn-ghost"
+                        href="{{ route('famfit.calendar', ['date' => $selectedDate->copy()->subWeek()->toDateString()]) }}">‹
+                        Semana anterior</a>
+                    <span>{{ $weekStart->locale('es')->translatedFormat('j M') }} –
+                        {{ $weekEnd->locale('es')->translatedFormat('j M') }}</span>
+                    <a class="ff-btn ff-btn-ghost"
+                        href="{{ route('famfit.calendar', ['date' => $selectedDate->copy()->addWeek()->toDateString()]) }}">Semana
+                        siguiente ›</a>
                 </div>
             </div>
-            <div class="ff-legend">
-                <span><i class="legend-teal"></i> Hábitos y movimiento</span>
-                <span><i class="legend-blue"></i> Actividad programada</span>
-                <span><i class="legend-green"></i> Actividad completada</span>
-            </div>
-        </section>
-        <footer class="ff-footer">FamFit · Cada pequeño hábito cuenta.</footer>
+    </div>
+    <div class="ff-legend">
+        <span><i class="legend-teal"></i> Hábitos y movimiento</span>
+        <span><i class="legend-blue"></i> Actividad programada</span>
+        <span><i class="legend-green"></i> Actividad completada</span>
+    </div>
+    </section>
+    <footer class="ff-footer">FamFit · Cada pequeño hábito cuenta.</footer>
     </div>
     <div class="ff-modal-backdrop" id="activityModal" aria-hidden="true">
         <section class="ff-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -248,10 +241,11 @@
             </div>
             <form id="activityForm" method="POST" action="{{ route('famfit.activities.store') }}"
                 data-store-url="{{ route('famfit.activities.store') }}" data-today="{{ now()->toDateString() }}"
-<<<<<<< Updated upstream
                 data-availability='@json($availability)' data-availability-slots='@json($availabilitySlots)'
-                data-reminders='@json($reminderActivities)' data-default-goal="{{ $scheduleGoal }}"
-                data-default-experience="{{ $scheduleExperience }}" data-default-duration="{{ $scheduleDuration }}"
+                data-reminders='@json($reminderActivities)'
+                data-planner-activities='@json($plannerActivities)'
+                data-default-goal="{{ $scheduleGoal }}" data-default-experience="{{ $scheduleExperience }}"
+                data-default-duration="{{ $scheduleDuration }}"
                 data-notification-preferences='@json($notificationPreferences)'>
                 @csrf
                 <input type="hidden" name="_method" id="formMethod" value="POST">
@@ -295,11 +289,6 @@
                     </button>
                     <div class="ff-schedule-suggestions" id="scheduleSuggestions" aria-live="polite"></div>
                 </section>
-=======
-                data-availability='@json($availability)' data-availability-slots='@json($availabilitySlots)'>
-                @csrf
-                <input type="hidden" name="_method" id="formMethod" value="POST">
->>>>>>> Stashed changes
                 <div class="ff-form-grid">
                     <label class="ff-field ff-field-full">Nombre de la actividad
                         <input name="title" id="activityTitle" maxlength="100" placeholder="Ej. Caminata matutina"
@@ -330,7 +319,6 @@
                             <option value="completed">Completada</option>
                         </select>
                     </label>
-<<<<<<< Updated upstream
                     <label class="ff-field ff-field-full">Notificación
                         <select name="reminder_minutes_before" id="activityReminder">
                             <option value="">Sin notificación</option>
@@ -345,22 +333,19 @@
                             <option value="10080">1 semana antes</option>
                         </select>
                     </label>
-=======
->>>>>>> Stashed changes
                     <label class="ff-field ff-field-full">Notas (opcional)
                         <textarea name="notes" id="activityNotes" rows="3" maxlength="1000"
                             placeholder="Agrega detalles de tu actividad..."></textarea>
                     </label>
                 </div>
                 <p class="ff-availability-feedback" id="availabilityFeedback" aria-live="polite"></p>
-<<<<<<< Updated upstream
-=======
                 <p class="ff-recovery-hint">
-                    Ejercicio, ciclismo y deporte cuentan como sesiones intensas: máximo {{ $weeklyIntenseLimit }} por semana, {{ $maximumIntenseDuration }} minutos por sesión y al menos un día de descanso entre ellas.
-                    Caminata y yoga pueden servir como recuperación activa. El calendario evita solapamientos entre todas las actividades.
+                    Ejercicio, ciclismo y deporte cuentan como sesiones intensas: máximo {{ $weeklyIntenseLimit }} por
+                    semana, {{ $maximumIntenseDuration }} minutos por sesión y al menos un día de descanso entre ellas.
+                    Caminata y yoga pueden servir como recuperación activa. El calendario evita solapamientos entre todas
+                    las actividades.
                 </p>
                 <p class="ff-points-hint">★ Las actividades completadas generan 10 puntos por cada 30 minutos.</p>
->>>>>>> Stashed changes
                 <div class="ff-modal-actions">
                     <button type="button" class="ff-btn ff-btn-ghost" data-close-modal>Cancelar</button>
                     <button type="submit" class="ff-btn ff-btn-primary" id="saveActivityBtn">Guardar actividad</button>

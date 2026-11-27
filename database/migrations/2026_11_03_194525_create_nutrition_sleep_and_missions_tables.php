@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -127,8 +128,12 @@ return new class extends Migration
             $table->date('sleep_date');
             $table->dateTime('bedtime');
             $table->dateTime('wake_time');
-            // Columna generada en MySQL
-            $table->integer('duration_minutes')->storedAs('timestampdiff(MINUTE, bedtime, wake_time)');
+            $durationExpression = match (DB::connection()->getDriverName()) {
+                'mysql' => 'timestampdiff(MINUTE, bedtime, wake_time)',
+                'sqlite' => "CAST((CAST(strftime('%s', wake_time) AS INTEGER) - CAST(strftime('%s', bedtime) AS INTEGER)) / 60 AS INTEGER)",
+                default => throw new RuntimeException('The sleep duration generated column is unsupported by this database driver.'),
+            };
+            $table->integer('duration_minutes')->storedAs($durationExpression);
             $table->unsignedTinyInteger('quality_rating')->nullable();
             $table->enum('source', ['manual', 'device'])->default('manual');
             $table->string('notes', 300)->nullable();

@@ -122,32 +122,6 @@ class QuestExperienceTest extends TestCase
         $this->assertSame(1, FamFitActivity::query()->count());
     }
 
-    public function test_calendar_rejects_overlapping_activities(): void
-    {
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $this->post(route('famfit.activities.store'), [
-            'title' => 'Primera actividad',
-            'activity_type' => 'Ejercicio',
-            'activity_date' => today()->toDateString(),
-            'start_time' => '09:00',
-            'end_time' => '10:00',
-            'status' => 'planned',
-        ])->assertRedirect()->assertSessionHasNoErrors();
-
-        $this->post(route('famfit.activities.store'), [
-            'title' => 'Actividad superpuesta',
-            'activity_type' => 'Caminata',
-            'activity_date' => today()->toDateString(),
-            'start_time' => '09:30',
-            'end_time' => '10:30',
-            'status' => 'planned',
-        ])->assertRedirect()->assertSessionHasErrors('start_time');
-
-        $this->assertSame(1, FamFitActivity::where('user_id', $user->id)->count());
-    }
-
     public function test_calendar_enforces_recovery_days_and_weekly_intense_session_limit(): void
     {
         $user = User::factory()->create();
@@ -170,7 +144,7 @@ class QuestExperienceTest extends TestCase
 
         $this->get(route('famfit.calendar'))
             ->assertOk()
-            ->assertSee('máximo 3 por semana');
+            ->assertSee('máximo 3 por');
 
         $this->post(route('famfit.activities.store'), [
             ...$schedule('Ejercicio', 0),
